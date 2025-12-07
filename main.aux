@@ -16,11 +16,11 @@
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {1.2.2}Multi-level paging}{5}{subsubsection.1.2.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{a. The Page Table Problem in 64-bit Systems}{5}{section*.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{b. 5-Level Paging Architecture}{5}{section*.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.2.3}Comparative Analysis of Page Table Architectures}{5}{subsubsection.1.2.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{a. Hierarchical Paging}{5}{section*.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {1.2.3}Comparative Analysis of Page Table Architectures}{6}{subsubsection.1.2.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{a. Hierarchical Paging}{6}{section*.6}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{b. Hashed Page Tables}{6}{section*.7}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{c. Inverted Page Tables}{6}{section*.8}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{d. Reasons for Choosing Hierarchical Page Tables}{6}{section*.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{d. Reasons for Choosing Hierarchical Page Tables}{7}{section*.9}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces 5-Level Paging Scheme (Address Translation for 57-bit Virtual Address)}}{7}{figure.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {2}Implementation}{8}{section.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Scheduler}{8}{subsection.2.1}\protected@file@percent }
@@ -41,15 +41,15 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Memory Management}{12}{subsection.2.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.1}Memory management}{12}{subsubsection.2.2.1}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{a. Overview}{12}{section*.16}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{b. Implementation Details}{12}{section*.17}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{b. Implementation Details}{13}{section*.17}\protected@file@percent }
 \@writefile{lol}{\contentsline {lstlisting}{\numberline {6}Virtual Memory Area Structure}{13}{lstlisting.6}\protected@file@percent }
 \@writefile{lol}{\contentsline {lstlisting}{\numberline {7}User Space System Call Wrapper}{13}{lstlisting.7}\protected@file@percent }
 \@writefile{lol}{\contentsline {lstlisting}{\numberline {8}Kernel Space Allocation Routine}{13}{lstlisting.8}\protected@file@percent }
 \@writefile{lol}{\contentsline {lstlisting}{\numberline {9}Deallocation Logic}{15}{lstlisting.9}\protected@file@percent }
 \@writefile{toc}{\contentsline {paragraph}{c. Algorithm Description}{15}{section*.18}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.2}Multi-level paging}{16}{subsubsection.2.2.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{a. Implementation Details}{16}{section*.19}\protected@file@percent }
-\@writefile{lol}{\contentsline {lstlisting}{\numberline {10}Bit Manipulation Macros in mm64.h}{16}{lstlisting.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.2}Multi-level paging}{17}{subsubsection.2.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{a. Implementation Details}{17}{section*.19}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {10}Bit Manipulation Macros in mm64.h}{17}{lstlisting.10}\protected@file@percent }
 \@writefile{lol}{\contentsline {lstlisting}{\numberline {11}PTE Definition and Initialization}{17}{lstlisting.11}\protected@file@percent }
 \@writefile{lol}{\contentsline {lstlisting}{\numberline {12}Page Walk Logic (Simplified)}{18}{lstlisting.12}\protected@file@percent }
 \@writefile{lol}{\contentsline {lstlisting}{\numberline {13}Physical Memory Access}{19}{lstlisting.13}\protected@file@percent }
@@ -82,11 +82,26 @@
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Question 4}{33}{subsection.4.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Question 5}{34}{subsection.4.5}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.6}Question 6}{37}{subsection.4.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.7}Question 7}{39}{subsection.4.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5}Overall}{49}{section.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {6}Source Code}{49}{section.6}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {14}mm\_struct in os-mm.h}{37}{lstlisting.14}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {15}vm\_map\_ram() in mm64.c}{38}{lstlisting.15}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {16}alloc\_pages\_range() in mm64.c}{38}{lstlisting.16}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {17}get\_vma\_by\_num() in mm-vm.c}{39}{lstlisting.17}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {18}validate\_overlap\_vm\_area() in mm-vm.c}{40}{lstlisting.18}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {19}inc\_vma\_limit() in mm-vm.c}{41}{lstlisting.19}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {20}get\_free\_vmrg\_area() in libmem.c}{43}{lstlisting.20}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {21}get\_vm\_area\_node\_at\_brk() in mm-vm.c}{44}{lstlisting.21}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {22}\_\_alloc() in libmem.c}{45}{lstlisting.22}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {23}\_\_read() in libmem.c}{47}{lstlisting.23}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {24}Overlap check logic}{48}{lstlisting.24}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {25}find\_victim\_page() in libmem.c}{49}{lstlisting.25}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.7}Question 7}{50}{subsection.4.7}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {26}timer\_routine() and next\_slot() in timer.c}{51}{lstlisting.26}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {27}Removed muxtex timer\_routine()}{54}{lstlisting.27}\protected@file@percent }
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {28}Removed muxtex next\_slot()}{55}{lstlisting.28}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}Overall}{62}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Source Code}{62}{section.6}\protected@file@percent }
 \abx@aux@read@bbl@mdfivesum{nobblfile}
-\newlabel{LastPage}{{6}{49}{Source Code}{page.49}{}}
-\gdef\lastpage@lastpage{49}
-\gdef\lastpage@lastpageHy{49}
-\gdef \@abspage@last{50}
+\newlabel{LastPage}{{6}{62}{Source Code}{page.62}{}}
+\gdef\lastpage@lastpage{62}
+\gdef\lastpage@lastpageHy{62}
+\gdef \@abspage@last{63}

@@ -8,11 +8,11 @@
 \contentsline {subsubsection}{\numberline {1.2.2}Multi-level paging}{5}{subsubsection.1.2.2}%
 \contentsline {paragraph}{a. The Page Table Problem in 64-bit Systems}{5}{section*.4}%
 \contentsline {paragraph}{b. 5-Level Paging Architecture}{5}{section*.5}%
-\contentsline {subsubsection}{\numberline {1.2.3}Comparative Analysis of Page Table Architectures}{5}{subsubsection.1.2.3}%
-\contentsline {paragraph}{a. Hierarchical Paging}{5}{section*.6}%
+\contentsline {subsubsection}{\numberline {1.2.3}Comparative Analysis of Page Table Architectures}{6}{subsubsection.1.2.3}%
+\contentsline {paragraph}{a. Hierarchical Paging}{6}{section*.6}%
 \contentsline {paragraph}{b. Hashed Page Tables}{6}{section*.7}%
 \contentsline {paragraph}{c. Inverted Page Tables}{6}{section*.8}%
-\contentsline {paragraph}{d. Reasons for Choosing Hierarchical Page Tables}{6}{section*.9}%
+\contentsline {paragraph}{d. Reasons for Choosing Hierarchical Page Tables}{7}{section*.9}%
 \contentsline {section}{\numberline {2}Implementation}{8}{section.2}%
 \contentsline {subsection}{\numberline {2.1}Scheduler}{8}{subsection.2.1}%
 \contentsline {subsubsection}{\numberline {2.1.1}Queue Operations (Implementation of Round-Robin)}{8}{subsubsection.2.1.1}%
@@ -27,10 +27,10 @@
 \contentsline {subsection}{\numberline {2.2}Memory Management}{12}{subsection.2.2}%
 \contentsline {subsubsection}{\numberline {2.2.1}Memory management}{12}{subsubsection.2.2.1}%
 \contentsline {paragraph}{a. Overview}{12}{section*.16}%
-\contentsline {paragraph}{b. Implementation Details}{12}{section*.17}%
+\contentsline {paragraph}{b. Implementation Details}{13}{section*.17}%
 \contentsline {paragraph}{c. Algorithm Description}{15}{section*.18}%
-\contentsline {subsubsection}{\numberline {2.2.2}Multi-level paging}{16}{subsubsection.2.2.2}%
-\contentsline {paragraph}{a. Implementation Details}{16}{section*.19}%
+\contentsline {subsubsection}{\numberline {2.2.2}Multi-level paging}{17}{subsubsection.2.2.2}%
+\contentsline {paragraph}{a. Implementation Details}{17}{section*.19}%
 \contentsline {paragraph}{b. Algorithm Description}{19}{section*.20}%
 \contentsline {section}{\numberline {3}Interprets the results of running tests}{21}{section.3}%
 \contentsline {subsection}{\numberline {3.1}Scheduling}{21}{subsection.3.1}%
@@ -48,6 +48,6 @@
 \contentsline {subsection}{\numberline {4.4}Question 4}{33}{subsection.4.4}%
 \contentsline {subsection}{\numberline {4.5}Question 5}{34}{subsection.4.5}%
 \contentsline {subsection}{\numberline {4.6}Question 6}{37}{subsection.4.6}%
-\contentsline {subsection}{\numberline {4.7}Question 7}{39}{subsection.4.7}%
-\contentsline {section}{\numberline {5}Overall}{49}{section.5}%
-\contentsline {section}{\numberline {6}Source Code}{49}{section.6}%
+\contentsline {subsection}{\numberline {4.7}Question 7}{50}{subsection.4.7}%
+\contentsline {section}{\numberline {5}Overall}{62}{section.5}%
+\contentsline {section}{\numberline {6}Source Code}{62}{section.6}%
