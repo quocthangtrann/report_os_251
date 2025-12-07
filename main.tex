@@ -1,0 +1,2072 @@
+\documentclass[a4paper,13pt]{extarticle}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{geometry}
+\usepackage{array}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{csvsimple}
+\usepackage[T1]{fontenc}
+\usepackage{ragged2e} % Sử dụng gói này để có lệnh \justify
+\usepackage[backend=biber,style=numeric]{biblatex}
+\addbibresource{references.bib}
+\usepackage{setspace} % Gói để điều chỉnh khoảng cách giữa các dòng
+\usepackage{algorithm}
+\usepackage{pgfplots}
+\usepgfplotslibrary{patchplots}
+\usepackage{pgfgantt}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{verbatim}
+\usepackage{pgfplots}
+%\usepackage{tikz-3dplot}
+\usepackage{lastpage}
+\usepackage{longtable}
+\usepackage{framed}  % Thêm vào phần preamble của tài liệu
+\addbibresource{references.bib}
+\usepackage{enumitem}
+
+\lstset{
+    language=C,
+    basicstyle=\ttfamily\small, % Font chữ code
+    numbers=left,               % Số dòng bên trái
+    numberstyle=\tiny\color{gray}, % Style số dòng
+    stepnumber=1,               % Đánh số từng dòng
+    numbersep=8pt,              % Khoảng cách số dòng và code
+    backgroundcolor=\color{white},
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    frame=single,               % TẠO KHUNG VIỀN (FRAMED)
+    rulecolor=\color{black},    % Màu khung
+    tabsize=4,
+    captionpos=b,
+    breaklines=true,
+    breakatwhitespace=false,
+    title=\lstname,
+    keywordstyle=\color{blue},
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{red}
+}
+
+\geometry{
+  a4paper,
+  total={170mm,257mm},
+  left=20mm,
+  right=20mm,
+  top=20mm,
+  bottom=20mm,
+}
+\renewcommand{\abstractname}{\textbf{\Large\uppercase{Abstract}}}
+
+\everymath{\displaystyle}
+
+% Add this to make display math the same size as text
+\AtBeginDocument{
+  \abovedisplayskip=6pt plus 2pt minus 4pt
+  \belowdisplayskip=6pt plus 2pt minus 4pt
+  \abovedisplayshortskip=0pt plus 2pt
+  \belowdisplayshortskip=4pt plus 2pt minus 2pt
+}
+
+% Thiết lập header và footer
+\pagestyle{fancy}
+\fancyhf{} % Xóa các kiểu header và footer mặc định
+
+% Header
+\fancyhead[L]{\includegraphics[height=1.5cm]{logobk.png}} % Thay 'logo.png' bằng tên file logo của bạn
+\fancyhead[C]{\textbf{VIETNAM NATIONAL UNIVERSITY HO CHI MINH CITY\\HO CHI MINH CITY UNIVERSITY OF TECHNOLOGY}}
+\fancyhead[R]{}
+
+% Footer
+\fancyfoot[C]{\textbf{Page} \thepage\ \textbf{|} \pageref{LastPage}}
+
+\setlength{\headheight}{28pt} % Tăng chiều cao của header để tránh chồng lấn
+\setlength{\headsep}{30pt}    % Tạo khoảng cách giữa header và nội dung
+
+% Bỏ header và footer ở trang đầu tiên nếu cần
+\renewcommand{\headrulewidth}{0.5pt} % Đường kẻ ở header
+\renewcommand{\footrulewidth}{0.5pt} % Đường kẻ ở footer
+
+
+\begin{document}
+
+
+\begin{titlepage}
+\definecolor{myblue1}{RGB}{3, 43, 145}
+\definecolor{myblue2}{RGB}{30, 126, 219}
+
+\begin{tikzpicture}[remember picture, overlay]
+  \draw[myblue1, thick] ([shift={(0.8cm, -0.8cm)}]current page.north west) rectangle ([shift={(-0.8cm, 0.8cm)}]current page.south east);
+  \draw[myblue2, thick]([shift={(1cm, -1cm)}]current page.north west) rectangle ([shift={(-1cm, 1cm)}]current page.south east);
+\end{tikzpicture}
+
+\begin{center}
+  \textbf{ VIETNAM NATIONAL UNIVERSITY HO CHI MINH CITY}\\
+  \vspace{0.1cm}
+  \textbf{HO CHI MINH CITY UNIVERSITY OF TECHNOLOGY}\\
+  \vspace{0.1cm}
+  \textbf{ FACULTY OF COMPUTER SCIENCE AND ENGINEERING}\\
+  \vspace{2.5cm}
+      \centering
+      \includegraphics[scale = 1.0]{logobk.png} \\
+    \vspace{1.0cm}
+
+  \textbf{\fontsize{30pt}{0pt}\LARGE REPORT ASSIGNMENT}\\
+  \vspace{1.0cm}    
+  \textbf{\LARGE OPERATING SYSTEM}\\
+  \vspace{3cm}
+  \textbf{Class: CC01 - HK251}\\
+  \textbf{INSTRUCTOR: NGUYEN PHUONG DUY}\\
+    \vspace{1cm}
+  \textbf{TOPIC: DESIGN SIMPLE OPERATING SYSTEM}\\
+  \vspace{1cm}
+  
+  {\large
+			\begin{tabular}{|c|c|}
+				\hline
+				\textbf{student's name} & \textbf{Student's ID} \\ \hline
+				Le Phuc Khang & 235 \\ \hline
+				Tran Quoc Thang & 2353125 \\ \hline
+				Tran Xuan Hao & 235 \\ \hline
+				Nguyen Xuan Ngoc & 235 \\ \hline
+				Phan Tuan Kiet & 2352654 \\ \hline
+			\end{tabular}
+    }
+  
+  \vspace{4cm}
+  \textbf{Ho Chi Minh City, 2025}
+\end{center}
+
+\end{titlepage}
+
+\thispagestyle{empty}
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{center}
+  
+    \textbf{ GROUP WORK RESULTS REPORT} \\
+    \vspace{0.5cm}
+    \begin{tabular}{|c|>{\centering\arraybackslash}m{4cm}|>{\centering\arraybackslash}m{4cm}|>{\centering\arraybackslash}m{3cm}|} \hline
+      \textbf{Number} & \textbf{Full name} & \textbf{Student ID} & \textbf{Contribution} \\ \hline
+      1 & Le Phuc Khang & 235 & 100\% \\ \hline
+      2 & Tran Quoc Thang & 2353125 & 100\% \\ \hline
+      3 & Nguyen Xuan Ngoc & 235 & 100\% \\ \hline
+      4 & Phan Tuan Kiet & 2352654 & 100\% \\ \hline
+      5 & Tran Xuan Hao & 235 & 100\% \\ \hline
+    \end{tabular} \\
+    \end{center}
+    
+    \vspace{0.5cm}
+
+
+\newpage
+
+\justifying % Căn đều đoạn văn bản dưới đây
+\setstretch{1.5} % Thiết lập khoảng cách giữa các dòng
+
+\tableofcontents
+
+\pagebreak
+
+\section{Theorical Background}
+
+\subsection{Scheduler}
+
+The scheduler module is the core component responsible for orchestrating process execution. In this assignment, we implement a scheduler for a \textbf{Symmetric Multiprocessing (SMP)} system using a \textbf{Slot-based Multi-Level Queue (MLQ)} algorithm. This design balances the strictness of priority scheduling with fairness mechanisms required to prevent starvation, as mandated by the project specifications.
+
+\begin{enumerate}
+    \item \textbf{Multilevel Queue Scheduling (Partitioning):}
+    According to OS theory, a multilevel queue scheduling algorithm partitions the ready queue into several separate queues. In our system, processes are permanently assigned to a specific queue based on their fixed priority (\texttt{prio}). The system defines \texttt{MAX\_PRIO} levels, ranging from 0 (highest priority) to \texttt{MAX\_PRIO - 1} (lowest priority).
+
+    \item \textbf{Intra-Queue Scheduling (Round-Robin):}
+    Within a single priority queue, the assignment specifies that the CPU must run processes in a \textbf{Round-Robin (RR)} style.
+    \begin{itemize}
+        \item Each process is assigned a \textit{Time Slice} (defined in the system configuration).
+        \item When the time slice expires, if the process has not finished, the CPU is forced to preempt it.
+        \item The preempted process is placed back at the \textbf{tail} of its priority queue, waiting for its next turn. This necessitates a First-In-First-Out (FIFO) queue structure.
+    \end{itemize}
+
+    \item \textbf{Inter-Queue Scheduling (Slot-based Allocation):}
+    A critical issue in fixed-priority scheduling is \textit{starvation}, where low-priority processes effectively never execute. To mitigate this, the textbook suggests allocating CPU time among queues:
+    \begin{equation}
+        slot[i] = MAX\_PRIO - i
+    \end{equation}
+    Each queue $i$ is given a budget of $slot[i]$ dispatches. The scheduler iterates through queues; if a high-priority queue exhausts its slots, the scheduler \textbf{must} yield to the next priority level, even if the high-priority queue is not empty. This ensures lower-priority queues eventually receive CPU cycles.
+
+    \item \textbf{Symmetric Multiprocessing (SMP) \& Load Balancing:}
+    The system simulates 2 CPUs sharing a \textbf{Common Ready Queue} (Global Queue). According to SMP theory, this architecture allows for automatic \textit{Load Balancing} and \textit{Process Migration}. 
+    \begin{itemize}
+        \item Any available CPU checks the global \texttt{mlq\_ready\_queue} to pick the next process.
+        \item A process running on CPU 0 may be paused and later resumed on CPU 1.
+        \item To prevent race conditions (e.g., two CPUs picking the same process), we employ a Mutex Lock (\texttt{queue\_lock}) to protect the critical section during queue access.
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Memory Management}
+
+\subsubsection{Memory management}
+
+The fundamental task of an operating system is to manage the memory hierarchy and provide an abstraction mechanism to separate the user process from the physical details of the hardware.
+\paragraph{a. Logical vs. Physical Address Space}
+According to \textbf{Chapter 9.1.3}, the central concept of memory management is the separation of logical address space from physical address space:
+
+\begin{itemize}
+    \item \textbf{Logical Address:} An address generated by the CPU during program execution. To a process, memory appears as a flat, continuous space ranging from address $0$ to $Max_{Virtual}$. The set of all valid logical addresses for a process is defined as the \textit{Logical Address Space}.
+    \item \textbf{Physical Address:} The actual address seen and accessed by the memory unit on the physical RAM.
+    \item \textbf{Memory Management Unit (MMU):} A hardware device responsible for the run-time mapping from virtual to physical addresses. Under this scheme, the user program never interacts with the real physical addresses.
+\end{itemize}
+
+
+\paragraph{b. Process Memory Layout}
+Although the virtual address space is linear, logically, a process is typically organized into distinct sections to manage access rights and usage purposes (referencing \textbf{Chapter 9.3}):
+
+\begin{itemize}
+    \item \textbf{Text Section:} Contains the executable code of the program (typically Read-Only).
+    \item \textbf{Data Section:} Contains global and static variables.
+    \item \textbf{Heap:} The memory region for dynamic allocation, which grows upward in the address space.
+    \item \textbf{Stack:} Contains stack frames for function calls and local variables, which grows downward.
+\end{itemize}
+
+The operating system manages these segments as \textbf{Virtual Memory Areas (VMAs)}. Each VMA is characterized by a start address, an end address, and permission flags (read/write/execute).
+
+
+\subsubsection{Multi-level paging}
+
+To implement memory mapping in modern architectures, \textbf{Paging} is widely used to eliminate external fragmentation.
+
+\paragraph{a. The Page Table Problem in 64-bit Systems}
+In traditional 32-bit architectures, a two-level paging scheme is often sufficient. However, with a 64-bit architecture ($2^{64}$ bytes of address space), the size of the page table becomes prohibitively large if stored contiguously.
+
+According to \textbf{Chapter 9.4.2 (Hierarchical Paging)}, the optimal solution is to divide the page table into smaller pieces. This allows the operating system to avoid allocating the entire page table structure in contiguous memory. Only the necessary sub-tables are allocated (on-demand allocation).
+
+\paragraph{b. 5-Level Paging Architecture}
+The system is designed based on an extension of the Intel x86-64 architecture, utilizing a \textbf{5-level paging scheme} to support a significantly larger virtual address space (up to 57-bit linear address).
+
+The virtual address structure is decomposed into index fields and an offset. Assuming a standard page size of 4KB ($2^{12}$ bytes), the virtual address is resolved as follows:
+
+\begin{equation}
+    \texttt{Virtual\_Address} = PGD \oplus P4D \oplus PUD \oplus PMD \oplus PT \oplus Offset
+\end{equation}
+
+The address translation process (also known as the \textbf{Page Walk}) occurs sequentially through 5 tables:
+\begin{enumerate}
+    \item \textbf{PGD (Page Global Directory):} The top-level table (Level 5).
+    \item \textbf{P4D (Page Level 4 Directory):} The Level 4 table.
+    \item \textbf{PUD (Page Upper Directory):} The Level 3 table.
+    \item \textbf{PMD (Page Middle Directory):} The Level 2 table.
+    \item \textbf{PT (Page Table):} The final level (Level 1), containing the mapping to the physical frame.
+\end{enumerate}
+
+Each entry in the upper-level tables points to the base address of the next lower-level table. The entry in the \texttt{PT} (Page Table Entry - PTE) contains the actual \textbf{Physical Frame Number (PFN)}.
+
+\subsubsection{Comparative Analysis of Page Table Architectures}
+
+\paragraph{a. Hierarchical Paging}
+	This method divides the logical address into multiple parts to manage the page table as a tree structure (4-level or 5-level paging in modern systems).
+	
+	\begin{figure}[H] 
+		\centering
+		\includegraphics[width=1\textwidth]{Hierarchical Page Tables}
+		\caption{Hierarchical Page Tables Diagram}
+	\end{figure}
+	
+	\noindent \textbf{Advantages}
+	\begin{itemize}
+		\item \textbf{Memory Efficiency for Sparse Addresses:} The system does not need to allocate memory for the entire page table at once. It solves the problem where a single-level table would require an enormous amount of contiguous memory. It allows dividing the page table into smaller units.
+		 \item \textbf{Hardware Support:} This is the standard implementation for modern architectures, such as the Intel x86-64 (which uses a 4-level hierarchy) and ARMv8 architectures.
+	\end{itemize}
+	
+	\noindent \textbf{Disadvantages}
+	\begin{itemize}
+		 \item \textbf{Memory Access Latency:} As the address space expands (e.g., to 64-bit), the number of levels in the hierarchy increases. Without a TLB, a single memory reference might require multiple memory accesses (e.g., 4 accesses) to traverse the page table before accessing the actual data.
+		\item \textbf{Complexity:} Managing a multi-level tree (5 levels) is more complex than a simple flat table.
+	\end{itemize}
+	
+	
+	\paragraph{b. Hashed Page Tables}
+	This method uses a hash function on the virtual page number to locate the physical frame.
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=1\textwidth]{Hashed Page Tables}
+		\caption{Hashed Page Table Diagram}
+	\end{figure}
+	
+	\noindent \textbf{Advantages}
+	\begin{itemize}
+		 \item \textbf{Suitability for Large Address Spaces:} This structure is common in address spaces larger than 32 bits.
+		 \item \textbf{Handling Sparse Memory:} It is especially useful for sparse address spaces where memory references are non-contiguous and scattered.
+	\end{itemize}
+	
+	\noindent \textbf{Disadvantages}
+	\begin{itemize}
+		 \item \textbf{Collision Handling:} Multiple virtual addresses may hash to the same location, requiring a chain of elements to be searched to find a match.
+		\item \textbf{Implementation Complexity:} While efficient for size, the overhead of hashing and traversing linked lists (chains) can impact performance compared to direct indexing.
+	\end{itemize}
+	
+	
+	\paragraph{c. Inverted Page Tables}
+	 Instead of one page table per process, there is one entry for each real page (frame) of physical memory.
+	 \begin{figure}[H]
+	 	\centering
+	 	\includegraphics[width=1\textwidth]{Inverted Page Tables}
+	 	\caption{Inverted Page Table Diagram}
+	 \end{figure}
+	
+	\noindent \textbf{Advantages}
+	\begin{itemize}
+		 \item \textbf{Memory Savings:} This approach significantly decreases the amount of memory needed to store each page table, as the table size is proportional to physical memory, not the virtual address space.
+	\end{itemize}
+	
+	\noindent \textbf{Disadvantages}
+	\begin{itemize}
+		 \item \textbf{Increased Lookup Time:} It increases the time needed to search the table when a page reference occurs, often requiring a hash table to limit the search.
+		 \item \textbf{Difficulty with Shared Memory:} Implementing shared memory is difficult because there is typically only one mapping of a virtual address to a shared physical address.
+	\end{itemize}
+	
+	
+	\paragraph{d. Reasons for Choosing Hierarchical Page Tables}
+	
+	In this simple operating system simulation project, we selected Hierarchical Page Tables for the following three reasons:
+	
+	\begin{itemize}
+		\item \textbf{Dynamic Allocation:} \\
+		The hierarchical structure enables ``on-demand'' memory allocation. There is no need to initialize the entire massive data structure upfront. When a process requires access to a memory region, we simply invoke \texttt{alloc\_aligned\_table()} for that specific branch. This approach effectively prevents the wastage of management memory within a 64-bit environment.
+		
+		\item \textbf{Simplified Implementation of Sharing and Protection:} \\
+		The Address-Translation model allows for the assignment of access permissions (Read/Write/Execute) at each level of the tree (from top-level directories down to individual pages). This facilitates the implementation of Memory Protection, allowing for easy setup and granular control over specific memory regions.
+		
+		\item \textbf{Ease of Implementation:} \\
+		Compared to Inverted Page Tables or Hashed Page Tables, the hierarchical structure is easier to implement within a C-based simulation environment. We primarily rely on bitwise shifts and array indexing to decompose virtual addresses into their respective indices (e.g., \texttt{pgd\_idx}, \texttt{p4d\_idx}, etc.).
+	\end{itemize}
+
+\pagebreak
+
+\section{Implementation}
+
+\subsection{Scheduler}
+
+\subsubsection{Queue Operations (Implementation of Round-Robin)}
+
+To support the Round-Robin scheduling within each priority level, the queue operations in \texttt{queue.c} must strictly enforce First-In-First-Out (FIFO) behavior. I have implemented three core functions as follows:
+
+\paragraph{a. Enqueue Operation (Arrival/Preemption)}
+The \texttt{enqueue} function handles the arrival of a new process or the return of a preempted process.
+\begin{itemize}
+    \item \textbf{Mechanism:} It places the process at index \texttt{q->size}. This is critical for Round-Robin: a process finishing its time slice is moved to the back of the line. We check for buffer overflow (\texttt{MAX\_QUEUE\_SIZE}) before assignment to ensure memory safety.
+\end{itemize}
+
+\begin{lstlisting}[language=C, caption=Enqueue Implementation]
+void enqueue(struct queue_t *q, struct pcb_t *proc) {
+    /* TODO: put a new process to queue [q] */
+    if (q->size < MAX_QUEUE_SIZE) {
+        q->proc[q->size] = proc;
+        q->size++;
+    }
+}
+\end{lstlisting}
+
+\paragraph{b. Dequeue Operation (Dispatching)}
+The \texttt{dequeue} function selects the next process for execution.
+\begin{itemize}
+    \item \textbf{Mechanism:} It selects the process at index 0 (the Head), which corresponds to the process that has been waiting the longest. Since we use a static array, removing index 0 leaves a "hole". The function includes a loop to shift all subsequent elements ($i+1$) to position $i$. This ensures the array remains contiguous and the next candidate is always at index 0. 
+\end{itemize}
+
+\begin{lstlisting}[language=C, caption=Dequeue Implementation]
+struct pcb_t *dequeue(struct queue_t *q) {
+    /* TODO: return a pcb whose prioprity is the highest
+     * in the queue [q] and remember to remove it from q */
+        if (q == NULL || q->size == 0) {
+        return NULL;
+    }
+    struct pcb_t *first_proc = q->proc[0];
+
+    int i;
+    for (i = 0; i < q->size - 1; i++) {
+        q->proc[i] = q->proc[i + 1];
+    }
+    q->size--;
+    return first_proc;
+}
+\end{lstlisting}
+
+
+\subsubsection{MLQ Scheduler Implementation (sched.c)}
+
+The \texttt{sched.c} module implements the core logic of the Multi-Level Queue scheduler. This implementation is designed to handle process retrieval and placement within a Symmetric Multiprocessing (SMP) environment, strictly following the Slot-based policy defined in the assignment specifications.
+
+\paragraph{a. Scheduler Initialization (\texttt{init\_scheduler})}
+This function sets up the system state before any process execution begins.
+
+\begin{itemize}
+    \item \textbf{Slot Pre-calculation:} Instead of calculating the slot quota at runtime, we initialize the \texttt{slot} array immediately using the formula $slot[i] = MAX\_PRIO - i$. 
+    \item \textbf{Reasoning:} This optimization reduces CPU overhead during the critical context-switching phase. By pre-filling the quotas, the scheduler simply needs to decrement or reset values during execution.
+    \item \textbf{Mutex Initialization:} The \texttt{pthread\_mutex\_init} call prepares the lock required for thread safety in the SMP architecture.
+\end{itemize}
+
+\begin{lstlisting}[caption={Initialization Logic}]
+void init_scheduler(void) {
+    int i;
+    for (i = 0; i < MAX_PRIO; i++) {
+        mlq_ready_queue[i].size = 0;
+        slot[i] = MAX_PRIO - i; // Pre-calculate quotas
+    }
+    // ...
+    pthread_mutex_init(&queue_lock, NULL);
+}
+\end{lstlisting}
+
+\paragraph{b. Process Retrieval Logic (\texttt{get\_mlq\_proc}):}
+
+The \texttt{get\_mlq\_proc} function serves as the core of the scheduler, responsible for selecting the next process for CPU allocation from the set of priority queues. The algorithm is designed based on the Multi-Level Queue (MLQ) model combined with a \textit{Slot-based Allocation} mechanism to address the issue of resource starvation.
+
+\begin{enumerate}
+    \item \textbf{General Operating Principle}
+    
+    The function iterates sequentially through the queues from the highest priority (\texttt{prio = 0}) to the lowest (\texttt{prio = MAX\_PRIO - 1}). The decision to select a process is based on two prerequisites:
+    \begin{itemize}
+        \item \textbf{Readiness:} The queue at that priority level must have waiting processes (\texttt{!empty}).
+        \item \textbf{Resource Quota (Slot):} The queue must have remaining CPU usage quota (\texttt{slot[i] > 0}).
+    \end{itemize}
+
+    \item \textbf{Algorithm Flow}
+    
+    The process selection procedure occurs through the following steps:
+    
+    \begin{itemize}
+        \item \textbf{Step 1: Critical Section Protection.} Since the system simulates a multi-processor environment, the function begins by locking the Mutex (\texttt{pthread\_mutex\_lock(\&queue\_lock)}). This ensures the data integrity of the \texttt{mlq\_ready\_queue} when multiple CPUs access it simultaneously.
+        
+        \item \textbf{Step 2: Priority Traversal.} A loop iterates from \texttt{i = 0} (highest priority) to \texttt{MAX\_PRIO}. At each priority level \texttt{i}:
+        \begin{itemize}
+            \item \textit{Check Empty:} If \texttt{mlq\_ready\_queue[i]} is empty, the system skips it and checks the next priority level.
+            \item \textit{Check Slot (Core Logic):}
+            \begin{itemize}
+                \item \textbf{Case A (Slot Remaining - \texttt{slot[i] > 0}):} The queue is allowed to run. The system retrieves the first process (dequeue) and decrements the remaining slots by 1 (\texttt{slot[i]-{}-}). \textbf{Decision:} Break the loop immediately to return this process to the CPU.
+                \item \textbf{Case B (Slot Exhausted - \texttt{slot[i] == 0}):} The queue has used up its quota for the current cycle. The system performs a Slot Refill using the formula: \texttt{slot[i] = MAX\_PRIO - i}. \textbf{Decision:} Crucially, the algorithm DOES NOT select a process from this queue but continues the loop (\texttt{continue}) to check the next lower priority queue.
+            \end{itemize}
+        \end{itemize}
+        
+        \item \textbf{Step 3: System State Update.} If a process is found (\texttt{proc != NULL}), it is added to the running list (\texttt{running\_list}) for tracking.
+        
+        \item \textbf{Step 4: Finish.} Unlock the Mutex (\texttt{pthread\_mutex\_unlock}) and return the \texttt{pcb\_t} pointer of the selected process (or \texttt{NULL} if no viable process exists).
+    \end{itemize}
+
+    \item \textbf{Slot-based Mechanism Analysis}
+    
+    
+    This implements a mechanism of \textbf{"Conditional Yielding"}:
+    \begin{itemize}
+        \item \textbf{Purpose:} To prevent high-priority processes (e.g., Priority 0) from monopolizing the CPU indefinitely.
+        \item \textbf{Operation:} When a high-priority queue consumes its allocated slots (e.g., 140 slots for Prio 0), it is forced to reset its slots and "yield" the checking turn to lower-priority queues within the current function call. This ensures relative fairness, allowing lower-priority processes (such as Prio 139) a chance to execute (CPU time) even under heavy load conditions.
+    \end{itemize}
+
+    \item \textbf{Complexity Analysis}
+    
+    In the worst-case scenario, the algorithm must traverse through all \texttt{MAX\_PRIO} queues.
+    \\
+    \textbf{Complexity:} $O(K + N)$
+    \begin{itemize}
+        \item $K$: The number of priority levels (\texttt{MAX\_PRIO}).
+        \item $N$: The cost of the \texttt{dequeue} operation.
+    \end{itemize}
+\end{enumerate}
+
+\begin{lstlisting}[caption={Slot-based Decision Logic}]
+struct pcb_t * get_mlq_proc(void) {
+    struct pcb_t * proc = NULL;
+
+    pthread_mutex_lock(&queue_lock);
+    
+    for (int i = 0; i < MAX_PRIO; i++) {
+        if (!empty(&mlq_ready_queue[i])) {
+            if (slot[i] > 0) {
+                proc = dequeue(&mlq_ready_queue[i]);
+                slot[i]--;
+                break; 
+            } else {
+                slot[i] = MAX_PRIO - i;
+            }
+        }
+    }
+
+    if (proc != NULL)
+        enqueue(&running_list, proc);
+    
+    pthread_mutex_unlock(&queue_lock);
+    
+    return proc;    
+}
+}
+\end{lstlisting}
+
+\paragraph{c. Process Placement (\texttt{put\_mlq\_proc} / \texttt{add\_mlq\_proc})}
+These functions handle putting a process back into the ready queue (e.g., after a time slice expires or upon creation).
+
+\begin{itemize}
+    \item \textbf{Mechanism:} They map the process's priority (\texttt{proc->prio}) to the correct index in the \texttt{mlq\_ready\_queue} array and invoke the FIFO \texttt{enqueue} operation.
+    \item \textbf{Synchronization:} These operations are wrapped in mutex locks to ensure the queue structure is not corrupted by concurrent access from the loader or other CPUs.
+\end{itemize}
+
+\paragraph{d. Synchronization Mechanism (Mutex Protection)}
+A critical aspect of this implementation is the handling of Shared Resources in a multi-core environment.
+
+In this simulation, the \texttt{mlq\_ready\_queue} is a \textbf{Global Shared Resource}. 
+\begin{itemize}
+    \item \textit{Scenario without Mutex:} CPU 0 checks queue 0 and sees 1 process. Simultaneously, CPU 1 checks queue 0 and sees the same process. Both CPUs try to \texttt{dequeue} the same pointer. This creates a \textbf{Race Condition}, leading to memory corruption or one process being executed twice.
+\end{itemize}
+
+We use \texttt{pthread\_mutex\_lock(\&queue\_lock)} to define a \textbf{Critical Section}.
+\begin{itemize}
+    \item \textbf{Scope:} The lock covers the entire duration of reading the state (checking \texttt{empty} and \texttt{slot}) and modifying the state (\texttt{dequeue}, \texttt{enqueue}, \texttt{$slot--$}).
+    \item \textbf{Atomicity:} This ensures that the complex operation of "Check Slot $\rightarrow$ Dequeue $\rightarrow$ Decrement Slot" appears as a single atomic instruction to other CPUs. No other thread can interrupt or modify the queue during this sequence.
+\end{itemize}
+
+\begin{lstlisting}[caption={Critical Section Protection}]
+pthread_mutex_lock(&queue_lock); // BEGIN Critical Section
+// ... 
+// Safe access to shared mlq_ready_queue and slot arrays
+// ...
+pthread_mutex_unlock(&queue_lock); // END Critical Section
+\end{lstlisting}
+
+\subsubsection{Scheduler Algorithm Conclusion}
+
+This section presented the implementation of a \textbf{Slot-based Multi-Level Queue (MLQ)} scheduler for an SMP environment. By integrating a quota mechanism ($slot = MAX\_PRIO - prio$) into the priority traversal logic, the design successfully balances two conflicting objectives: prioritizing critical tasks while preventing the starvation of lower-priority processes. Additionally, the rigorous application of \textbf{Mutex locks} ensures thread safety, preventing race conditions as multiple CPUs concurrently access the shared ready queue structure.
+
+
+\subsection{Memory Management}
+
+\subsubsection{Memory management}
+
+\paragraph{a. Overview}
+The objective of this module is to implement memory management at the \textbf{Logical Level} (Process View), adhering to the principles outlined in Chapter 9 of \textit{Silberschatz}. In this simulation, each process possesses a distinct Logical Address Space, which is segmented into functional areas (VMAs - Virtual Memory Areas) such as Code, Data, Heap, and Stack.
+
+The core design principles enforced in this implementation are:
+\begin{itemize}
+    \item \textbf{VMA Management:} Organizing virtual memory regions as a linked list of \texttt{vm\_area\_struct}.
+    \item \textbf{Separable User/Kernel Space:} A strict isolation between User Mode and Kernel Mode. User programs are prohibited from directly accessing Kernel data structures (such as \texttt{pcb\_t} or \texttt{mm\_struct}). All interactions must occur via System Calls using only the Process ID (\texttt{PID}) as an identifier.
+    \item \textbf{Allocation Strategy:} The system prioritizes the \textit{Reuse} of freed memory holes (via \texttt{vm\_freerg\_list}) before performing \textit{Expansion} of the address space to minimize external fragmentation.
+\end{itemize}
+
+\paragraph{b. Implementation Details}
+The following code snippets illustrate the core logic handling VMA organization and the secure User-Kernel interface.
+
+\textbf{1. VMA Data Structure (\texttt{mm.h})} \\
+The \texttt{vm\_area\_struct} represents a contiguous range of logical addresses $[vm\_start, vm\_end]$.
+\begin{lstlisting}[language=C, caption={Virtual Memory Area Structure}]
+struct vm_area_struct {
+    unsigned long vm_id;    // Region ID (e.g., DATA, HEAP)
+    unsigned long vm_start; // Logical Start Address
+    unsigned long vm_end;   // Logical End Address
+    struct vm_rg_struct *vm_freerg_list; // List of free holes for reuse
+    struct vm_area_struct *vm_next;      // Pointer to next VMA
+};
+\end{lstlisting}
+
+\textbf{2. Secure User/Kernel Interface (\texttt{libstd.c})} \\
+This wrapper demonstrates the protection mechanism. The user space only passes value arguments and the \texttt{pid}, never the raw PCB pointer, ensuring isolation.
+\begin{lstlisting}[language=C, caption={User Space System Call Wrapper}]
+int libsyscall(struct pcb_t *caller, uint32_t syscall_idx, 
+               arg_t a1, arg_t a2, arg_t a3)
+{
+    struct sc_regs regs;
+    regs.a1 = a1; regs.a2 = a2; regs.a3 = a3;
+
+    /* CRITICAL: Only caller->pid is passed to the kernel.
+       The Kernel must resolve the PCB internally. */
+    return syscall(caller->krnl, caller->pid, syscall_idx, &regs);
+}
+\end{lstlisting}
+
+\textbf{3. Memory Allocation Algorithm - \texttt{\_\_alloc} (\texttt{libmem.c})} \\
+This function executes in \textbf{Kernel Mode} after the PID has been validated. It implements the logic to search for available memory space within the VMA.
+\begin{lstlisting}[language=C, caption={Kernel Space Allocation Routine}]
+int __alloc(struct pcb_t *caller, int vmaid, int rgid, addr_t size, addr_t *alloc_addr)
+{
+    pthread_mutex_lock(&mmvm_lock);
+    struct vm_rg_struct rgnode;
+
+    // Check if we can reuse a free region
+    if (get_free_vmrg_area(caller, vmaid, size, &rgnode) == 0)
+    {
+        caller->mm->symrgtbl[rgid].rg_start = rgnode.rg_start;
+        caller->mm->symrgtbl[rgid].rg_end = rgnode.rg_end;
+        *alloc_addr = rgnode.rg_start;
+        pthread_mutex_unlock(&mmvm_lock);
+        return 0;
+    }
+
+    /* If get_free_vmrg_area FAILED, we must expand the heap */
+    struct vm_area_struct *cur_vma = get_vma_by_num(caller->mm, vmaid);
+    if (!cur_vma)
+    {
+        pthread_mutex_unlock(&mmvm_lock);
+        return -1;
+    }
+
+    addr_t inc_sz = PAGING_PAGE_ALIGNSZ(size);
+    // Usually aligning to page size is good practice, or use exact size if your inc_vma handles it.
+    // The provided skeleton had some ifdef logic, let's stick to standard alignment.
+
+    addr_t old_sbrk = cur_vma->sbrk;
+
+    /* SYSCALL to increase limit */
+    struct sc_regs regs;
+    regs.a1 = SYSMEM_INC_OP;
+    regs.a2 = vmaid;
+    regs.a3 = inc_sz; // Request expansion
+
+    // Note: In real syscall, we don't pass PCB, but here we simulate it via wrapper
+    // The wrapper 'syscall' takes (krnl, pid, nr, regs)
+    if (syscall(caller->krnl, caller->pid, 17, &regs) < 0)
+    {
+        pthread_mutex_unlock(&mmvm_lock);
+        return -1; // Failed to expand
+    }
+
+    /* Successful increase limit */
+    caller->mm->symrgtbl[rgid].rg_start = old_sbrk;
+    caller->mm->symrgtbl[rgid].rg_end = old_sbrk + size;
+    *alloc_addr = old_sbrk;
+
+    // The remaining space (inc_sz - size) should technically be added to free list
+    // to avoid internal fragmentation, but for this simple assignment we might skip it
+    // or add logic:
+    if (inc_sz > size)
+    {
+        struct vm_rg_struct *fragment = malloc(sizeof(struct vm_rg_struct));
+        fragment->rg_start = old_sbrk + size;
+        fragment->rg_end = old_sbrk + inc_sz;
+        fragment->rg_next = NULL;
+        enlist_vm_freerg_list(caller->mm, fragment);
+    }
+
+    pthread_mutex_unlock(&mmvm_lock);
+    return 0;
+}
+\end{lstlisting}
+
+\textbf{4. Memory Deallocation Algorithm - \texttt{enlist\_vm\_freerg\_list} (\texttt{libmem.c})} \\
+This function inserts a recently freed memory region back into the reuse list (free list), marking it available for future allocations.
+\begin{lstlisting}[language=C, caption={Deallocation Logic}]
+int enlist_vm_freerg_list(struct mm_struct *mm, struct vm_rg_struct *rg_elmt)
+{
+    struct vm_rg_struct *rg_node = mm->mmap->vm_freerg_list;
+
+    if (rg_elmt->rg_start >= rg_elmt->rg_end)
+        return -1;
+
+    if (rg_node != NULL)
+        rg_elmt->rg_next = rg_node;
+
+    /* Enlist the new region */
+    mm->mmap->vm_freerg_list = rg_elmt;
+
+    return 0;
+}
+\end{lstlisting}
+
+\paragraph{c. Algorithm Description}
+\textbf{Step 1: User-Kernel Transition (Protection Mechanism)}
+To ensure memory safety (referencing \textit{Silberschatz Chapter 2}), the allocation process begins with a System Call:
+\begin{itemize}
+    \item \textbf{User Request:} The user program calls a library function (e.g., \texttt{malloc}), which triggers the wrapper \texttt{libsyscall}.
+    \item \textbf{Trap to OS:} \texttt{libsyscall} passes the Process ID (\texttt{PID}) and the operation code (e.g., \texttt{SYSMEM\_MAP\_OP}) to the Kernel via a software interrupt/trap.
+    \item \textbf{Authentication:} Upon entering Kernel Mode, the kernel uses the provided \texttt{PID} to traverse the process table and retrieve the correct \texttt{pcb\_t} pointer. This prevents any user process from manipulating the memory of another process.
+\end{itemize}
+
+\textbf{Step 2: VMA Management (\texttt{get\_vma\_by\_num})} \\
+Once in Kernel Mode, the system must identify which memory region the process is requesting.
+\begin{itemize}
+    \item \textbf{Activity:} The function \texttt{get\_vma\_by\_num} traverses the linked list \texttt{mm->mmap}.
+    \item \textbf{Purpose:} It locates the \texttt{vm\_area\_struct} with a \texttt{vm\_id} matching the request (e.g., \texttt{vm\_id = 1} for the Data segment). This enforces the logical separation between data, code, and stack.
+\end{itemize}
+
+\textbf{Step 3: Memory Allocation (\texttt{\_\_alloc})} \\
+The allocation logic prioritizes filling "holes" in the memory space before expanding it, ensuring resource efficiency.
+\begin{enumerate}
+    \item \textbf{Reuse Strategy:} The system inspects the \texttt{vm\_freerg\_list} of the current VMA. This list contains memory regions that were previously freed. The algorithm applies a \textbf{First-Fit} strategy: it traverses the list, and if a node satisfying $rg\_end - rg\_start \ge size$ is found, the system either splits the node or claims the entire node for the new allocation.
+    \item \textbf{Expansion Strategy:} If the free list is empty or contains no suitable regions, the system performs a linear expansion. The new allocation address starts at the current \texttt{vm\_end}, and the boundary is updated: $vm\_end = vm\_end + size$. This behavior is analogous to the Unix \texttt{sbrk()} system call.
+    \item \textbf{Registration:} Finally, the system updates the \texttt{symrgtbl} (Symbol Region Table) with the \texttt{rgid}. This maps a User-managed Region ID to the actual Kernel-managed logical address.
+\end{enumerate}
+
+\textbf{Step 4: Memory Deallocation (\texttt{enlist\_vm\_freerg\_list})} \\
+When a process frees memory, the region is not immediately physically erased but transitioned to an "Available" state.
+\begin{itemize}
+    \item \textbf{Logic:} The function receives a memory region structure (\texttt{rg\_elmt}).
+    \item \textbf{Operation:} It inserts this node into the head of the singly linked list \texttt{vm\_freerg\_list}.
+    \item \textbf{Significance:} This turns used memory into a new "hole". The next allocation request (via \texttt{\_\_alloc}) will scan and potentially reuse this region, thereby minimizing external fragmentation of the logical address space.
+\end{itemize}
+
+\textbf{Conclusion:} \\
+The Memory Management module at the Logical Level has successfully established a secure memory management mechanism (via strict User/Kernel separation) and an efficient allocation strategy (via Free List reuse). This serves as the initial abstraction layer before these logical addresses are translated into physical addresses through the 5-Level Paging mechanism described in the next section.
+
+\subsubsection{Multi-level paging}
+
+\paragraph{a. Implementation Details}
+The following core components constitute the paging mechanism.
+
+\textbf{1. Bit Masking and Address Decoding (\texttt{mm64.h})}
+The system uses macros to "peel off" each layer of the virtual address.
+\begin{lstlisting}[language=C, caption={Bit Manipulation Macros in mm64.h}]
+/* PGD Index: Extract 9 bits from position 48 to 56 */
+#define PAGING64_ADDR_PGD_MASK   GENMASK64(56, 48)
+#define PAGING64_ADDR_PGD_LOBIT  48
+#define PAGING64_ADDR_PGD(addr)  ((addr & PAGING64_ADDR_PGD_MASK) >> PAGING64_ADDR_PGD_LOBIT)
+
+/* P4D -> PUD -> PMD: Shift the bit window downwards */
+#define PAGING64_ADDR_P4D(addr)  ((addr & GENMASK64(47, 39)) >> 39)
+#define PAGING64_ADDR_PUD(addr)  ((addr & GENMASK64(38, 30)) >> 30)
+#define PAGING64_ADDR_PMD(addr)  ((addr & GENMASK64(29, 21)) >> 21)
+
+/* PT Index (Leaf Level): Bits 20-12 */
+#define PAGING64_ADDR_PT_MASK    GENMASK64(20, 12)
+#define PAGING64_ADDR_PT(addr)   ((addr & PAGING64_ADDR_PT_MASK) >> 12)
+
+/* Offset: Last 12 bits */
+#define PAGING64_ADDR_OFFST(addr) (addr & GENMASK64(11, 0))
+\end{lstlisting}
+
+\textbf{Page Table Entry - PTE (\texttt{mm64.h} \& \texttt{mm64.c})}
+The PTE stores the page state. Manipulating the PTE requires bitwise operations ($|$, $\&$, $\sim$).
+\begin{lstlisting}[language=C, caption={PTE Definition and Initialization}]
+/* mm64.h - PTE Bit Definitions */
+#define PAGING_PTE_PRESENT_MASK BIT_ULL(0)  // Bit 0: Page is in RAM
+#define PAGING_PTE_DIRTY_MASK   BIT_ULL(6)  // Bit 6: Page was written to
+#define PAGING_PTE_SWAPPED_MASK BIT_ULL(9)  // Bit 9: Page is swapped out
+#define PAGING_PTE_FPN_MASK     GENMASK64(51, 12) // Bits 12-51: Frame Number
+
+/* mm64.c - PTE Initialization Function */
+int init_pte(addr_t *pte, int pre, addr_t fpn, int drt, int swp, int swptyp, addr_t swpoff) {
+    if (pre != 0) { // If page exists (Present)
+        if (swp == 0) { // Case 1: Page is in RAM
+            SETBIT(*pte, PAGING_PTE_PRESENT_MASK);
+            CLRBIT(*pte, PAGING_PTE_SWAPPED_MASK);
+            /* Write FPN to bits 12-51 */
+            SETVAL(*pte, fpn, PAGING_PTE_FPN_MASK, PAGING_PTE_FPN_LOBIT);
+        } else { // Case 2: Page is Swapped
+            SETBIT(*pte, PAGING_PTE_SWAPPED_MASK);
+            CLRBIT(*pte, PAGING_PTE_PRESENT_MASK);
+            /* Write Swap Offset */
+            SETVAL(*pte, swpoff, PAGING_PTE_SWPOFF_MASK, PAGING_PTE_SWPOFF_LOBIT);
+        }
+    }
+    return 0;
+}
+\end{lstlisting}
+
+\textbf{3. Page Walk Mechanism (\texttt{mm64.c})}
+The \texttt{pg\_getpage} function is the core of translation, traversing 5 table levels.
+\begin{lstlisting}[language=C, caption={Page Walk Logic (Simplified)}]
+uint64_t *get_page_table_entry(struct mm_struct *mm, addr_t addr, int alloc)
+{
+    // Get Indices
+    int pgd_idx = PAGING64_ADDR_PGD(addr);
+    int p4d_idx = PAGING64_ADDR_P4D(addr);
+    int pud_idx = PAGING64_ADDR_PUD(addr);
+    int pmd_idx = PAGING64_ADDR_PMD(addr);
+    int pt_idx = PAGING64_ADDR_PT(addr);
+
+    // Check Root (PGD)
+    if (mm->pgd == NULL)
+    {
+        if (!alloc)
+            return NULL;
+        mm->pgd = alloc_aligned_table();
+
+        if (!mm->pgd)
+            return NULL;
+        memset(mm->pgd, 0, sizeof(struct pgd_t));
+    }
+
+    // Walk PGD -> P4D
+    struct p4d_t *p4d_table = get_next_level((uint64_t *)&mm->pgd->entries[pgd_idx], alloc);
+    if (!p4d_table)
+        return NULL;
+
+    // Walk P4D -> PUD
+    struct pud_t *pud_table = get_next_level((uint64_t *)&p4d_table->entries[p4d_idx], alloc);
+    if (!pud_table)
+        return NULL;
+
+    // Walk PUD -> PMD
+    struct pmd_t *pmd_table = get_next_level((uint64_t *)&pud_table->entries[pud_idx], alloc);
+    if (!pmd_table)
+        return NULL;
+
+    // Walk PMD -> PT
+    struct pt_t *pt_table = get_next_level((uint64_t *)&pmd_table->entries[pmd_idx], alloc);
+    if (!pt_table)
+        return NULL;
+
+    // Return pointer to the specific Page Table Entry (Leaf)
+    return (uint64_t *)&pt_table->entries[pt_idx];
+}
+\end{lstlisting}
+
+\textbf{4. Hardware Simulation (\texttt{mm-memphy.c})}
+RAM is simulated not as a physical chip but as a BYTE array.
+\begin{lstlisting}[language=C, caption={Physical Memory Access}]
+/* mm-memphy.c */
+int MEMPHY_read(struct memphy_struct *mp, addr_t addr, BYTE *value) {
+    if (mp == NULL) return -1;
+    /* Direct access to storage array at index addr */
+    *value = mp->storage[addr];
+    return 0;
+}
+
+int MEMPHY_write(struct memphy_struct *mp, addr_t addr, BYTE data) {
+    if (mp == NULL) return -1;
+    mp->storage[addr] = data;
+    return 0;
+}
+\end{lstlisting}
+
+\paragraph{b. Algorithm Description}
+
+The system executes address translation via a strict procedure, simulating the hardware MMU (Memory Management Unit).
+
+\textbf{Step 1: Address Decoding}
+The computer views the virtual address not as a large integer, but as a collection of indices.
+\begin{itemize}
+    \item \textbf{Input:} 64-bit Virtual Address (VA).
+    \item \textbf{Algorithm:} Use Bitwise AND (\&) with a Mask to isolate specific bits, then Bitwise Right Shift ($>>$) to normalize the value into an integer index.
+    \item \textbf{Example:} To get the PGD Index, the system extracts the highest 9 bits (56-48). This value determines the position in the PGD table.
+\end{itemize}
+
+\textbf{Step 2: Page Walk (Tree Traversal)}
+This is the core algorithm. Conceptually, the page table is a 5-level tree.
+\begin{enumerate}
+    \item \textbf{Root:} Start from \texttt{mm->pgd} (stored in the CR3 register on real CPUs).
+    \item \textbf{Traversal:}
+    \begin{itemize}
+        \item Use PGD Index to select an entry in PGD. This entry contains the physical address of the P4D table.
+        \item Use P4D Index to select an entry in P4D. This points to the PUD table.
+        \item Continue similarly through PUD and PMD.
+    \end{itemize}
+    \item \textbf{Leaf:} At the final level (PT), use the PT Index to retrieve the \textbf{PTE}.
+\end{enumerate}
+\textbf{Logic Flow:} CR3 $\rightarrow$ [PGD] $\rightarrow$ [P4D] $\rightarrow$ [PUD] $\rightarrow$ [PMD] $\rightarrow$ [PT] $\rightarrow$ Frame.
+
+\textbf{Step 3: PTE Handling \& State Check}
+Once the PTE is retrieved, the system checks the status bits:
+\begin{itemize}
+    \item \textbf{Case A: Bit Present = 1 (Hit):} The page is in RAM. The system extracts the 40-bit FPN (Frame Page Number) from the PTE.
+    \item \textbf{Case B: Bit Present = 0 \& Swapped = 1 (Page Fault):} The data is not in RAM but in Swap. The system triggers \texttt{\_\_mm\_swap\_page}: Find a free frame $\rightarrow$ Read data from Swap $\rightarrow$ Update PTE (Present=1, Swapped=0).
+    \item \textbf{Case C: Bit Present = 0 \& Swapped = 0 (Invalid):} Accessing unallocated memory $\rightarrow$ Segmentation Fault.
+\end{itemize}
+
+\textbf{Step 4: Physical Address Composition}
+After obtaining the frame number (FPN), the final physical address is calculated:
+\[
+PhysicalAddress = (FPN \times PageSize) + Offset
+\]
+In code, this is optimized using bitwise operations:
+\begin{itemize}
+    \item \texttt{FPN << 12}: Left shift 12 bits (equivalent to multiplying by 4096).
+    \item \texttt{| Offset}: Bitwise OR with Offset (lower 12 bits of VA) to combine them.
+\end{itemize}
+
+\textbf{Step 5: Physical Access}
+Finally, the Physical Address (PA) is passed to \texttt{mm-memphy.c}.
+\begin{itemize}
+    \item The module treats RAM as a massive array \texttt{storage[]}.
+    \item It accesses \texttt{storage[PA]} to read or write the actual data byte.
+\end{itemize}
+
+\textbf{Conclusion}
+The successful implementation of the 5-Level Paging mechanism demonstrates memory management at the finest granularity. The Page Walk algorithm, combined with precise Bitwise operations, ensures the system can translate addresses within the vast 64-bit space while transparently handling complex scenarios like Page Faults and Swapping.
+
+\pagebreak
+
+\section{Interprets the results of running tests}
+
+\subsection{Scheduling}
+
+\subsubsection{The result input file of scheduler (sched)}
+
+The following output describes the behavior of the scheduler over multiple time slots, showing how processes are loaded, dispatched, and processed by the CPU.
+
+\begin{lstlisting}
+Time slot    0
+ld_routine
+        Loaded a process at input/proc/p2s, PID: 1 PRIO: 0
+Time slot    1
+        CPU 1: Dispatched process  1
+        Loaded a process at input/proc/p1s, PID: 2 PRIO: 1
+Time slot    2
+        CPU 0: Dispatched process  2
+Time slot    3
+        Loaded a process at input/proc/p2s, PID: 3 PRIO: 1
+Time slot    4
+        Loaded a process at input/proc/p3s, PID: 4 PRIO: 0
+Time slot    5
+        CPU 1: Put process  1 to run queue
+        CPU 1: Dispatched process  4
+Time slot    6
+        CPU 0: Put process  2 to run queue
+        CPU 0: Dispatched process  1
+Time slot    7
+Time slot    8
+Time slot    9
+        CPU 1: Put process  4 to run queue
+        CPU 1: Dispatched process  4
+Time slot   10
+        CPU 0: Put process  1 to run queue
+        CPU 0: Dispatched process  1
+Time slot   11
+Time slot   12
+Time slot   13
+        CPU 1: Put process  4 to run queue
+        CPU 1: Dispatched process  4
+Time slot   14
+        CPU 0: Processed  1 has finished
+        CPU 0: Dispatched process  3
+Time slot   15
+Time slot   16
+        CPU 1: Processed  4 has finished
+        CPU 1: Dispatched process  2
+Time slot   17
+Time slot   18
+        CPU 0: Put process  3 to run queue
+        CPU 0: Dispatched process  3
+Time slot   19
+Time slot   20
+        CPU 1: Put process  2 to run queue
+        CPU 1: Dispatched process  2
+Time slot   21
+Time slot   22
+        CPU 0: Put process  3 to run queue
+        CPU 0: Dispatched process  3
+        CPU 1: Processed  2 has finished
+        CPU 1 stopped
+Time slot   23
+Time slot   24
+Time slot   25
+Time slot   26
+        CPU 0: Processed  3 has finished
+        CPU 0 stopped
+\end{lstlisting}
+
+\textbf{Explanation of Output}
+
+The output demonstrates the behavior of the scheduler across multiple time slots and the corresponding actions performed by the CPU. Below is an analysis of key steps:
+
+\begin{itemize}
+    \item \textbf{Time Slot 0 - 4 (Loading and Initial Dispatching):}
+    \begin{itemize}
+        \item \textit{Loading:} Processes are loaded sequentially. Process 1 (Prio 0) loads at slot 0; Process 2 (Prio 1) at slot 1; Process 3 (Prio 1) at slot 3; and Process 4 (Prio 0) at slot 4.
+        \item \textit{Dispatching:} CPU 1 picks up Process 1 at slot 1. CPU 0 picks up Process 2 at slot 2. This shows the workload being distributed across both CPUs immediately as processes arrive.
+    \end{itemize}
+
+    \item \textbf{Time Slot 5 - 6 (Preemption and Context Switching):}
+    \begin{itemize}
+        \item \textit{Preemption:} At slot 5, Process 1 (on CPU 1) exhausts its time slice and is put back into the run queue. CPU 1 immediately dispatches the newly loaded Process 4 (Prio 0).
+        \item \textit{Process Migration:} At slot 6, Process 2 (on CPU 0) is preempted. CPU 0 then picks up Process 1 (which was previously on CPU 1). This clearly demonstrates \textit{process migration} in the SMP environment.
+    \end{itemize}
+
+    \item \textbf{Time Slot 9 - 13 (Re-dispatching):}
+    \begin{itemize}
+        \item \textit{Round-Robin Behavior:} Processes 4 and 1 continue to execute. At slot 9 and 13, CPU 1 puts Process 4 back to the queue but immediately re-dispatches it (likely because it has the highest priority/quota at that moment). Similarly, CPU 0 re-dispatches Process 1 at slot 10.
+    \end{itemize}
+
+    \item \textbf{Time Slot 14 - 16 (Process Completion):}
+    \begin{itemize}
+        \item \textit{Completion:} Process 1 finishes execution on CPU 0 at slot 14. CPU 0 then switches to Process 3 (Prio 1).
+        \item \textit{Completion:} Process 4 finishes execution on CPU 1 at slot 16. CPU 1 then switches to Process 2 (Prio 1), which had been waiting since slot 6.
+    \end{itemize}
+
+    \item \textbf{Time Slot 22 - 26 (Finalization):}
+    \begin{itemize}
+        \item \textit{Termination:} Process 2 finishes at slot 22, and CPU 1 stops as there are no more processes for it. Process 3 continues on CPU 0 until slot 26, where it finishes, and CPU 0 finally stops.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection{Scheduling: Gantt chart}
+
+\begin{figure}[h]
+    \centering
+    \begin{ganttchart}[
+        vgrid, hgrid,
+        y unit title=0.5cm,
+        y unit chart=0.6cm,
+        x unit=0.45cm, % Điều chỉnh độ rộng của cột
+        title label anchor/.style={below=-1.6ex},
+        title height=1,
+        bar height=0.6,
+        bar label node/.append style={align=left, text width=2cm},
+        bar/.append style={fill=blue!30}, % Màu thanh bar
+        include title in canvas=false
+    ]{0}{26}
+    
+    % --- Labels (Time Slots) ---
+    \gantttitle{Time Slots}{27} \\
+    \gantttitlelist{0,...,26}{1} \\
+    
+    % --- Tasks (Processes on CPU 0) ---
+    % PID 2 chạy từ slot 2 đến hết slot 5 (4 ticks)
+    \ganttbar[bar/.append style={fill=green!40}]{PID2-Prio 1}{2}{5} \\
+    
+    % PID 1 chạy từ slot 6 đến hết slot 9 (4 ticks)
+    \ganttbar[bar/.append style={fill=red!40}]{PID1-Prio 0}{6}{9} \\
+    
+    % PID 1 chạy tiếp từ slot 10 đến hết slot 13 (4 ticks) -> Finish tại 14
+    \ganttbar[bar/.append style={fill=red!40}]{PID1-Prio 0}{10}{13} \\
+    
+    % PID 3 chạy từ slot 14 đến hết slot 17 (4 ticks)
+    \ganttbar[bar/.append style={fill=blue!40}]{PID3-Prio 1}{14}{17} \\
+    
+    % PID 3 chạy từ slot 18 đến hết slot 21 (4 ticks)
+    \ganttbar[bar/.append style={fill=blue!40}]{PID3-Prio 1}{18}{21} \\
+    
+    % PID 3 chạy từ slot 22 đến hết slot 25 (4 ticks) -> Finish tại 26
+    \ganttbar[bar/.append style={fill=blue!40}]{PID3-Prio 1}{22}{25} 
+    
+    % Relations (Optional - visual flow)
+    \ganttlink{elem0}{elem1}
+    \ganttlink{elem1}{elem2}
+    \ganttlink{elem2}{elem3}
+    \ganttlink{elem3}{elem4}
+    \ganttlink{elem4}{elem5}
+    
+    \end{ganttchart}
+    \caption{Gantt Chart for CPU 0}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \begin{ganttchart}[
+        vgrid, hgrid,
+        y unit title=0.5cm,
+        y unit chart=0.6cm,
+        x unit=0.45cm,
+        title label anchor/.style={below=-1.6ex},
+        title height=1,
+        bar height=0.6,
+        bar label node/.append style={align=left, text width=2cm},
+        bar/.append style={fill=orange!30}, % Màu thanh bar khác cho CPU 1
+        include title in canvas=false
+    ]{0}{26}
+    
+    % --- Labels ---
+    \gantttitle{Time Slots}{27} \\
+    \gantttitlelist{0,...,26}{1} \\
+    
+    % --- Tasks (Processes on CPU 1) ---
+    % PID 1 chạy từ slot 1 đến hết slot 4 (4 ticks)
+    \ganttbar[bar/.append style={fill=red!40}]{PID1-Prio 0}{1}{4} \\
+    
+    % PID 4 chạy từ slot 5 đến hết slot 8 (4 ticks)
+    \ganttbar[bar/.append style={fill=yellow!50}]{PID4-Prio 0}{5}{8} \\
+    
+    % PID 4 chạy từ slot 9 đến hết slot 12 (4 ticks)
+    \ganttbar[bar/.append style={fill=yellow!50}]{PID4-Prio 0}{9}{12} \\
+    
+    % PID 4 chạy từ slot 13 đến hết slot 15 (3 ticks) -> Finish tại 16
+    \ganttbar[bar/.append style={fill=yellow!50}]{PID4-Prio 0}{13}{15} \\
+    
+    % PID 2 chạy từ slot 16 đến hết slot 19 (4 ticks)
+    \ganttbar[bar/.append style={fill=green!40}]{PID2-Prio 1}{16}{19} \\
+    
+    % PID 2 chạy từ slot 20 đến hết slot 21 (2 ticks) -> Finish tại 22
+    \ganttbar[bar/.append style={fill=green!40}]{PID2-Prio 1}{20}{21}
+    
+    % Relations
+    \ganttlink{elem0}{elem1}
+    \ganttlink{elem1}{elem2}
+    \ganttlink{elem2}{elem3}
+    \ganttlink{elem3}{elem4}
+    \ganttlink{elem4}{elem5}
+    
+    \end{ganttchart}
+    \caption{Gantt Chart for CPU 1}
+\end{figure}
+
+\subsection{Memory}
+\subsubsection{Result of the input file of Memory (os\_0\_mlq\_paging)}
+\begin{lstlisting}
+    Time slot   0
+ld_routine
+	Loaded a process at input/proc/p0s, PID: 1 PRIO: 0
+Time slot   1
+	CPU 1: Dispatched process  1
+	Loaded a process at input/proc/p1s, PID: 2 PRIO: 15
+Time slot   2
+	CPU 0: Dispatched process  2
+liballoc:152
+--- Page Table Dump ---
+print_pgtbl:
+ PGD=0x739974001000 P4D=0x739974003000 PUD=0x739974005000 PMD=0x739974007000 PT=0x739974009000
+0000000000000000: 0000000000000001
+Time slot   3
+	Loaded a process at input/proc/p1s, PID: 3 PRIO: 0
+liballoc:152
+--- Page Table Dump ---
+print_pgtbl:
+ PGD=0x739974001000 P4D=0x739974003000 PUD=0x739974005000 PMD=0x739974007000 PT=0x739974009000
+0000000000000000: 0000000000000001
+Time slot   4
+libfree:168
+--- Page Table Dump ---
+print_pgtbl:
+ PGD=0x739974001000 P4D=0x739974003000 PUD=0x739974005000 PMD=0x739974007000 PT=0x739974009000
+0000000000000000: 0000000000000001
+Time slot   5
+liballoc:152
+--- Page Table Dump ---
+print_pgtbl:
+ PGD=0x739974001000 P4D=0x739974003000 PUD=0x739974005000 PMD=0x739974007000 PT=0x739974009000
+0000000000000000: 0000000000000001
+Time slot   6
+	Loaded a process at input/proc/p0s, PID: 4 PRIO: 0
+libwrite:343
+--- Page Table Dump ---
+print_pgtbl:
+ PGD=0x739974001000 P4D=0x739974003000 PUD=0x739974005000 PMD=0x739974007000 PT=0x739974009000
+0000000000000000: 0000000000000001
+Time slot   7
+	CPU 1: Put process  1 to run queue
+	CPU 1: Dispatched process  3
+Time slot   8
+	CPU 0: Put process  2 to run queue
+	CPU 0: Dispatched process  4
+Time slot   9
+liballoc:152
+--- Page Table Dump ---
+print_pgtbl:
+ PGD=0x73996c001000 P4D=0x73996c003000 PUD=0x73996c005000 PMD=0x73996c007000 PT=0x73996c009000
+0000000000000000: 0000000000001001
+Time slot  10
+liballoc:152
+--- Page Table Dump ---
+print_pgtbl:
+ PGD=0x73996c001000 P4D=0x73996c003000 PUD=0x73996c005000 PMD=0x73996c007000 PT=0x73996c009000
+0000000000000000: 0000000000001001
+Time slot  11
+libfree:168
+--- Page Table Dump ---
+print_pgtbl:
+ PGD=0x73996c001000 P4D=0x73996c003000 PUD=0x73996c005000 PMD=0x73996c007000 PT=0x73996c009000
+0000000000000000: 0000000000001001
+Time slot  12
+liballoc:152
+--- Page Table Dump ---
+print_pgtbl:
+ PGD=0x73996c001000 P4D=0x73996c003000 PUD=0x73996c005000 PMD=0x73996c007000 PT=0x73996c009000
+0000000000000000: 0000000000001001
+Time slot  13
+libwrite:343
+--- Page Table Dump ---
+print_pgtbl:
+ PGD=0x73996c001000 P4D=0x73996c003000 PUD=0x73996c005000 PMD=0x73996c007000 PT=0x73996c009000
+0000000000000000: 0000000000001001
+	CPU 1: Put process  3 to run queue
+	CPU 1: Dispatched process  1
+libread:304
+Time slot  14
+	CPU 0: Put process  4 to run queue
+	CPU 0: Dispatched process  3
+Time slot  15
+Time slot  16
+Time slot  17
+Time slot  18
+	CPU 0: Processed  3 has finished
+	CPU 0: Dispatched process  4
+libread:304
+Time slot  19
+	CPU 1: Put process  1 to run queue
+	CPU 1: Dispatched process  1
+libfree:168
+--- Page Table Dump ---
+print_pgtbl:
+ PGD=0x739974001000 P4D=0x739974003000 PUD=0x739974005000 PMD=0x739974007000 PT=0x739974009000
+0000000000000000: 0000000000000001
+Time slot  20
+Time slot  21
+	CPU 1: Processed  1 has finished
+	CPU 1: Dispatched process  2
+Time slot  22
+Time slot  23
+Time slot  24
+	CPU 0: Put process  4 to run queue
+	CPU 0: Dispatched process  4
+libfree:168
+--- Page Table Dump ---
+print_pgtbl:
+ PGD=0x73996c001000 P4D=0x73996c003000 PUD=0x73996c005000 PMD=0x73996c007000 PT=0x73996c009000
+0000000000000000: 0000000000001001
+Time slot  25
+	CPU 1: Processed  2 has finished
+	CPU 1 stopped
+Time slot  26
+	CPU 0: Processed  4 has finished
+	CPU 0 stopped
+
+\end{lstlisting}
+%%%%%%%%%%%%%
+\subsubsection{Explain the status of the memory allocation in heap and data segments}
+
+\begin{itemize}
+    \item \textbf{Heap Segment:} It is the memory area for initialization (Dynamic Allocation) while the program is running. It has no fixed size and can be expanded.
+    
+    \item \textbf{Data Segment:} In this simplified simulation model, the "Data Segment" refers to the actual byte values written into the allocated Heap memory frames. While the Heap defines the "container" (virtual addresses and size), the Data represents the "content" stored in the corresponding Physical Frames (RAM).
+\end{itemize}
+
+\subsubsection{Chronological Analysis of Memory Allocation}
+
+The following analysis tracks the state of memory allocation across specific time slots where memory intervention occurs. Two distinct processes are identified by their Page Global Directory (PGD) addresses:
+\begin{itemize}
+    \item \textbf{Process A (p0s):} PGD Address \texttt{0x739974001000}
+    \item \textbf{Process B (p1s):} PGD Address \texttt{0x73996c001000}
+\end{itemize}
+\textbf{Start Explain the status of the memory allocation in heap and data segments.}
+\begin{itemize}
+    \item\textbf{Time Slot 2: Initial Allocation (Process A)}
+    \begin{itemize}
+        \item \textbf{Event:} \texttt{liballoc:152} triggered by Process A.
+        \item \textbf{Action:} The process requests memory allocation. The OS expands the Heap and creates a new virtual memory region starting at Virtual Address 0.
+        \item \textbf{Page Table Dump:} \texttt{00...00: 00...01}
+        \item \textbf{Analysis:} The Page Table Entry (PTE) value \texttt{0x1} indicates:
+        \begin{itemize}
+            \item \textbf{Present Bit (Bit 0):} 1 (Page is in RAM).
+            \item \textbf{Frame Page Number (FPN):} 0 (Derived from the upper bits).
+        \end{itemize}
+    \end{itemize}
+        Process A is assigned \textbf{Physical Frame 0}.
+    \item \textbf{Time Slot 4: Logical Deallocation (Process A)}
+    \begin{itemize}
+        \item \textbf{Event:} \texttt{libfree:168}.
+        \item \textbf{Action:} Process A calls \texttt{free}.
+        \item \textbf{Heap Status:} The memory region is logically marked as "free" and added to the \texttt{vm\_freerg\_list} for future reuse.
+    \end{itemize}
+    
+    \item\textbf{Time Slot 5: Re-allocation (Process A)}
+    \begin{itemize}
+        \item \textbf{Event:} \texttt{liballoc:152}.
+        \item \textbf{Action:} Process A requests allocation again.
+        \item \textbf{Heap Status:} The OS checks the \texttt{vm\_freerg\_list}, finds the region freed in Time Slot 4, and reuses it.
+        \item \textbf{Mapping:} The mapping remains \texttt{00...01} (Physical Frame 0).
+    \end{itemize}
+    
+    \item \textbf{Time Slot 6: Data Write (Process A)}
+    \begin{itemize}
+        \item \textbf{Event:} \texttt{libwrite:343}.
+        \item \textbf{Action:} Data is written to the allocated address.
+        \item \textbf{Data Status:} The actual value is stored in \textbf{Physical Frame 0}.
+    \end{itemize}
+    
+    \item\textbf{Time Slot 9: Allocation for New Process (Process B)}
+    \begin{itemize}
+        \item \textbf{Event:} \texttt{liballoc:152}.
+        \item \textbf{Context Switch:} The PGD changes to \texttt{0x73996c001000}, indicating a context switch to Process B.
+        \item \textbf{Page Table Dump:} \texttt{00...00: 00...1001}
+        \item \textbf{Analysis:} The PTE value \texttt{0x1001} indicates:
+        \begin{itemize}
+            \item \textbf{Present Bit:} 1.
+            \item \textbf{FPN:} 1 (The value \texttt{0x1000} at bit offset 12 corresponds to index 1).
+        \end{itemize}
+        Since Frame 0 is occupied by Process A, Process B is assigned the next available resource, \textbf{Physical Frame 1}.
+    \end{itemize}
+    
+    \item \textbf{Time Slot 11 \& 13: Free and Write (Process B)}
+    \begin{itemize}
+        \item \textbf{Time Slot 11 (Free):} Process B frees its memory region. The region enters Process B's private free list.
+        \item \textbf{Time Slot 13 (Write):} Process B writes data. This data is stored in \textbf{Physical Frame 1}.
+    \end{itemize}
+
+
+\item \textbf{Time Slot 19 \& 24: Final Deallocation}
+Both processes perform their final \texttt{libfree} operations (Slot 19 for Process A, Slot 24 for Process B), releasing their respective logical memory regions.
+\end{itemize}
+
+
+\subsubsection{Summary of Result Flow}
+
+The table below summarizes the correlation between Time Slots, Processes, and Physical Memory status.
+
+\begin{longtable}{@{}cllll@{}}
+\toprule
+\textbf{Slot} & \textbf{PGD (Process)} & \textbf{Event} & \textbf{Physical Frame} & \textbf{Logical Heap Status} \\ \midrule
+\endhead
+2 & ...7400 (Proc A) & Alloc & Frame 0 & New Region created \\
+4 & ...7400 (Proc A) & Free & Frame 0 & Region moved to Free List \\
+5 & ...7400 (Proc A) & Alloc & Frame 0 & Region reused from Free List \\
+6 & ...7400 (Proc A) & Write & Frame 0 & Data written to Frame 0 \\
+9 & ...6c00 (Proc B) & Alloc & \textbf{Frame 1} & New Region created \\
+11 & ...6c00 (Proc B) & Free & Frame 1 & Region moved to Free List \\
+13 & ...6c00 (Proc B) & Write & Frame 1 & Data written to Frame 1 \\ \bottomrule
+\caption{Memory Allocation Flow Summary}
+\label{tab:mem-flow}
+\end{longtable}
+%%%%%%%%%%%%%
+
+
+\pagebreak
+
+	\section{Answer question}
+	\subsection{Question 1}
+	\textbf{Question:} What is the mechanism to pass a complex argument to a system call using the limited registers?
+
+\vspace{0.5cm}
+
+    \noindent\textbf{Answer:}
+    
+	The mechanism used to pass a complex argument to a system call is Indirection via pointers. Since CPU registers are very limited in number and size, they cannot hold large or complex data directly. Instead, the user-space program places the data in its own memory and passes only the memory address (pointer) of that data in a register. When the system call is invoked, the kernel receive the pointer from the register. But this method have a problem that the passed address maybe wrong or bad address (pointing to kernel memory or unmapped memory) leading to the kernel could crash. To handle this problem, the kernel check if the address provided is actually within the User space memory area. Then the kernel copy the data from User space into Kernel Space buffer, the Kernel perform on its own safe copy of the data.
+	
+	\subsection{Question 2}
+	\textbf{Question:} Which mechanisms does the operating system use to manage system calls that become unresponsive?
+
+\vspace{0.5cm}
+
+    \noindent\textbf{Answer:}
+    
+	Operating systems use a multi-layered approach to manage system calls that become unresponsive. The mechanisms used to manage this fall into three categories:
+	\begin{itemize}
+		\item Interruption Mechanisms: when the system call blocks, the operating system provides ways for the user or the application to forcefully break. In Linux most of blocking system calls place the process in a task interruptible state, when the process receives a signal like Ctrl + C, the kernel prematurely wakes the process.
+		\item Timeout/Watchdogs: The kernel monitors itself to ensure that a single stuck system call does not freeze the entire computer. Many blocking system calls accept a timeout parameter. The kernel sets an internal timer; if the condition is not satisfied before the timer expires, the call returns with an error. In addition, the operating system runs a background kernel thread that scans all process in every constant time (120 seconds in Linux), if it find a process stuck in Uninterruptible Sleep (D state) for more than this duration, it logs a "Hung Task" error to the kernel log with a stack trace.
+		\item Asynchronous Avoidance: Modern operating systems encourage developers to avoid "blocking" system calls entirely to prevent unresponsiveness. Applications can set file descriptors to non-blocking mode (O\_NONBLOCK). Its mean that if a system call would freeze, it returns immediately with an error instead of waiting. In addition, there are some API (Application Programming Interface) like io\_uring, epoll,.. in Linux that allow applications to submit system calls to a queue and retrieve results later, ensuring the main application thread never actually block.
+	\end{itemize}
+    
+	\subsection{Question 3}
+    \textbf{Question:} Evaluate the comparative advantages of the scheduling algorithm implemented in this assignment in relation to other scheduling algorithms you have learned. What is the complexity of this algorithm?
+
+\vspace{0.5cm}
+
+\noindent\textbf{Answer:}
+
+The scheduling algorithm implemented in this assignment is a \textbf{Non-Feedback Multilevel Queue (MLQ)} augmented with a \textbf{Slot-based Round Robin} mechanism for inter-queue dispatching. The design employs a static array of priority queues, where each priority level is assigned a specific execution quota (slot). Based on the theoretical framework provided in \textit{Operating System Concepts (10th Edition)} and the specific logic in \texttt{sched.c}, we present a detailed comparative evaluation and complexity analysis below.
+
+% --- SECTION 1: COMPARATIVE ADVANTAGES ---
+\begin{enumerate}[label=\textbf{\arabic*.}]
+    \item \textbf{Comparative Evaluation against Standard Algorithms}
+    
+    \begin{enumerate}[label=\textbf{\alph*.}]
+% --- 1. FCFS ---
+    \item \textbf{Comparison with First-Come, First-Served (FCFS)}
+    
+    \begin{itemize}
+        \item \textbf{Theoretical Background:} 
+        FCFS is the most basic non-preemptive scheduling algorithm. The CPU is allocated to the process at the head of the ready queue. The critical drawback identified in operating system theory is the \textit{"Convoy Effect"}. This phenomenon occurs when a CPU-intensive process occupies the processor for an extended period, causing all subsequent I/O-bound processes to wait in the ready queue. This leads to extremely low I/O device utilization and a high Average Waiting Time.
+        
+        \item \textbf{Assignment Implementation Analysis:}
+        The implemented algorithm in the assignment is inherently \textbf{Preemptive}.
+        \begin{itemize}
+            \item \textit{Mechanism:} The simulation framework in \texttt{os.c} enforces a \texttt{time\_slot}. Even if a process has not completed its CPU burst, it is forced to yield the CPU and is placed back into the \texttt{mlq\_ready\_queue} via \texttt{put\_mlq\_proc()}.
+            \item \textit{Code Evidence:} In \texttt{sched.c}, the scheduler manages \texttt{slot[i]}. When a process consumes its time slice, the scheduler is invoked again to pick a new candidate.
+        \end{itemize}
+        
+        \item \textbf{Comparative Advantage:}
+        Our Slot-based MLQ algorithm completely eliminates the Convoy Effect. By forcing time-sharing (Round Robin within queues), short processes and I/O-bound processes are guaranteed frequent CPU access. This significantly improves the system's \textbf{Responsiveness}, making it suitable for interactive environments, whereas FCFS is strictly limited to Batch Systems.
+    \end{itemize}
+
+    % --- 2. SJF ---
+    \item \textbf{Comparison with Shortest-Job-First (SJF)}
+    
+    \begin{itemize}
+        \item \textbf{Theoretical Background:} 
+        SJF is theoretically optimal; it is proven to yield the minimum possible average waiting time for a given set of processes. Ideally, the scheduler selects the process with the shortest next CPU burst. However, the textbook highlights a fundamental implementation flaw: \textit{Infeasibility}. In a real Short-Term Scheduler, the OS cannot know the length of the next CPU burst. Implementing SJF requires relying on exponential averaging ($\tau_{n+1} = \alpha t_n + (1 - \alpha)\tau_n$) to predict the future, which adds computational overhead and is not always accurate.
+        
+        \item \textbf{Assignment Implementation Analysis:}
+        Our implementation prioritizes \textbf{Determinism} and \textbf{Feasibility} over theoretical optimality.
+        \begin{itemize}
+            \item \textit{Mechanism:} Instead of guessing the future, the system uses a static priority value (\texttt{proc->prio}) defined in the \texttt{pcb\_t} structure.
+            \item \textit{Code Evidence:} The \texttt{get\_mlq\_proc()} function iterates through a fixed array \texttt{mlq\_ready\_queue[i]}. The decision is based purely on the current state (priority and slot), requiring no complex mathematical prediction.
+        \end{itemize}
+        
+        \item \textbf{Comparative Evaluation:}
+        While our algorithm may not achieve the theoretically minimum waiting time of SJF, it is practically implementable with $O(1)$ decision overhead (relative to process count). It avoids the runtime cost of predicting CPU bursts, making the kernel faster and more predictable.
+    \end{itemize}
+
+    % --- 3. Priority Scheduling (Crucial Point) ---
+    \item \textbf{Comparison with Pure Priority Scheduling}
+    
+    \begin{itemize}
+        \item \textbf{Theoretical Background:} 
+        In standard Priority Scheduling, the CPU is always allocated to the highest priority process. The fatal flaw of this design is \textit{"Indefinite Blocking"} or \textit{"Starvation"}. If a steady stream of high-priority processes arrives, low-priority processes may never execute. The standard solution is "Aging" (gradually increasing the priority of waiting processes), which adds complexity to the system.
+        
+        \item \textbf{Assignment Implementation Analysis (The Slot Mechanism):}
+        This is the most innovative aspect of the assignment's design. It solves starvation \textbf{without} changing process priorities (Aging).
+        \begin{itemize}
+            \item \textit{Code Logic:}
+            \begin{lstlisting}[language=C, basicstyle=\ttfamily\scriptsize]
+// sched.c : get_mlq_proc()
+if (slot[i] > 0) {
+    proc = dequeue(...);
+    slot[i]--; // Consume budget
+    break;     // Dispatch immediate
+} else {
+    slot[i] = MAX_PRIO - i; // Refill budget
+    continue; // SKIP this queue, force check lower priority
+}
+            \end{lstlisting}
+            \item \textit{Operational Theory:} The system assigns a "CPU Budget" to each priority level based on the formula $Budget = MAX\_PRIO - Prio$. 
+            \item \textit{Example:} Priority 0 gets 140 slots. Priority 1 gets 139 slots. Even if Priority 0 has infinite tasks, after 140 dispatches, the \texttt{slot[0]} becomes 0. The scheduler is mathematically forced to skip Priority 0 and serve Priority 1.
+        \end{itemize}
+        
+        \item \textbf{Comparative Advantage:}
+        The implementation achieves \textbf{Starvation Freedom} through a "Share-based" approach. It guarantees that every priority level, no matter how low, eventually receives a turn when higher levels exhaust their quotas. This is a robust and fairness-oriented improvement over standard Priority Scheduling.
+    \end{itemize}
+
+    % --- 4. Standard MLQ ---
+    \item \textbf{Comparison with Standard Multilevel Queue (Partitioned)}
+    
+    \begin{itemize}
+        \item \textbf{Theoretical Background:} 
+        Standard MLQ partitions the ready queue into distinct groups, typically "Foreground" (Interactive) and "Background" (Batch). The scheduling between queues is often Fixed-Priority (leading to starvation) or Time-Slicing with coarse granularity (e.g., 80\% CPU for Foreground, 20\% for Background).
+        
+        \item \textbf{Assignment Implementation Analysis:}
+        Our implementation offers a \textbf{Fine-Grained Proportional Share}.
+        \begin{itemize}
+            \item \textit{Granularity:} Instead of just 2 or 3 partitions, the system supports \texttt{MAX\_PRIO} (140) distinct levels.
+            \item \textit{Distribution:} The slot allocation decreases linearly ($140, 139, \dots, 1$).
+        \end{itemize}
+        
+        \item \textbf{Comparative Advantage:}
+        This linear distribution creates a smoother degradation of service. It allows the OS to differentiate processes with high precision (e.g., a process with priority 10 is slightly favored over 11), providing more flexibility than the rigid Foreground/Background binary of standard MLQ.
+    \end{itemize}
+
+    % --- 5. MLFQ ---
+    \item \textbf{Comparison with Multilevel Feedback Queue (MLFQ)}
+    
+    \begin{itemize}
+        \item \textbf{Theoretical Background:} 
+        MLFQ is considered the most general and powerful scheduling algorithm. Its key feature is \textit{Feedback}: processes move between queues. A process using too much CPU moves down; a process waiting too long moves up (Aging). This allows the OS to learn the nature of the process (I/O-bound vs CPU-bound) dynamically.
+        
+        \item \textbf{Assignment Implementation Limitation:}
+        The assignment specification explicitly states a non-feedback design.
+        \begin{itemize}
+            \item \textit{Code Evidence:} In \texttt{put\_mlq\_proc()}, a process is always enqueued back to \\
+            \texttt{mlq\_ready\_queue[proc->prio]}. The \texttt{prio} field is never modified by the scheduler.
+        \end{itemize}
+        
+        \item \textbf{Disadvantage/Trade-off:}
+        The lack of feedback makes the system less adaptive. If a high-priority process becomes CPU-intensive, it continues to enjoy a large slot quota (140 slots), potentially degrading overall system throughput compared to an MLFQ which would demote such a process. However, this simplifies the implementation significantly and reduces the overhead of priority recalculation.
+    \end{itemize}
+    \end{enumerate} 
+
+    % --- SECTION 2: COMPLEXITY ANALYSIS ---
+    \item \textbf{Algorithmic Complexity Analysis}
+    
+    The performance of the scheduler is determined by the operations on the \texttt{queue\_t} structure (array-based) and the search logic in \texttt{sched.c}. Let $N$ be the number of processes in a specific queue, and $K$ be the number of priority levels ($K = \texttt{MAX\_PRIO} = 140$).
+
+    \begin{itemize}
+        \item \textbf{Enqueue Operation ($O(1)$):}
+        \begin{itemize}
+            \item \textit{Code Reference:} \texttt{queue.c: enqueue()}.
+            \item \textit{Analysis:} The function inserts a process at the tail of the array: \texttt{q->proc[q->size] = proc}. This requires direct index access and incrementing the size counter.
+            \item \textit{Complexity:} Constant time, $O(1)$.
+        \end{itemize}
+
+        \item \textbf{Dequeue Operation ($O(N)$):}
+        \begin{itemize}
+            \item \textit{Code Reference:} \texttt{queue.c: dequeue()}.
+            \item \textit{Analysis:} The scheduler retrieves the process at the head (index 0). Because the queue is implemented as a contiguous memory block (array), removing the first element creates a "gap". The loop \texttt{for (i = 0; i < q->size - 1; i++)} is required to shift all remaining $N-1$ elements to the left to preserve data contiguity.
+            \item \textit{Complexity:} Linear time relative to queue size, $O(N)$.
+        \end{itemize}
+
+        \item \textbf{Scheduler Selection Logic ($O(K + N)$):}
+        \begin{itemize}
+            \item \textit{Code Reference:} \texttt{sched.c: get\_mlq\_proc()}.
+            \item \textit{Analysis:} The routine employs a linear search across priority levels: \texttt{for (int i = 0; i < MAX\_PRIO; i++)}. In the worst-case scenario (e.g., when the system is idle or all high-priority slots are exhausted), the loop iterates $K$ times. Upon finding a valid queue, it calls \texttt{dequeue()}.
+            \item \textit{Calculation:} $Cost = Search\_Cost + Retrieval\_Cost = O(K) + O(N)$.
+            \item \textbf{Total Complexity:} $O(K + N)$.
+         \end{itemize}
+    \end{itemize}
+
+\end{enumerate}
+
+	\subsection{Question 4}
+    \textbf{Question:} Discuss the architectural and operational implications of implementing multiple memory segments in this simple OS.
+
+    \vspace{0.5cm}
+
+    \noindent\textbf{Answer:}
+    
+Implementing multiple memory segments fundamentally structures how the OS manages the virtual address space on top of the physical paging system. The implications can be divided into architectural changes and operational behaviors.
+
+    % Bắt đầu danh sách cấp 1 (1., 2.)
+    \begin{enumerate}[label=\textbf{\arabic*.}]
+
+        % --- 1. Architectural Implications ---
+        \item \textbf{Architectural Implications}
+        
+        From an architectural perspective, this adds a logical organization layer above the raw paging mechanism:
+        
+        \begin{enumerate}[label=\textbf{\alph*.}]
+            \item \textbf{Data Structure Transformation:}
+            In the design, a segment is represented by a \texttt{vm\_area\_struct} inside the per-process \texttt{mm\_struct}. Implementing multiple segments means that instead of a single VMA (current \texttt{vm\_id = 0} for "data/heap"), \texttt{mm->mmap} becomes a linked list of VMAs. For example:
+            \begin{itemize}
+                \item \texttt{vm\_id = 0}: Code / Read-only data
+                \item \texttt{vm\_id = 1}: Heap
+                \item \texttt{vm\_id = 2}: Stack
+                \item \texttt{vm\_id = 3}: Shared regions, etc.
+            \end{itemize}
+            
+            \item \textbf{Logical Abstraction Layer:}
+            Architecturally, this creates a logical layer on top of the 5-level page tables:
+            \begin{itemize}
+                \item The \textbf{5-level paging} (PGD--P4D--PUD--PMD--PT) remains unchanged and is solely responsible for translating virtual page numbers to physical frames.
+                \item The \textbf{Segmentation layer} decides \textit{which} virtual ranges exist and \textit{what} they are used for. Each VMA tracks its virtual interval \texttt{[vm\_start, vm\_end)}, current growth point \texttt{sbrk}, and a free-region list for local holes.
+            \end{itemize}
+
+            \item \textbf{Structured Extensibility:}
+            This makes the address space structured and extensible. Different regions can later be assigned different protection policies (e.g., code as read-only, stack as non-executable, or shared segments mapped into multiple processes) while still sharing the same page table root (\texttt{mm->pgd}).
+        \end{enumerate}
+
+        % --- 2. Operational Implications ---
+        \item \textbf{Operational Implications}
+        
+        On the operational side, supporting multiple segments changes the workflow of memory operations:
+
+        \begin{enumerate}[label=\textbf{\alph*.}]
+            \item \textbf{Segment-Aware Operations:}
+            All core memory functions (\texttt{\_\_alloc}, \texttt{\_\_free}, \texttt{\_\_read}, \texttt{\_\_write}) become segment-aware. They take a \texttt{vmaid} parameter to select the correct VMA via \texttt{get\_vma\_by\_num(mm, vmaid)} before performing any work. The allocator only searches and updates the free-region list of that specific segment, and \texttt{inc\_vma\_limit} grows only that targeted VMA when more virtual space is needed.
+
+            \item \textbf{Bookkeeping vs. Isolation:}
+            There is a trade-off involving increased bookkeeping for better isolation. Every time the kernel extends a segment, it must check for overlaps with other VMAs (\texttt{validate\_overlap\_vm\_area}) before calling \texttt{vm\_map\_ram} to map new pages. While this adds overhead (walking the VMA list, extra validation), it guarantees that distinct segments (e.g., Heap vs. Stack) do not collide and grow independently.
+
+            \item \textbf{Contextual Paging and Swapping:}
+            While low-level page-table operations in \texttt{mm64.c} (allocating frames, filling PTEs, swapping victim pages) remain structurally the same, the context of each page becomes clearer. The OS knows whether a page belongs to code, heap, or stack based on the VMA it falls into. This facilitates segment-specific policies (e.g., preventing code pages from being swapped out or prioritizing stack pages) without altering the core paging algorithms.
+        \end{enumerate}
+
+    \end{enumerate}
+
+    \vspace{0.5cm}
+    In summary, while multiple segments slightly increase complexity in the memory manager, the OS gains a much more organized virtual address space and a natural architectural hook to implement protection and per-segment policies on top of the underlying 5-level paging mechanism.    
+    
+	\subsection{Question 5}
+    \textbf{Question:} What will happen if we divide the address to more than 2 levels in the paging memory management system? 
+
+    \vspace{0.5cm}
+
+    \noindent\textbf{Answer:}
+    
+Based on the Simple OS implementation, dividing the address into more than 2 levels fundamentally changes the paging structure and introduces several important consequences:
+
+% Bắt đầu danh sách cấp 1 (1., 2., 3.)
+\begin{enumerate}[label=\textbf{\arabic*.}]
+
+    % --- 1. Current 2-Level Implementation ---
+    \item \textbf{Current 2-Level Implementation}
+    
+    In the Simple OS's 2-level paging system (defined in \texttt{common.h}), the 20-bit address space is divided as follows:
+    \begin{itemize}
+	\item \textbf{First level (Segment):} 5 bits (\texttt{FIRST\_LV\_LEN}) = 32 entries
+	\item \textbf{Second level (Page):} 5 bits (\texttt{SECOND\_LV\_LEN}) = 32 entries
+	\item \textbf{Offset:} 10 bits (\texttt{OFFSET\_LEN}) = 1KB pages
+\end{itemize}
+This creates a hierarchical structure with \texttt{page\_table\_t} containing pointers to \texttt{trans\_table\_t} entries, requiring 2 memory accesses for address translation. The total virtual address space is limited to 1 MB (2$^{20}$ bytes).
+
+
+    % --- 2. 5-Level Paging (64-bit Implementation) ---
+    \item \textbf{5-Level Paging (64-bit Implementation)}
+    
+    When moving to 5-level paging in the 64-bit mode (\texttt{mm64.h} and \texttt{mm64.c}), the address is divided into 5 distinct levels:
+\begin{itemize}
+	\item \textbf{Level 5 - PGD (Page Global Directory):} bits 56-48 (9 bits = 512 entries)
+	\item \textbf{Level 4 - P4D (Page Level 4 Directory):} bits 47-39 (9 bits = 512 entries)
+	\item \textbf{Level 3 - PUD (Page Upper Directory):} bits 38-30 (9 bits = 512 entries)
+	\item \textbf{Level 2 - PMD (Page Middle Directory):} bits 29-21 (9 bits = 512 entries)
+	\item \textbf{Level 1 - PT (Page Table):} bits 20-12 (9 bits = 512 entries)
+	\item \textbf{Offset:} bits 11-0 (12 bits = 4KB pages)
+\end{itemize}
+This expands the virtual address space from 1 MB (20-bit) to 128 PiB (57-bit canonical address space), as implemented in \texttt{mm64.c}.
+
+    % --- 3. Key Consequences of Multi-Level Paging ---
+    \item \textbf{Key Consequences of Multi-Level Paging}
+    
+    % Bắt đầu danh sách cấp 2 (a., b., c.)
+    \begin{enumerate}[label=\textbf{\alph*.}]
+        % a. Address Space Expansion
+   	\item \textbf{Address Space Expansion:} 
+	The 5-level scheme supports up to 128 petabytes of virtual memory, compared to the 2-level system's 1 MB limit. The function \texttt{get\_pd\_from\_address()} in \texttt{mm64.c} (lines 149-157) extracts all 5 directory indices from a single address using bit masks and shifts, enabling this massive expansion. Each level uses 9 bits, allowing 512 entries per directory table.
+	
+	\item \textbf{Increased Translation Overhead:}
+	Each address translation requires traversing all 5 levels (PGD $\rightarrow$ P4D $\rightarrow$ PUD $\rightarrow$ PMD $\rightarrow$ PT), requiring 5 memory accesses instead of 2. The implementation in \texttt{get\_page\_table\_entry()} (lines 101-144 of \texttt{mm64.c}) demonstrates this hierarchical traversal. Modern CPUs use Translation Lookaside Buffers (TLB) to cache recent translations, mitigating this overhead in practice.
+	
+	\item \textbf{Sparse Allocation and Memory Efficiency:}
+	The implementation uses \textbf{on-demand allocation} through the \texttt{get\_next\_level()} function (lines 72-96 of \texttt{mm64.c}). Page tables are allocated only when actually needed, not for the entire address space. This sparse allocation strategy is critical because:
+	\begin{itemize}
+		\item Theoretical maximum page table size would be 512$^5$ = 35 trillion entries (unfeasible)
+		\item Actual memory usage is much smaller since only used address ranges allocate tables
+		\item Each table is 4KB (512 entries $\times$ 8 bytes), allocated via \texttt{alloc\_aligned\_table()}
+		\item The \texttt{mm\_struct->pgd} pointer starts as NULL and is allocated on first use
+	\end{itemize}
+	
+	\item \textbf{Page Table Entry Operations Complexity:}
+	All PTE operations must traverse the full 5-level hierarchy:
+	\begin{itemize}
+		\item \texttt{pte\_set\_fpn()} (lines 192-208): Walks 5 levels to set frame number
+		\item \texttt{pte\_set\_swap()} (lines 171-187): Walks 5 levels to set swap information
+		\item \texttt{pte\_get\_entry()} (lines 211-218): Walks 5 levels to read PTE
+		\item \texttt{vmap\_pgd\_memset()} (lines 234-246): Must walk 5 levels for each page mapped
+	\end{itemize}
+	Each operation calls \texttt{get\_page\_table\_entry()} which performs the full traversal, allocating intermediate directories as needed.
+	
+	\item \textbf{Implementation Complexity:}
+	The 5-level implementation is significantly more complex than the 2-level system:
+	\begin{itemize}
+		\item \texttt{init\_mm()} (lines 358-386): Initializes the root PGD pointer as NULL, with VM area structures
+		\item \texttt{get\_page\_table\_entry()}: Implements recursive tree traversal with dynamic allocation
+		\item \texttt{print\_pgtbl\_recursive()} (lines 546-595): Recursive function to traverse and print all 5 levels
+		\item Address extraction in \texttt{get\_pd\_from\_address()}: Complex bit manipulation across 5 levels
+	\end{itemize}
+	The code structure shows separate directory types (\texttt{pgd\_t}, \texttt{p4d\_t}, \texttt{pud\_t}, \texttt{pmd\_t}, \texttt{pt\_t}) defined in \texttt{os-mm.h}, each containing 512 entries.
+	
+	\item \textbf{Storage Space Trade-offs:}
+	The implementation demonstrates careful design decisions to balance:
+	\begin{itemize}
+		\item \textbf{Traversal time:} 5 memory accesses per translation (mitigated by TLB)
+		\item \textbf{Memory accesses:} Each level requires one access, but sparse allocation reduces total accesses
+		\item \textbf{Storage space:} Only allocated tables consume memory, not theoretical maximum
+	\end{itemize}
+	The \texttt{vmap\_page\_range()} function (lines 251-278) shows how pages are mapped efficiently, tracking mapped pages in the \texttt{fifo\_pgn} list for replacement algorithms.
+    \end{enumerate}
+    
+    \item \textbf{Design Strategies Used:}
+    
+The implementation employs several optimization strategies to mitigate the overhead of 5-level paging:
+\begin{itemize}
+	\item \textbf{Demand Allocation:} Tables allocated only when first accessed (\texttt{get\_next\_level()} with \texttt{alloc=1})
+	\item \textbf{Sparse Page Tables:} No allocation for unused address ranges
+	\item \textbf{4KB Alignment:} Efficient memory allocation using \texttt{posix\_memalign()} for hardware compatibility
+	\item \textbf{Present Bit Checking:} Fast detection of absent entries using \texttt{PAGING\_PRESENT} bit (bit 0)
+	\item \textbf{FIFO Page Tracking:} Efficient page replacement tracking via \texttt{fifo\_pgn} linked list
+\end{itemize}
+
+\end{enumerate}
+\vspace{0.5cm}
+In summary, moving from 2-level to 5-level paging in this Simple OS enables massive address space expansion (from 1 MB to 128 PiB) but requires more complex address parsing, slower translation (5 memory accesses vs. 2), and sophisticated memory management strategies. The implementation successfully balances these trade-offs through sparse allocation, on-demand table creation, and efficient tree traversal algorithms, making it essential for supporting modern 64-bit operating systems and large-scale applications.
+
+	\subsection{Question 6}
+
+    \textbf{Question:}What are the advantages and disadvantages of segmentation with paging?
+
+    \vspace{0.5cm}
+
+    \noindent\textbf{Answer:}
+    
+In the Simple OS implementation, segmentation with paging is realized through the \texttt{vm\_area\_struct} (VM areas) acting as logical segments, which are then divided into fixed-size pages managed by the page table hierarchy. This hybrid approach combines the benefits of both memory management techniques.
+
+% Bắt đầu danh sách cấp 1 (1., 2., 3., 4.)
+\begin{enumerate}[label=\textbf{\arabic*.}]
+
+    % --- 1. Implementation in Simple OS ---
+    \item \textbf{Implementation in Simple OS}
+    
+    The OS uses \texttt{vm\_area\_struct} (defined in \texttt{os-mm.h}) as segment-like structures, each containing:
+    \begin{itemize}
+	\item \texttt{vm\_id}: Identifier for the VM area (logical segment identifier)
+	\item \texttt{vm\_start} and \texttt{vm\_end}: Boundaries defining the logical segment's virtual address range
+	\item \texttt{sbrk}: Break pointer for dynamic memory allocation within the segment (heap growth)
+	\item \texttt{vm\_freerg\_list}: Linked list of free regions within the segment for efficient reuse
+	\item \texttt{vm\_mm}: Back-pointer to the \texttt{mm\_struct} for accessing page tables
+\end{itemize}
+Each VM area is then paged using the hierarchical page table structure (\texttt{mm\_struct->pgd} in 64-bit mode, as defined in \texttt{os-mm.h} line 131), where pages are mapped to non-contiguous physical frames. The symbol table (\texttt{symrgtbl}, line 139) tracks memory regions (variables) within VM areas, similar to how segments track logical units. The \texttt{mm\_struct->mmap} field (line 136) maintains a linked list of all VM areas for a process.
+
+    % --- 2. Advantages ---
+    \item \textbf{Advantages}
+    
+    % Bắt đầu danh sách cấp 2 (a., b., c...)
+    \begin{enumerate}[label=\textbf{\alph*.}]
+  	\item \textbf{Eliminates External Fragmentation:}  
+	In \texttt{vm\_map\_ram()} (lines 322-337 of \texttt{mm64.c}) and \texttt{vmap\_page\_range()} (lines 251-278), physical memory is allocated in fixed-size 4KB frames. The \texttt{framephy\_struct} linked list (defined in \texttt{os-mm.h} lines 155-162) manages non-contiguous frames, eliminating external fragmentation entirely since segments are paged. The \texttt{alloc\_pages\_range()} function (lines 283-317) allocates frames individually and links them, allowing a VM area to span multiple non-contiguous physical frames.
+	
+	\item \textbf{Logical Memory Organization:}  
+	VM areas provide logical organization of memory, separating different memory regions (code, data, heap) conceptually. Functions like \texttt{get\_vma\_by\_num()} (lines 12-31 of \texttt{mm-vm.c}) traverse the VM area list to find segments by ID, and \texttt{validate\_overlap\_vm\_area()} (lines 76-102) ensures distinct logical regions don't overlap, allowing the OS to treat different memory areas as separate segments while using paging for physical allocation.
+	
+	\item \textbf{Efficient Handling of Large Segments:}  
+	The \texttt{inc\_vma\_limit()} function (lines 110-168 of \texttt{mm-vm.c}) demonstrates how large VM areas can grow dynamically. Since these segments are paged, they don't require contiguous physical memory. The function:
+	\begin{itemize}
+		\item Calculates page-aligned size using \texttt{DIV\_ROUND\_UP(inc\_amt, PAGING\_PAGESZ)} (line 124)
+		\item Calls \texttt{vm\_map\_ram()} which allocates frames via \texttt{alloc\_pages\_range()} and maps them via \texttt{vmap\_page\_range()}
+		\item Updates the \texttt{sbrk} pointer (line 158) to track the new segment boundary
+	\end{itemize}
+	This allows segments to grow without requiring contiguous physical memory allocation.
+	
+	\item \textbf{Reduced Internal Fragmentation:}  
+	The \texttt{vm\_freerg\_list} within each VM area tracks free regions, allowing efficient reuse of freed memory within segments. The \texttt{get\_free\_vmrg\_area()} function (lines 384-437 of \texttt{libmem.c}) searches the free list for regions large enough to satisfy allocation requests, reducing internal fragmentation. The symbol table (\texttt{symrgtbl}) with \texttt{PAGING\_MAX\_SYMTBL\_SZ = 30} entries enables tracking of variables within logical segments, and the \texttt{\_\_alloc()} function (lines 39-101) first attempts to reuse free regions before expanding the segment.
+	
+	\item \textbf{Support for Dynamic Growth:}  
+	The \texttt{sbrk} pointer in each VM area allows segments to grow dynamically. The \texttt{get\_vm\_area\_node\_at\_brk()} function (lines 47-67 of \texttt{mm-vm.c}) creates new regions starting at the current \texttt{sbrk} position. When \texttt{get\_free\_vmrg\_area()} fails (line 45 of \texttt{libmem.c}), the system expands the heap via \texttt{inc\_vma\_limit()}, which calls \texttt{vm\_map\_ram()} to allocate and map new pages. This enables processes to extend their segments on demand without pre-allocation.
+    \end{enumerate}
+
+    % --- 3. Disadvantages ---
+    \item \textbf{Disadvantages}
+    
+    \begin{enumerate}[label=\textbf{\alph*.}]
+    	\item \textbf{Increased Translation Complexity:}  
+	Address translation requires two conceptual steps: first identifying the VM area (segment) that contains the address, then translating the address through the page table hierarchy. In practice, the implementation uses the page table directly (via \texttt{get\_page\_table\_entry()} in \texttt{mm64.c}), but VM area validation adds overhead. In 64-bit mode, address translation involves extracting indices from PGD, P4D, PUD, PMD, and PT levels (as in \texttt{get\_pd\_from\_address()}, lines 149-157 of \texttt{mm64.c}), requiring 5 memory accesses. Additionally, functions like \texttt{\_\_read()} (lines 279-290 of \texttt{libmem.c}) must first validate the address is within the correct VM area region via \texttt{get\_symrg\_byid()} before performing page translation.
+	
+	\item \textbf{Memory Overhead for Management Structures:}  
+	Each process maintains a linked list of VM areas (\texttt{mm\_struct->mmap}, line 136 of \texttt{os-mm.h}), each with its own free region list (\texttt{vm\_freerg\_list}). Additionally, the hierarchical page table structure (\texttt{mm\_struct->pgd} in 64-bit mode) must be maintained, with each directory level consuming 4KB when allocated. The \texttt{symrgtbl} array (\texttt{PAGING\_MAX\_SYMTBL\_SZ = 30}, line 139) adds further overhead for tracking memory regions within segments. Each VM area structure itself consumes memory, and the free region lists within each VM area add additional overhead compared to a pure paging system.
+	
+	\item \textbf{Complex Overlap Validation:}  
+	The \texttt{validate\_overlap\_vm\_area()} function (lines 76-102 of \texttt{mm-vm.c}) must check all VM areas to prevent overlaps, requiring traversal of the entire \texttt{mmap} linked list. This adds O(n) overhead during memory allocation operations, as seen in \texttt{inc\_vma\_limit()} (line 138) and \texttt{\_\_alloc()} when expanding segments. The overlap check logic (lines 93-96) compares the new region against all existing VM areas, which becomes expensive as the number of VM areas grows.
+	
+	\item \textbf{Page Table Management Complexity:}  
+	The \texttt{mm\_struct} must maintain both VM area structures and page table structures simultaneously. In 64-bit mode, the structure contains the root PGD pointer (\texttt{mm->pgd}), and the initialization in \texttt{init\_mm()} (lines 358-386 of \texttt{mm64.c}) shows the complexity of managing both segment-like VM areas (initializing \texttt{mmap}, \texttt{symrgtbl}) and hierarchical page tables (initializing \texttt{pgd} as NULL). The \texttt{vmap\_page\_range()} function must walk the 5-level page table hierarchy while also tracking which VM area the pages belong to, adding complexity to memory mapping operations.
+	
+	\item \textbf{Swapping Complexity:}  
+	The swapping mechanism operates at the page level via \texttt{pg\_getpage()} (lines 177-237 of \texttt{libmem.c}), but the VM area structure adds complexity because:
+	\begin{itemize}
+		\item The FIFO page replacement (\texttt{fifo\_pgn} list, line 142 of \texttt{os-mm.h}) operates at the page level without direct VM area context
+		\item When a page is swapped out, the system must ensure the page table entry is properly marked (via \texttt{pte\_set\_swap()}, lines 171-187 of \texttt{mm64.c})
+		\item The \texttt{find\_victim\_page()} function (lines 352-381 of \texttt{libmem.c}) selects victims from the FIFO list without considering VM area boundaries, which could lead to swapping pages from different logical segments
+	\end{itemize}
+	The \texttt{\_\_mm\_swap\_page()} function (lines 33-37 of \texttt{mm-vm.c}) handles the actual swap copy, but the coordination between VM area tracking and page-level swapping adds complexity.
+	
+	\item \textbf{Synchronization Overhead:}  
+	The \texttt{\_\_alloc()} function uses \verb|pthread_mutex_lock(&mmvm_lock) | to synchronize access to VM areas and page tables. This mutex protects both segment-level operations (VM area list traversal, free region management) and page-level operations (page table updates). The \texttt{\_\_write()} function (line 312) also acquires this lock, and \texttt{\_\_read()} performs page table operations that may require synchronization. This single mutex protects multiple data structures, potentially creating contention points that wouldn't exist in a pure paging system where only page tables need protection.
+	
+	\item \textbf{Free Region List Management Overhead:}  
+	The \texttt{get\_free\_vmrg\_area()} function (lines 384-437 of \texttt{libmem.c}) must traverse the free region list within a VM area to find suitable regions, which can be O(n) in the number of free regions. When regions are freed via \texttt{\_\_free()} (lines 104-139), the function must create new free region nodes and insert them into the list (line 135), potentially fragmenting the free list. The \texttt{enlist\_vm\_freerg\_list()} function (lines 13-27) adds regions to the head of the list, which is efficient but doesn't merge adjacent free regions, potentially leading to fragmentation.   
+	 \end{enumerate}
+
+\end{enumerate}
+
+\vspace{0.5cm}
+In summary, the Simple OS's segmentation-with-paging approach (VM areas + page tables) provides logical memory organization and eliminates external fragmentation, but at the cost of increased translation complexity, memory overhead for management structures, O(n) overlap validation, complex coordination between segment and page-level operations, and synchronization overhead. The hybrid system requires maintaining both VM area metadata and page table structures, with operations spanning both abstraction levels, making the implementation more complex than a pure paging system.
+
+    \subsection{Question 7}
+    \textbf{Question:} What happens if the synchronization is not handled in your Simple OS? Illustrate the problem of your simple OS (assignment outputs) by example if you have any.
+
+    \vspace{0.5cm}
+
+    \noindent\textbf{Answer:}
+
+The Simple OS uses a multi-threaded architecture where multiple CPU threads (from \texttt{cpu\_routine()} in \texttt{os.c}) and a loader thread (from \texttt{ld\_routine()}) execute concurrently, sharing critical data structures. Without proper synchronization, severe system failures would occur.
+
+% Bắt đầu danh sách cấp 1 (1., 2., 3.)
+\begin{enumerate}[label=\textbf{\arabic*.}]
+
+    % --- 1. Synchronization Mechanisms ---
+    \item \textbf{Synchronization Mechanisms in Simple OS}
+    
+ The OS implements three main synchronization mechanisms:
+\begin{itemize}
+	\item \textbf{Timer Synchronization} (\texttt{timer.c}): Uses mutexes (\texttt{event\_lock}, \texttt{timer\_lock}) and condition variables (\texttt{event\_cond}, \texttt{timer\_cond}) to coordinate time slot advancement. The \texttt{timer\_routine()} waits for all devices to complete before incrementing \texttt{\_time}, and \texttt{next\_slot()} synchronizes CPU/loader threads with the timer.
+	
+	\item \textbf{Scheduler Synchronization} (\texttt{sched.c}): Uses \texttt{queue\_lock} mutex to protect shared scheduler state including \texttt{mlq\_ready\_queue[]}, \texttt{slot\_remaining[]}, \texttt{current\_queue\_index}, and \texttt{running\_list}. Functions like \texttt{get\_mlq\_proc()}, \texttt{put\_mlq\_proc()}, and \texttt{add\_mlq\_proc()} are all protected by this mutex.
+	
+	\item \textbf{Memory Management Synchronization} (\texttt{libmem.c}): Uses \texttt{mmvm\_lock} mutex to protect VM area structures and page table operations. Functions like \texttt{\_\_alloc()}, \texttt{\_\_write()}, and \texttt{\_\_read()} acquire this lock before accessing memory management structures.
+\end{itemize}
+
+    % --- 2. Consequences of Missing Synchronization ---
+    \item \textbf{Consequences of Missing Synchronization}
+    
+    \begin{enumerate}[label=\textbf{\alph*.}]
+       \item \textbf{Ready Queue Corruption:} 
+	Without \texttt{queue\_lock} protection, multiple CPU threads could simultaneously call \texttt{get\_mlq\_proc()} and \texttt{put\_mlq\_proc()}, leading to race conditions on \texttt{mlq\_ready\_queue[]}. This could result in:
+	\begin{itemize}
+		\item \textbf{Lost Processes:} A process dequeued by one CPU thread might be simultaneously dequeued by another, causing one CPU to receive \texttt{NULL} or an invalid process pointer.
+		\item \textbf{Duplicate Process Execution:} The same process could be dispatched to multiple CPUs simultaneously, leading to inconsistent state and data corruption.
+		\item \textbf{Queue Structure Corruption:} Concurrent enqueue/dequeue operations could corrupt the queue's internal structure (size, pointers), causing segmentation faults or infinite loops.
+	\end{itemize}
+	
+	\item \textbf{Scheduler State Inconsistency:}
+	The scheduler maintains state variables \texttt{slot[]} and \texttt{mlq\_ready\_queue} that must be updated atomically. Without synchronization:
+	\begin{itemize}
+		\item \textbf{Incorrect Priority Scheduling:} Multiple threads reading and updating \texttt{mlq\_ready\_queue} simultaneously could cause the scheduler to skip priority levels or process them out of order, violating the MLQ scheduling policy.
+		\item \textbf{Slot Counter Corruption:} The \texttt{slot[MAX\_PRIO]} counter could be incorrectly decremented by multiple threads, causing processes to receive incorrect time slices or be prematurely moved to lower priority queues.
+	\end{itemize}
+	
+	\item \textbf{Timer Desynchronization:}
+	The timer mechanism in \texttt{timer\_routine()} coordinates all threads by waiting for each device's \texttt{done} flag before advancing time slots. Without proper mutex protection:
+	\begin{itemize}
+		\item \textbf{Time Slot Skips:} If multiple threads call \texttt{next\_slot()} simultaneously, the timer might advance before all threads complete their work, causing some threads to miss time slots or execute out of order.
+		\item \textbf{Deadlock in Timer:} The condition variable waits in \texttt{timer\_routine()} (lines 36-38) and \texttt{next\_slot()} (lines 79-81) could deadlock if mutexes are not properly acquired, freezing the entire system.
+		\item \textbf{Inconsistent Time Perception:} Different CPU threads might observe different values of \texttt{current\_time()} if the timer advances while threads are reading it, leading to incorrect process scheduling decisions.
+	\end{itemize}
+	
+	\item \textbf{Memory Management Corruption:}
+	Without \texttt{mmvm\_lock} protection, concurrent memory operations could corrupt critical structures:
+	\begin{itemize}
+		\item \textbf{VM Area List Corruption:} Multiple threads accessing \texttt{mm\_struct->mmap} (the VM area linked list) simultaneously could corrupt list pointers, causing processes to access wrong memory regions or crash when traversing the list.
+		\item \textbf{Page Table Race Conditions:} Concurrent calls to \texttt{pte\_set\_fpn()} and \texttt{pte\_get\_entry()} could result in reading partially updated page table entries, causing incorrect address translations and memory access violations.
+		\item \textbf{Symbol Table Corruption:} The \texttt{symrgtbl[]} array could be corrupted if multiple threads allocate memory regions simultaneously, leading to processes accessing incorrect memory addresses or overwriting each other's data.
+	\end{itemize}
+	
+	\item \textbf{Process State Corruption:}
+	In \texttt{cpu\_routine()}, each CPU thread maintains local state (\texttt{proc}, \texttt{time\_left}) but accesses shared process control blocks. Without synchronization:
+	\begin{itemize}
+		\item \textbf{Concurrent Process Execution:} The same \texttt{pcb\_t} structure could be modified by multiple CPU threads simultaneously, corrupting the program counter (\texttt{pc}), registers, or memory mappings.
+		\item \textbf{Inconsistent Process Termination:} A process might be freed by one CPU thread while another is still executing it, leading to use-after-free errors and system crashes.
+	\end{itemize}
+	
+	\item \textbf{Loader-CPU Race Conditions:}
+	The \texttt{ld\_routine()} adds processes to the ready queue via \texttt{add\_proc()} while CPU threads are simultaneously removing processes via \texttt{get\_proc()}. Without synchronization:
+	\begin{itemize}
+		\item \textbf{Process Addition During Dequeue:} A process might be added to the queue while another thread is in the middle of dequeuing, causing the new process to be lost or the dequeue operation to fail.
+		\item \textbf{Incomplete Process Initialization:} A CPU thread might dispatch a process before the loader finishes initializing its memory structures (\texttt{mm\_struct}), leading to null pointer dereferences or uninitialized memory access.
+	\end{itemize}
+    \end{enumerate}
+
+    % --- 3. System-Wide Failures ---
+    \item \textbf{System-Wide Failures}
+    
+  Without synchronization, the Simple OS would experience cascading failures:
+\begin{itemize}
+	\item \textbf{Non-Deterministic Behavior:} The same input could produce different outputs on each run due to race conditions, making debugging and testing extremely difficult.
+	\item \textbf{System Crashes:} Segmentation faults from corrupted pointers, null pointer dereferences, or invalid memory accesses would cause the entire OS simulation to crash.
+	\item \textbf{Resource Leaks:} Lost processes or corrupted queue structures could prevent proper cleanup, leading to memory leaks and resource exhaustion.
+	\item \textbf{Incorrect Execution Results:} Even if the system doesn't crash, processes might execute incorrectly due to corrupted state, producing wrong outputs that are difficult to detect.
+\end{itemize}
+
+    % --- 4. Experimental Demonstration ---
+    \item \textbf{Experimental Demonstration: Removing Timer Synchronization}
+    
+    To demonstrate the consequences of missing synchronization, we removed all mutex protection from \texttt{timer\_routine()} (lines 20-64 of \texttt{timer.c}) and \texttt{next\_slot()} (lines 66-83) functions. This eliminates the critical synchronization mechanism that coordinates time slot advancement across all CPU threads and the loader thread.
+    
+    \begin{enumerate}[label=\textbf{\alph*.}]
+        \item \textbf{Experimental Setup}
+        
+    The mutexes \texttt{event\_lock} and \texttt{timer\_lock} (defined per device in \texttt{struct timer\_id\_t}), along with their associated condition variables (\texttt{event\_cond} and \texttt{timer\_cond}), were removed from the timer synchronization code. Specifically:
+\begin{itemize}
+	\item In \texttt{timer\_routine()}: Removed mutex locks at lines 32, 44, 53, 56 that protect the \texttt{done} flag checks and updates
+	\item In \texttt{next\_slot()}: Removed mutex locks at lines 69, 72, 75, 82 that coordinate between threads and the timer
+\end{itemize}
+This allows multiple threads (CPU threads from \texttt{cpu\_routine()} in \texttt{os.c} and the loader thread from \texttt{ld\_routine()}) to access and modify the timer state (\texttt{\_time}, line 15 of \texttt{timer.c}) and device \texttt{done} flags concurrently without any protection.
+        
+        \item \textbf{Observed Output}
+        
+        The following output was captured from a test run with timer synchronization removed:
+        
+\begin{lstlisting}
+Time slot   0
+ld_routine
+    Loaded a process at input/proc/p0s, PID: 1 PRIO: 0
+
+Time slot   1
+    CPU 0: Dispatched process  1
+    Loaded a process at input/proc/p1s, PID: 2 PRIO: 15
+    CPU 1: Dispatched process  2
+
+Time slot   2
+liballoc:152
+--- Page Table Dump ---
+print_pgtbl:
+ PGD=0x7fbab8001000 P4D=0x7fbab8003000 PUD=0x7fbab8005000 PMD=0x7fbab8007000 PT=0x7fbab8009000
+0000000000000000: 0000000000000001
+
+Time slot   3
+liballoc:152
+--- Page Table Dump ---
+print_pgtbl:
+ PGD=0x7fbab8001000 P4D=0x7fbab8003000 PUD=0x7fbab8005000 PMD=0x7fbab8007000 PT=0x7fbab8009000
+0000000000000000: 0000000000000001
+    Loaded a process at input/proc/p1s, PID: 3 PRIO: 0
+
+Time slot   4
+libfree:168
+--- Page Table Dump ---
+print_pgtbl:
+ PGD=0x7fbab8001000 P4D=0x7fbab8003000 PUD=0x7fbab8005000 PMD=0x7fbab8007000 PT=0x7fbab8009000
+0000000000000000: 0000000000000001
+
+Time slot   5
+liballoc:152
+--- Page Table Dump ---
+print_pgtbl:
+ PGD=0x7fbab8001000 P4D=0x7fbab8003000 PUD=0x7fbab8005000 PMD=0x7fbab8007000 PT=0x7fbab8009000
+0000000000000000: 0000000000000001
+
+Time slot   6
+libwrite:343
+--- Page Table Dump ---
+print_pgtbl:
+ PGD=0x7fbab8001000 P4D=0x7fbab8003000 PUD=0x7fbab8005000 PMD=0x7fbab8007000 PT=0x7fbab8009000
+0000000000000000: 0000000000000001
+    Loaded a process at input/proc/p0s, PID: 4 PRIO: 0
+    CPU 0: Put process  1 to run queue
+    CPU 1: Put process  2 to run queue
+    CPU 1: Dispatched process  3
+    CPU 0: Dispatched process  4
+
+Time slot   7
+
+Time slot   8
+liballoc:152
+--- Page Table Dump ---
+print_pgtbl:
+ PGD=0x7fbab800b000 P4D=0x7fbab800d000 PUD=0x7fbab800f000 PMD=0x7fbab8011000 PT=0x7fbab8013000
+0000000000000000: 0000000000001001
+
+Time slot   9
+liballoc:152
+--- Page Table Dump ---
+print_pgtbl:
+ PGD=0x7fbab800b000 P4D=0x7fbab800d000 PUD=0x7fbab800f000 PMD=0x7fbab8011000 PT=0x7fbab8013000
+0000000000000000: 0000000000001001
+
+Time slot   10
+libfree:168
+--- Page Table Dump ---
+print_pgtbl:
+ PGD=0x7fbab800b000 P4D=0x7fbab800d000 PUD=0x7fbab800f000 PMD=0x7fbab8011000 PT=0x7fbab8013000
+0000000000000000: 0000000000001001
+
+Time slot   11
+liballoc:152
+--- Page Table Dump ---
+print_pgtbl:
+ PGD=0x7fbab800b000 P4D=0x7fbab800d000 PUD=0x7fbab800f000 PMD=0x7fbab8013000
+0000000000000000: 0000000000001001
+
+Time slot   12
+libwrite:343
+--- Page Table Dump ---
+print_pgtbl:
+ PGD=0x7fbab800b000 P4D=0x7fbab800d000 PUD=0x7fbab800f000 PMD=0x7fbab8011000 PT=0x7fbab8013000
+0000000000000000: 0000000000001001
+
+Time slot   13
+    CPU 1: Put process  3 to run queue
+    CPU 1: Dispatched process  1
+libread:304
+    CPU 0: Put process  4 to run queue
+    CPU 0: Dispatched process  3
+
+Time slot   14
+
+Time slot   15
+
+Time slot   16
+
+Time slot   17
+    CPU 0: Processed  3 has finished
+    CPU 0: Dispatched process  4
+libread:304
+
+Time slot   18
+
+Time slot   19
+    CPU 1: Put process  1 to run queue
+    CPU 1: Dispatched process  1
+libfree:168
+--- Page Table Dump ---
+print_pgtbl:
+ PGD=0x7fbab8001000 P4D=0x7fbab8003000 PUD=0x7fbab8005000 PMD=0x7fbab8007000 PT=0x7fbab8009000
+0000000000000000: 0000000000000001
+
+Time slot   20
+
+Time slot   21
+    CPU 1: Processed  1 has finished
+    CPU 1: Dispatched process  2
+
+Time slot   22
+
+Time slot   23
+    CPU 0: Put process  4 to run queue
+    CPU 0: Dispatched process  4
+libfree:168
+--- Page Table Dump ---
+print_pgtbl:
+ PGD=0x7fbab800b000 P4D=0x7fbab800d000 PUD=0x7fbab800f000 PMD=0x7fbab8011000 PT=0x7fbab8013000
+0000000000000000: 0000000000001001
+
+Time slot   24
+
+Time slot   25
+    CPU 0: Processed  4 has finished
+    CPU 1: Processed  2 has finished
+    CPU 0 stopped
+    CPU 1 stopped
+\end{lstlisting}
+        
+        \item \textbf{Analysis of the Results}
+        
+  While this particular run completed successfully, several critical observations highlight the dangers of missing synchronization:
+
+\begin{itemize}
+	\item \textbf{Concurrent Operations in Same Time Slot:} At time slot 6, we observe multiple events occurring simultaneously within the same time slot: \texttt{libwrite:343}, process loading (PID 4), CPU 0 putting process 1 to run queue, CPU 1 putting process 2 to run queue, and both CPUs dispatching new processes (3 and 4). Without timer synchronization, the loader thread, CPU 0, and CPU 1 are all executing concurrently. The \texttt{next\_slot()} function (called from \texttt{cpu\_routine()} at lines 66, 99, 112 and from \texttt{ld\_routine()} at lines 140, 155 in \texttt{os.c}) should coordinate with \texttt{timer\_routine()} to ensure only one time slot is active at a time. Without mutexes, threads can read and modify the \texttt{done} flag and \texttt{\_time} variable concurrently, causing operations from different logical time slots to interleave.
+	
+	\item \textbf{Potential Page Table Race Conditions:} While the page table dumps appear consistent in this run, without proper synchronization, concurrent access to page table structures could lead to race conditions. Multiple threads could simultaneously call \texttt{pte\_set\_fpn()} or \texttt{pte\_get\_entry()} (in \texttt{mm64.c}), which traverse the 5-level page table hierarchy via \texttt{get\_page\_table\_entry()}. Without mutex protection, one thread could be updating a page table entry (via \texttt{get\_next\_level()} allocating new directory levels) while another thread reads it, potentially observing partially updated pointers or inconsistent states. The fact that this run shows consistent page tables does not guarantee correctness—race conditions are non-deterministic and may manifest differently in subsequent runs.
+	
+	\item \textbf{Concurrent Memory Operations:} At time slot 13, we see both CPUs performing operations simultaneously: CPU 1 putting process 3 to run queue and dispatching process 1, CPU 1 performing \texttt{libread:304}, CPU 0 putting process 4 to run queue and dispatching process 3. CPU 1 is reading memory while CPU 0 is dispatching a process. Without proper synchronization, these operations could interfere with each other, especially if they access shared scheduler structures or memory management data.
+	
+	\item \textbf{Non-Deterministic Execution Order:} The output shows that operations from different threads can appear in any order within a time slot. For example, at time slot 6, the process loading, CPU queue operations, and dispatches all occur in an unpredictable sequence. This non-determinism makes it impossible to reproduce bugs consistently, as the exact interleaving depends on thread scheduling by the operating system.
+	
+	\item \textbf{Time Slot Coordination Failure:} The \texttt{timer\_routine()} function (lines 20-64 of \texttt{timer.c}) is designed to:
+	\begin{enumerate}
+		\item Wait for all devices to set their \texttt{done} flag (lines 30-45)
+		\item Increment \texttt{\_time} (line 48)
+		\item Signal all devices to continue (lines 51-57)
+	\end{enumerate}
+	Without mutex protection, multiple threads can call \texttt{next\_slot()} simultaneously, and the timer thread can advance \texttt{\_time} while other threads are still reading it or setting their \texttt{done} flags. This breaks the atomicity of time slot transitions, causing threads to operate on inconsistent time values.
+	
+	\item \textbf{The Illusion of Correctness:} The fact that this run completed successfully demonstrates a critical characteristic of race conditions: they are \textbf{non-deterministic}. The absence of visible errors in one run does not guarantee correctness. While this particular run shows consistent page table structures and no obvious data corruption, the concurrent operations observed (especially at time slots 6 and 13) indicate that threads are executing without proper coordination. Subsequent runs with the same input might:
+	\begin{itemize}
+		\item Crash due to corrupted pointers or invalid memory accesses
+		\item Produce incorrect results due to data corruption
+		\item Deadlock if threads wait on condition variables without proper mutex protection (the condition variable waits in \texttt{timer\_routine()} lines 35-37 and \texttt{next\_slot()} lines 78-80 require mutexes to function correctly)
+		\item Exhibit different execution orders, making debugging and testing impossible
+	\end{itemize}
+\end{itemize}
+        
+        \item \textbf{Why This Demonstrates the Problem}
+        
+   The removal of timer synchronization mutexes creates a \textbf{time-of-check to time-of-use (TOCTOU)} vulnerability and breaks the atomicity of time slot transitions. The synchronization protocol in \texttt{timer.c} works as follows:
+
+\begin{enumerate}
+	\item Each device thread calls \texttt{next\_slot()} which sets \texttt{done = 1} and signals the timer (lines 69-72)
+	\item The device then waits for the timer to advance (lines 75-82)
+	\item The timer waits for all devices to set \texttt{done = 1} (lines 30-45)
+	\item The timer increments \texttt{\_time} and resets all \texttt{done} flags (lines 48, 54-56)
+	\item The timer signals all devices to continue (line 55)
+\end{enumerate}
+
+Without mutex protection, this protocol breaks:
+\begin{itemize}
+	\item Thread A might read \texttt{\_time = 5} and set \texttt{done = 1}
+	\item Thread B might read \texttt{\_time = 5} and also set \texttt{done = 1}
+	\item The timer thread might increment \texttt{\_time} to 6 while Thread A is still in the middle of its operation
+	\item Thread A completes its operation thinking it's in time slot 5, but the timer has already advanced
+	\item Multiple threads can observe different values of \texttt{\_time} simultaneously
+\end{itemize}
+\end{enumerate}
+The concurrent operations observed at time slots 6 and 13 provide concrete evidence of this race condition: multiple threads are executing operations simultaneously without proper coordination, breaking the atomicity of time slot transitions.
+
+
+\end{enumerate}
+
+\vspace{0.5cm}
+In summary, synchronization is essential for the Simple OS's correctness. The mutex-protected critical sections in \texttt{timer.c} (protecting \texttt{\_time} and \texttt{done} flags), \texttt{sched.c} (protecting queue operations), and \texttt{libmem.c} (protecting memory management structures) ensure that shared data structures are accessed atomically, preventing race conditions, data corruption, and system failures. The experimental removal of timer synchronization demonstrates that even when a run appears successful, the underlying race conditions create non-deterministic behavior. The concurrent operations observed in the output show that threads are not properly coordinated, which can lead to subtle bugs, data corruption, and unpredictable system behavior in subsequent runs.
+
+    \pagebreak
+    
+\section{Overall}
+
+In this assignment, we have successfully designed and implemented the core components of a simple Operating System simulation, focusing on a Symmetric Multiprocessing (SMP) environment. The project integrated three critical modules: a Slot-based Scheduler, a Hybrid Memory Management system, and a robust Synchronization mechanism.
+
+For process management, we implemented a Slot-based Multi-Level Queue (MLQ) scheduling algorithm. Unlike standard priority scheduling which suffers from starvation, our design introduces a dynamic slot mechanism ($slot = MAX\_PRIO - prio$) combined with Round-Robin execution within each queue. This approach ensures a balance between honoring process priority and maintaining fairness, guaranteeing that lower-priority tasks eventually receive CPU resources even under heavy load. The implementation successfully handles context switching and load balancing across multiple simulated CPUs.
+
+Regarding memory management, we constructed a sophisticated hybrid architecture that combines Segmentation with 5-Level Paging. A focal point of this implementation is the rigorous simulation of the hardware page walk mechanism.We programmed the traversal logic that iteratively resolves a 64-bit virtual address through the five hierarchical levels: PGD $\rightarrow$ P4D $\rightarrow$ PUD $\rightarrow$ PMD $\rightarrow$ PT. By utilizing precise bit-masking and shifting operations to extract directory indices at each level, our system accurately mimics the translation process of modern MMUs. This mechanism allows the OS to handle sparse memory allocation efficiently within a massive 128 PiB address space while ensuring strict isolation between user and kernel modes.
+
+Furthermore, we addressed the critical challenge of concurrency in a multi-threaded architecture. We identified potential race conditions that could lead to data corruption or system crashes when multiple CPUs and the loader access shared resources simultaneously. By strictly applying synchronization mechanisms—specifically Mutex locks on the ready queue, memory structures, and the global timer—we ensured the atomicity of critical operations and the deterministic behavior of the system.
+
+In conclusion, this assignment has provided a comprehensive hands-on experience in building OS kernel components. It bridged the gap between theoretical concepts—such as virtual memory translation, process scheduling, and thread safety—and practical system programming. The insights gained from handling the complexity of the 5-level page walking algorithm and SMP synchronization serve as a solid foundation for understanding the architecture of modern, high-performance operating systems.
+
+\section{Source Code}
+
+\begin{enumerate}
+    \item \textbf{Scheduler:} \href{https://github.com/quocthangtrann/os_lamiaatrium-2.git}{Link GitHub}
+    \item \textbf{Memory Management:} \href{https://github.com/tom1209-netizen/lamia_atrium.git}{Link GitHub}
+\end{enumerate}
+
+\end{document}
+
+
+
+
+
