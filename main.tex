@@ -1576,7 +1576,22 @@ Based on the Simple OS implementation, dividing the address into more than 2 lev
 	\item \textbf{Offset:} 10 bits (\texttt{OFFSET\_LEN}) = 1KB pages
 \end{itemize}
 This creates a hierarchical structure with \texttt{page\_table\_t} containing pointers to \texttt{trans\_table\_t} entries, requiring 2 memory accesses for address translation. The total virtual address space is limited to 1 MB (2$^{20}$ bytes).
-
+\begin{lstlisting}[language=C, caption=20-Bit Address Space]
+// common.h
+/* Address geometry (two-level page tables):
+* ADDRESS_SIZE: total VA bits.
+* OFFSET_LEN:   bits within a page (page size = 1 << OFFSET_LEN).
+* FIRST_LV_LEN: bits used by first-level index (L1).
+* SECOND_LV_LEN:bits used by second-level index (L2).
+* SEGMENT_LEN/PAGE_LEN: aliases to L1/L2 lengths.
+*/
+#define ADDRESS_SIZE 20
+#define OFFSET_LEN 10
+#define FIRST_LV_LEN 5
+#define SECOND_LV_LEN 5
+#define SEGMENT_LEN FIRST_LV_LEN
+#define PAGE_LEN SECOND_LV_LEN
+\end{lstlisting}
 
     % --- 2. 5-Level Paging (64-bit Implementation) ---
     \item \textbf{5-Level Paging (64-bit Implementation)}
@@ -1591,7 +1606,40 @@ This creates a hierarchical structure with \texttt{page\_table\_t} containing po
 	\item \textbf{Offset:} bits 11-0 (12 bits = 4KB pages)
 \end{itemize}
 This expands the virtual address space from 1 MB (20-bit) to 128 PiB (57-bit canonical address space), as implemented in \texttt{mm64.c}.
+\begin{lstlisting}[language=C, caption=64-Bit 5 Level Paging]
+// mm64.h
+#define MM64_BITS_PER_LONG 64
 
+#define PAGING64_CPU_BUS_WIDTH 57 /* 57-bit canonical VA space */
+#define PAGING64_PAGESZ 4096      /* 4KB or 12-bits PAGE NUMBER */
+
+// ...
+
+/* OFFSET */
+#define PAGING64_ADDR_OFFST_HIBIT 11
+#define PAGING64_ADDR_OFFST_LOBIT 0
+
+/* PT */
+#define PAGING64_ADDR_PT_HIBIT 20
+#define PAGING64_ADDR_PT_LOBIT 12
+#define PAGING64_ADDR_PT_SHIFT 12
+
+/* PMD */
+#define PAGING64_ADDR_PMD_HIBIT 29
+#define PAGING64_ADDR_PMD_LOBIT 21
+
+/* PUD */
+#define PAGING64_ADDR_PUD_HIBIT 38
+#define PAGING64_ADDR_PUD_LOBIT 30
+
+/* P4D */
+#define PAGING64_ADDR_P4D_HIBIT 47
+#define PAGING64_ADDR_P4D_LOBIT 39
+
+/* PGD */
+#define PAGING64_ADDR_PGD_HIBIT 56
+#define PAGING64_ADDR_PGD_LOBIT 48
+\end{lstlisting}
     % --- 3. Key Consequences of Multi-Level Paging ---
     \item \textbf{Key Consequences of Multi-Level Paging}
     
@@ -1600,9 +1648,24 @@ This expands the virtual address space from 1 MB (20-bit) to 128 PiB (57-bit can
         % a. Address Space Expansion
    	\item \textbf{Address Space Expansion:} 
 	The 5-level scheme supports up to 128 petabytes of virtual memory, compared to the 2-level system's 1 MB limit. The function \texttt{get\_pd\_from\_address()} in \texttt{mm64.c} (lines 149-157) extracts all 5 directory indices from a single address using bit masks and shifts, enabling this massive expansion. Each level uses 9 bits, allowing 512 entries per directory table.
+	\begin{lstlisting}[language=C, caption=get\_pd\_from\_address() in mm64.c]
+// mm64.c
+/*
+* get_pd_from_address - Parse address to 5 page directory level
+*/
+int get_pd_from_address(addr_t addr, addr_t *pgd, addr_t *p4d, addr_t *pud, addr_t *pmd, addr_t *pt)
+{
+	*pgd = (addr & PAGING64_ADDR_PGD_MASK) >> PAGING64_ADDR_PGD_LOBIT;
+	*p4d = (addr & PAGING64_ADDR_P4D_MASK) >> PAGING64_ADDR_P4D_LOBIT;
+	*pud = (addr & PAGING64_ADDR_PUD_MASK) >> PAGING64_ADDR_PUD_LOBIT;
+	*pmd = (addr & PAGING64_ADDR_PMD_MASK) >> PAGING64_ADDR_PMD_LOBIT;
+	*pt = (addr & PAGING64_ADDR_PT_MASK) >> PAGING64_ADDR_PT_LOBIT;
+	return 0;
+}
+	\end{lstlisting}
 	
 	\item \textbf{Increased Translation Overhead:}
-	Each address translation requires traversing all 5 levels (PGD $\rightarrow$ P4D $\rightarrow$ PUD $\rightarrow$ PMD $\rightarrow$ PT), requiring 5 memory accesses instead of 2. The implementation in \texttt{get\_page\_table\_entry()} (lines 101-144 of \texttt{mm64.c}) demonstrates this hierarchical traversal. Modern CPUs use Translation Lookaside Buffers (TLB) to cache recent translations, mitigating this overhead in practice.
+	Each address translation requires traversing all 5 levels (PGD $\rightarrow$ P4D $\rightarrow$ PUD $\rightarrow$ PMD $\rightarrow$ PT), requiring 5 memory accesses instead of 2. The implementation in \texttt{get\_page\_table\_entry()} (Listing 12) demonstrates this hierarchical traversal. Modern CPUs use Translation Lookaside Buffers (TLB) to cache recent translations, mitigating this overhead in practice.
 	
 	\item \textbf{Sparse Allocation and Memory Efficiency:}
 	The implementation uses \textbf{on-demand allocation} through the \texttt{get\_next\_level()} function (lines 72-96 of \texttt{mm64.c}). Page tables are allocated only when actually needed, not for the entire address space. This sparse allocation strategy is critical because:
@@ -1612,26 +1675,215 @@ This expands the virtual address space from 1 MB (20-bit) to 128 PiB (57-bit can
 		\item Each table is 4KB (512 entries $\times$ 8 bytes), allocated via \texttt{alloc\_aligned\_table()}
 		\item The \texttt{mm\_struct->pgd} pointer starts as NULL and is allocated on first use
 	\end{itemize}
+	\begin{lstlisting}[language=C, caption=get\_next\_level() in mm64.c]
+// mm64.c
+/*
+* Helper: Get or Allocate Next Level (Directory Navigation)
+*/
+void *get_next_level(uint64_t *entry, int alloc)
+{
+	/* Check Real Hardware Present Bit (Bit 0) */
+	if (*entry & X86_PRESENT)
+	{
+		/* Mask off the bottom 12 bits to get the pointer */
+		return (void *)(*entry & X86_ADDR_MASK);
+	}
+	
+	if (!alloc)
+	return NULL;
+	
+	/* Allocate 4KB Aligned Table */
+	void *new_table = alloc_aligned_table();
+	if (new_table == NULL)
+	return NULL;
+	
+	/* * Write the Entry:
+	* Pointer (Already 4KB aligned, so bottom 12 bits are 0)
+	* OR with X86 Flags (Present + Write + User)
+	*/
+	*entry = (uint64_t)new_table | X86_PRESENT | X86_WRITE | X86_USER;
+	
+	return new_table;
+}
+	\end{lstlisting}
 	
 	\item \textbf{Page Table Entry Operations Complexity:}
 	All PTE operations must traverse the full 5-level hierarchy:
 	\begin{itemize}
 		\item \texttt{pte\_set\_fpn()} (lines 192-208): Walks 5 levels to set frame number
+		\begin{lstlisting}[language=C, caption=pte\_set\_fpn() in mm64.c]
+// mm64.c
+/*
+* pte_set_fpn - Set PTE entry for on-line page
+*/
+int pte_set_fpn(struct pcb_t *caller, addr_t pgn, addr_t fpn)
+{
+	addr_t addr = pgn << PAGING64_ADDR_PT_SHIFT;
+	uint64_t *pte = get_page_table_entry(caller->mm, addr, 1);
+	if (pte == NULL)
+	return -1;
+	
+	*pte = 0; // Clear old data
+	
+	// Mark page present in RAM
+	SETBIT(*pte, PAGING_PTE_PRESENT_MASK);
+	CLRBIT(*pte, PAGING_PTE_SWAPPED_MASK);
+	
+	SETVAL(*pte, fpn, PAGING_PTE_FPN_MASK, PAGING_PTE_FPN_LOBIT);
+	
+	return 0;
+}
+		\end{lstlisting}
 		\item \texttt{pte\_set\_swap()} (lines 171-187): Walks 5 levels to set swap information
+		\begin{lstlisting}[language=C, caption=pte\_set\_swap() in mm64.c]
+// mm64.c
+/*
+* pte_set_swap - Set PTE entry for swapped page
+*/
+int pte_set_swap(struct pcb_t *caller, addr_t pgn, int swptyp, addr_t swpoff)
+{
+	addr_t addr = pgn << PAGING64_ADDR_PT_SHIFT;
+	uint64_t *pte = get_page_table_entry(caller->mm, addr, 1);
+	if (pte == NULL)
+	return -1;
+	
+	*pte = 0; // Clear old data
+	
+	// Swapped pages keep Present=0 and only carry swap metadata
+	SETBIT(*pte, PAGING_PTE_SWAPPED_MASK);
+	
+	SETVAL(*pte, swptyp, PAGING_PTE_SWPTYP_MASK, PAGING_PTE_SWPTYP_LOBIT);
+	SETVAL(*pte, swpoff, PAGING_PTE_SWPOFF_MASK, PAGING_PTE_SWPOFF_LOBIT);
+	
+	return 0;
+}
+		\end{lstlisting}
 		\item \texttt{pte\_get\_entry()} (lines 211-218): Walks 5 levels to read PTE
-		\item \texttt{vmap\_pgd\_memset()} (lines 234-246): Must walk 5 levels for each page mapped
+		\begin{lstlisting}[language=C, caption=pte\_get\_entry() in mm64.c]
+// mm64.c
+/* Get PTE page table entry */
+uint64_t pte_get_entry(struct pcb_t *caller, addr_t pgn)
+{
+	addr_t addr = pgn << PAGING64_ADDR_PT_SHIFT;
+	uint64_t *pte = get_page_table_entry(caller->mm, addr, 0);
+	if (pte == NULL)
+	return 0;
+	return *pte;
+}
+\end{lstlisting}
+\item \texttt{vmap\_pgd\_memset()} (lines 234-246): Must walk 5 levels for each page mapped
+\begin{lstlisting}[language=C, caption=vmap\_pgd\_memset() in mm64.c]
+// mm64.c
+/*
+* vmap_pgd_memset - map a range of page at aligned address
+*/
+int vmap_pgd_memset(struct pcb_t *caller, addr_t addr, int pgnum)
+{
+	for (int i = 0; i < pgnum; i++)
+	{
+		addr_t current_addr = addr + (i * PAGING64_PAGESZ);
+		uint64_t *pte = get_page_table_entry(caller->mm, current_addr, 1);
+		if (pte)
+		{
+			*pte = 0; // Clear the LEAF entry (Not Present)
+		}
+	}
+	return 0;
+}
+		\end{lstlisting}
 	\end{itemize}
 	Each operation calls \texttt{get\_page\_table\_entry()} which performs the full traversal, allocating intermediate directories as needed.
 	
 	\item \textbf{Implementation Complexity:}
 	The 5-level implementation is significantly more complex than the 2-level system:
 	\begin{itemize}
-		\item \texttt{init\_mm()} (lines 358-386): Initializes the root PGD pointer as NULL, with VM area structures
-		\item \texttt{get\_page\_table\_entry()}: Implements recursive tree traversal with dynamic allocation
-		\item \texttt{print\_pgtbl\_recursive()} (lines 546-595): Recursive function to traverse and print all 5 levels
-		\item Address extraction in \texttt{get\_pd\_from\_address()}: Complex bit manipulation across 5 levels
+		\item \texttt{init\_mm()} (lines 358-386 in mm64.c): Initializes the root PGD pointer as NULL, with VM area structures
+		\begin{lstlisting}[language=C, caption=init\_mm() in mm64.c]
+// mm64.c
+/* init_mm */
+int init_mm(struct mm_struct *mm, struct pcb_t *caller)
+{
+	struct vm_area_struct *vma0 = malloc(sizeof(struct vm_area_struct));
+	mm->pgd = NULL;
+	
+	vma0->vm_id = 0;
+	vma0->vm_start = 0;
+	vma0->vm_end = vma0->vm_start;
+	vma0->sbrk = vma0->vm_start;
+	vma0->vm_freerg_list = NULL;
+	
+	struct vm_rg_struct *first_rg = init_vm_rg(vma0->vm_start, vma0->vm_end);
+	enlist_vm_rg_node(&vma0->vm_freerg_list, first_rg);
+	
+	vma0->vm_next = NULL;
+	vma0->vm_mm = mm;
+	mm->mmap = vma0;
+	
+	for (int i = 0; i < PAGING_MAX_SYMTBL_SZ; i++)
+	{
+		mm->symrgtbl[i].rg_start = 0;
+		mm->symrgtbl[i].rg_end = 0;
+		mm->symrgtbl[i].rg_next = NULL;
+	}
+	
+	mm->fifo_pgn = NULL;
+	
+	return 0;
+}
+		\end{lstlisting}
+		\item \texttt{get\_page\_table\_entry()}: Implements recursive tree traversal with dynamic allocation (Listing 12)
+		\item \texttt{print\_pgtbl\_recursive()} (lines 546-595 in mm64.c): Recursive function to traverse and print all 5 levels
+		\item Address extraction in \texttt{get\_pd\_from\_address()}: Complex bit manipulation across 5 levels (Listing 16)
 	\end{itemize}
 	The code structure shows separate directory types (\texttt{pgd\_t}, \texttt{p4d\_t}, \texttt{pud\_t}, \texttt{pmd\_t}, \texttt{pt\_t}) defined in \texttt{os-mm.h}, each containing 512 entries.
+	\begin{lstlisting}[language=C, caption=Directory Structs defined in os-mm.h]
+// os-mm.h
+#define MM_PAGING
+#define PAGING_MAX_MMSWP 4 /* max number of supported swapped space */
+#define PAGING_MAX_SYMTBL_SZ 30
+
+/* 64-bit Paging Constants */
+#define PAGING64_ENTRY_COUNT 512 // 9 bits per level = 512 entries
+
+/*
+* @bksysnet: in long address mode of 64bit or original 32bit
+* the address type need to be redefined
+*/
+
+#ifdef MM64
+typedef uint64_t addr_t;
+typedef char BYTE;
+
+// Page Table (Level 1) - Points to Physical Frame
+struct pt_t
+{
+	uint64_t entries[PAGING64_ENTRY_COUNT];
+};
+
+// Page Middle Directory (Level 2) - Points to PT
+struct pmd_t
+{
+	uint64_t entries[PAGING64_ENTRY_COUNT];
+};
+
+// Page Upper Directory (Level 3) - Points to PMD
+struct pud_t
+{
+	uint64_t entries[PAGING64_ENTRY_COUNT];
+};
+
+// Page Level-4 Directory (Level 4) - Points to PUD
+struct p4d_t
+{
+	uint64_t entries[PAGING64_ENTRY_COUNT];
+};
+
+// Page Global Directory (Level 5) - Points to P4D
+struct pgd_t
+{
+	uint64_t entries[PAGING64_ENTRY_COUNT];
+};
+	\end{lstlisting}
 	
 	\item \textbf{Storage Space Trade-offs:}
 	The implementation demonstrates careful design decisions to balance:
@@ -1640,7 +1892,40 @@ This expands the virtual address space from 1 MB (20-bit) to 128 PiB (57-bit can
 		\item \textbf{Memory accesses:} Each level requires one access, but sparse allocation reduces total accesses
 		\item \textbf{Storage space:} Only allocated tables consume memory, not theoretical maximum
 	\end{itemize}
-	The \texttt{vmap\_page\_range()} function (lines 251-278) shows how pages are mapped efficiently, tracking mapped pages in the \texttt{fifo\_pgn} list for replacement algorithms.
+	The \texttt{vmap\_page\_range()} function (lines 251-278 of mm64.c) shows how pages are mapped efficiently, tracking mapped pages in the \texttt{fifo\_pgn} list for replacement algorithms.
+	\begin{lstlisting}[language=C, caption=vmap\_page\_range() in os-mm.h]
+/*
+* vmap_page_range - map a range of page at aligned address
+*/
+addr_t vmap_page_range(struct pcb_t *caller,
+addr_t addr,
+int pgnum,
+struct framephy_struct *frames,
+struct vm_rg_struct *ret_rg)
+{
+	struct framephy_struct *fpit = frames;
+	int pgit = 0;
+	addr_t pgn;
+	
+	ret_rg->rg_start = addr;
+	ret_rg->rg_end = addr + (pgnum * PAGING64_PAGESZ);
+	
+	for (pgit = 0; pgit < pgnum; pgit++)
+	{
+		if (fpit == NULL)
+		return -1;
+		
+		pgn = (addr + (pgit * PAGING64_PAGESZ)) >> PAGING64_ADDR_PT_SHIFT;
+		
+		pte_set_fpn(caller, pgn, fpit->fpn);
+		enlist_pgn_node(&caller->mm->fifo_pgn, pgn);
+		
+		fpit = fpit->fp_next;
+	}
+	
+	return 0;
+}
+	\end{lstlisting}
     \end{enumerate}
     
     \item \textbf{Design Strategies Used:}
