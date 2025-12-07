@@ -279,54 +279,148 @@ Each entry in the upper-level tables points to the base address of the next lowe
 
 \subsubsection{Comparative Analysis of Page Table Architectures}
 
-\paragraph{a. Hierarchical Paging}
-	This method divides the logical address into multiple parts to manage the page table as a tree structure (4-level or 5-level paging in modern systems).
+\noindent\textbf{a. Hierarchical Paging}
+
+When applying Single-level paging on a 64-bit system with a 4KB ($2^{12}$) page size, the virtual address space contains approximately $2^{52}$ pages. If a single page table were used, the Operating System would be required to allocate a massive, contiguous block of physical memory to store all Page Table Entries for each process. This is practically impossible due to the sheer size exceeding RAM limits and the difficulty of finding contiguous memory caused by fragmentation.
+
+Hierarchical Paging resolves this by dividing the logical address into multiple parts to manage the page table as a tree structure (typically 4-level or 5-level paging in modern systems). This method offers two key advantages:
+
+\begin{itemize}
+	\item \textbf{Memory Efficiency:} The system does not need to store the entire page table structure in RAM. Due to the sparse nature of address spaces, Inner Tables are only initialized for the virtual memory regions that the process actually uses.
+	\item \textbf{Non-contiguous Allocation:} Only the highest-level table (Outer Page Table)—which is usually very small—needs to be contiguous. The Inner Tables can be scattered anywhere in physical memory, reducing the burden on the OS's memory management.
+\end{itemize}
+
+%\subsection*{Disadvantages}
+\noindent However, this method comes with significant disadvantages regarding performance and complexity:
+
+\begin{itemize}
+	\item \textbf{Access Latency:} The number of memory accesses increases with the number of paging levels. For instance, with 5-level paging, the CPU requires 6 memory accesses to retrieve a single byte of data (5 for the page table walk and 1 for the actual data), significantly slowing down processing speed.
+	\item \textbf{Design Complexity:} Both the hardware (specifically the MMU) and the Operating System must be designed with greater complexity to handle the page walk mechanism accurately.
+\end{itemize}
+	\begin{figure}[H]
+			\centering
+			\includegraphics[width=0.9\textwidth]{Hierarchical Paging}
+			\caption{5-Level Paging Scheme (Address Translation for 57-bit Virtual Address)}
+	\end{figure}
 	
+%	This method divides the logical address into multiple parts to manage the page table as a tree structure (4-level or 5-level paging in modern systems).
+	
+	
+	%\noindent \textbf{Advantages}
+%	\begin{itemize}
+%		\item \textbf{Memory Efficiency for Sparse Addresses:} The system does not need to allocate memory for the entire page table at once. It solves the problem where a single-level table would require an enormous amount of contiguous memory. It allows dividing the page table into smaller units.
+
+%	\end{itemize}
+	
+%	\noindent \textbf{Disadvantages}
+%	\begin{itemize}
+%		 \item \textbf{Memory Access Latency:} As the address space expands (e.g., to 64-bit), the number of levels in the hierarchy increases. Without a TLB, a single memory reference might require multiple memory accesses (e.g., 5 accesses) to traverse the page table before accessing the actual data.
+%		\item \textbf{Complexity:} Managing a multi-level tree (5 levels) is more complex than a simple flat table.
+%	\end{itemize}
+	
+	%%%%%%%%%%%%%%%%%%%%%%%%%
+	\noindent \textbf{b. Hashed Page Tables}
+	
+	This method utilizes a \textbf{Hash Table} to manage page table entries. Instead of using linear storage or a hierarchical tree structure, the Virtual Page Number (VPN) is passed through a hash function to determine its storage location in the table. This approach is particularly effective for systems with a ``sparse address space,'' where the majority of virtual addresses are not in use. Each entry in the hash table typically serves as the head of a linked list (to handle hash collisions). Each element in the list consists of three main fields:
+	\begin{itemize}
+		\item \textbf{Virtual Page Number (VPN):} Used to identify the page.
+		\item \textbf{Physical Frame Number (PFN):} The corresponding mapped physical frame value.
+		\item \textbf{Pointer:} A reference to the next element in the linked list.
+	\end{itemize}
+	
+%	\noindent The address translation process proceeds as follows:
+%	\begin{itemize}
+%		\item The CPU extracts the virtual page number ($p$) from the logical address and applies a hash function to generate an index $h(p)$.
+%		\item The system accesses the corresponding entry in the hash table and begins traversing the linked list at that location. For each element, the system compares $p$ with the stored VPN field:
+%		\begin{itemize}
+%			\item \textbf{If there is a match:} The system retrieves the corresponding PFN value and combines it with the offset to form the actual physical address.
+%			\item \textbf{If there is no match:} The system proceeds to the next element in the list to continue the search.
+%		\end{itemize}
+%	\end{itemize}
 	
 	\noindent \textbf{Advantages}
 	\begin{itemize}
-		\item \textbf{Memory Efficiency for Sparse Addresses:} The system does not need to allocate memory for the entire page table at once. It solves the problem where a single-level table would require an enormous amount of contiguous memory. It allows dividing the page table into smaller units.
-		 \item \textbf{Hardware Support:} This is the standard implementation for modern architectures, such as the Intel x86-64 and ARMv8 architectures.
+		\item \textbf{Optimal Memory Efficiency:} The size of the hashed page table is proportional to the number of \textit{physical pages actually in use}, rather than the size of the entire virtual address space. This results in significant memory savings in massive 64-bit systems.
+		\item \textbf{Flexible Structure:} Since it does not require storing information for unused memory regions, this method eliminates memory waste associated with page tables for unallocated address ranges.
 	\end{itemize}
 	
 	\noindent \textbf{Disadvantages}
 	\begin{itemize}
-		 \item \textbf{Memory Access Latency:} As the address space expands (e.g., to 64-bit), the number of levels in the hierarchy increases. Without a TLB, a single memory reference might require multiple memory accesses (e.g., 5 accesses) to traverse the page table before accessing the actual data.
-		\item \textbf{Complexity:} Managing a multi-level tree (5 levels) is more complex than a simple flat table.
+		\item \textbf{Variable Memory Access Cost:} Performance depends heavily on the quality of the hash function. High collision rates result in longer linked lists, forcing the CPU to perform multiple memory accesses to traverse the list, thereby reducing processing speed.
+		\item \textbf{Hardware Design Complexity:} Traversing a linked list is more difficult to implement in hardware (MMU) compared to walking a tree structure in hierarchical paging.
+		\item \textbf{Poor Locality of Reference:} Due to the random nature of hashing, pages that are contiguous in virtual memory may be scattered across the hash table, reducing the efficiency of the CPU Cache.
 	\end{itemize}
 	
+		\begin{figure}[H]
+		\centering
+		\includegraphics[width=1\textwidth]{Hashed Page Tables}
+		\caption{Hashed Page Tables}
+	\end{figure}
 	
-	\paragraph{b. Hashed Page Tables}
-	This method uses a hash function on the virtual page number to locate the physical frame.
+	\noindent \textbf{Variation: Clustered Page Tables}
+	
+	A common variation of this method is \textbf{Clustered Page Tables}. Instead of storing a single page per entry in the list, it stores mappings for multiple contiguous pages. This technique helps reduce the length of the linked list and improves search performance for large memory blocks. 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=1\textwidth]{Clustered Page Tables}
+		\caption{Clustered Page Tables}
+	\end{figure}
+%	This method uses a hash function on the virtual page number to locate the physical frame.
 
 	
+%	\noindent \textbf{Advantages}
+%	\begin{itemize}
+%		 \item \textbf{Suitability for Large Address Spaces:} This structure is common in address spaces larger than 32 bits.
+%		 \item \textbf{Handling Sparse Memory:} It is especially useful for sparse address spaces where memory references are non-contiguous and scattered.
+%	\end{itemize}
+	
+%	\noindent \textbf{Disadvantages}
+%	\begin{itemize}
+%		 \item \textbf{Collision Handling:} Multiple virtual addresses may hash to the same location, requiring a chain of elements to be searched to find a match.
+%		\item \textbf{Implementation Complexity:} While efficient for size, the overhead of hashing and traversing linked lists (chains) can impact performance compared to direct indexing.
+%	\end{itemize}
+	
+	
+	\noindent \textbf{c. Inverted Page Tables}
+	
+	In both Hierarchical Paging and Hashed Page Tables methods, each process maintains its own separate page table. Each table contains an entry for every virtual page the process is using. This results in the system managing millions of entries, consuming a significant amount of physical memory just to store page table structures to track memory usage.
+	
+	To solve this problem, the \textbf{Inverted Page Table} method was developed. Instead of indexing based on the virtual address space of each process, this method indexes based on the frames of the actual \textbf{physical memory}.
+	
+	\noindent \textbf{Structure and Mechanism}
+	\begin{itemize}
+		\item \textbf{Global Nature:} There is only one Global Page Table for the entire system, regardless of the number of running processes.
+		\item \textbf{Fixed Size:} The number of entries in this table corresponds exactly to the number of \textbf{Physical Frames} in RAM. For example, if RAM has 1 million frames, the table will have 1 million entries.
+		\item \textbf{Entry Structure:} The $i$-th entry in the table contains information about the virtual page stored in the $i$-th physical frame. Each entry typically consists of:
+		\begin{enumerate}
+			\item \textbf{Virtual Page Address:} To identify the logical page.
+			\item \textbf{Process ID (PID):} Information about the process that owns the page (essential because different processes may generate identical virtual addresses).
+		\end{enumerate}
+	\end{itemize}
+	
 	\noindent \textbf{Advantages}
 	\begin{itemize}
-		 \item \textbf{Suitability for Large Address Spaces:} This structure is common in address spaces larger than 32 bits.
-		 \item \textbf{Handling Sparse Memory:} It is especially useful for sparse address spaces where memory references are non-contiguous and scattered.
+		\item \textbf{Maximum Memory Efficiency:} This is the most significant advantage. The size of the page table is fixed and depends only on the size of physical RAM, making it independent of the number of processes or the size of the virtual address space.
 	\end{itemize}
 	
 	\noindent \textbf{Disadvantages}
 	\begin{itemize}
-		 \item \textbf{Collision Handling:} Multiple virtual addresses may hash to the same location, requiring a chain of elements to be searched to find a match.
-		\item \textbf{Implementation Complexity:} While efficient for size, the overhead of hashing and traversing linked lists (chains) can impact performance compared to direct indexing.
+		\item \textbf{High Lookup Latency:} Since the table is sorted by physical address (while the CPU queries based on virtual address), the system cannot use direct indexing ($O(1)$) as in traditional methods. Instead, it must perform a search operation. Although often assisted by a Hash Table, handling collisions and traversing the table is inherently slower than direct array access.
+		\item \textbf{Difficulty in Shared Memory:} This is the major drawback. In traditional paging, memory sharing is achieved by having entries in different process page tables point to the same physical frame. However, in an Inverted Page Table, each physical frame corresponds to exactly \textbf{one single entry}. Therefore, it can only store one $\langle \text{PID, VPN} \rangle$ pair, making the implementation of shared memory complex and often requiring auxiliary data structures.
 	\end{itemize}
-	
-	
-	\paragraph{c. Inverted Page Tables}
-	 Instead of one page table per process, there is one entry for each real page (frame) of physical memory.
+%	 Instead of one page table per process, there is one entry for each real page (frame) of physical memory.
 
 	
-	\noindent \textbf{Advantages}
-	\begin{itemize}
-		 \item \textbf{Memory Savings:} This approach significantly decreases the amount of memory needed to store each page table, as the table size is proportional to physical memory, not the virtual address space.
-	\end{itemize}
+%	\noindent \textbf{Advantages}
+%	\begin{itemize}
+%		 \item \textbf{Memory Savings:} This approach significantly decreases the amount of memory needed to store each page table, as the table size is proportional to physical memory, not the virtual address space.
+%	\end{itemize}
 	
-	\noindent \textbf{Disadvantages}
-	\begin{itemize}
-		 \item \textbf{Increased Lookup Time:} It increases the time needed to search the table when a page reference occurs, often requiring a hash table to limit the search.
-		 \item \textbf{Difficulty with Shared Memory:} Implementing shared memory is difficult because there is typically only one mapping of a virtual address to a shared physical address.
-	\end{itemize}
+%	\noindent \textbf{Disadvantages}
+%	\begin{itemize}
+%		 \item \textbf{Increased Lookup Time:} It increases the time needed to search the table when a page reference occurs, often requiring a hash table to limit the search.
+%		 \item \textbf{Difficulty with Shared Memory:} Implementing shared memory is difficult because there is typically only one mapping of a virtual address to a shared physical address.
+%	\end{itemize}
 	
 	
 	\paragraph{d. Reasons for Choosing Hierarchical Page Tables}
@@ -343,11 +437,11 @@ Each entry in the upper-level tables points to the base address of the next lowe
 		\item \textbf{Ease of Implementation:} \\
 		Compared to Inverted Page Tables or Hashed Page Tables, the hierarchical structure is easier to implement within a C-based simulation environment. We primarily rely on bitwise shifts and array indexing to decompose virtual addresses into their respective indices .
 	\end{itemize}
-	\begin{figure}[H]
-		\centering
-		\includegraphics[width=1\textwidth]{Hierarchical Page Tables}
-		\caption{5-Level Paging Scheme (Address Translation for 57-bit Virtual Address)}
-	\end{figure}
+%	\begin{figure}[H]
+%		\centering
+%		\includegraphics[width=1\textwidth]{Hierarchical Page Tables}
+%		\caption{5-Level Paging Scheme (Address Translation for 57-bit Virtual Address)}
+%	\end{figure}
 	
 \pagebreak
 
