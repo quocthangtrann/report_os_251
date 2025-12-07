@@ -181,33 +181,34 @@
 
 \subsection{Scheduler}
 
-The scheduler module is the core component responsible for orchestrating process execution. In this assignment, we implement a scheduler for a \textbf{Symmetric Multiprocessing (SMP)} system using a \textbf{Slot-based Multi-Level Queue (MLQ)} algorithm. This design balances the strictness of priority scheduling with fairness mechanisms required to prevent starvation, as mandated by the project specifications.
+The scheduler is the central component of the kernel responsible for deciding which process runs at any given time. Our implementation is grounded in the theoretical framework of CPU Scheduling described in Chapter 5 of \textit{Operating System Concepts}. Specifically, we construct a \textbf{Symmetric Multiprocessing (SMP)} system utilizing a \textbf{Preemptive Multilevel Queue (MLQ)} algorithm with a \textbf{Time-Slicing allocation strategy} to address starvation.
 
 \begin{enumerate}
-    \item \textbf{Multilevel Queue Scheduling (Partitioning):}
-    According to OS theory, a multilevel queue scheduling algorithm partitions the ready queue into several separate queues. In our system, processes are permanently assigned to a specific queue based on their fixed priority (\texttt{prio}). The system defines \texttt{MAX\_PRIO} levels, ranging from 0 (highest priority) to \texttt{MAX\_PRIO - 1} (lowest priority).
-
-    \item \textbf{Intra-Queue Scheduling (Round-Robin):}
-    Within a single priority queue, the assignment specifies that the CPU must run processes in a \textbf{Round-Robin (RR)} style.
+    \item \textbf{Multilevel Queue Scheduling (Theory of Partitioning):}
     \begin{itemize}
-        \item Each process is assigned a \textit{Time Slice} (defined in the system configuration).
-        \item When the time slice expires, if the process has not finished, the CPU is forced to preempt it.
-        \item The preempted process is placed back at the \textbf{tail} of its priority queue, waiting for its next turn. This necessitates a First-In-First-Out (FIFO) queue structure.
+        \item \textbf{Theoretical Basis:} According to \textit{Section 5.3.5}, processes in a system often have different response-time requirements (e.g., interactive/foreground vs. batch/background). A Multilevel Queue (MLQ) algorithm partitions the Ready Queue into several separate queues, each assigned to a different class of processes.
+        \item \textbf{System Design:} In our assignment, we define \texttt{MAX\_PRIO} distinct queues. Processes are permanently assigned to a specific queue based on their \texttt{priority} attribute. Unlike Multilevel Feedback Queues (MLFQ), which allow processes to move between queues to define their behavior dynamically, our standard MLQ implementation reduces runtime overhead ($\mathcal{O}(1)$ queue selection) by maintaining fixed process classification.
     \end{itemize}
 
-    \item \textbf{Inter-Queue Scheduling (Slot-based Allocation):}
-    A critical issue in fixed-priority scheduling is \textit{starvation}, where low-priority processes effectively never execute. To mitigate this, the textbook suggests allocating CPU time among queues:
-    \begin{equation}
-        slot[i] = MAX\_PRIO - i
-    \end{equation}
-    Each queue $i$ is given a budget of $slot[i]$ dispatches. The scheduler iterates through queues; if a high-priority queue exhausts its slots, the scheduler \textbf{must} yield to the next priority level, even if the high-priority queue is not empty. This ensures lower-priority queues eventually receive CPU cycles.
-
-    \item \textbf{Symmetric Multiprocessing (SMP) \& Load Balancing:}
-    The system simulates 2 CPUs sharing a \textbf{Common Ready Queue} (Global Queue). According to SMP theory, this architecture allows for automatic \textit{Load Balancing} and \textit{Process Migration}. 
+    \item \textbf{Intra-Queue Scheduling: Round-Robin (RR) and Preemption:}
     \begin{itemize}
-        \item Any available CPU checks the global \texttt{mlq\_ready\_queue} to pick the next process.
-        \item A process running on CPU 0 may be paused and later resumed on CPU 1.
-        \item To prevent race conditions (e.g., two CPUs picking the same process), we employ a Mutex Lock (\texttt{queue\_lock}) to protect the critical section during queue access.
+        \item \textbf{Theoretical Basis:} To support time-sharing, \textit{Section 5.3.3} introduces Round-Robin (RR) scheduling. RR is theoretically defined as FCFS scheduling with \textbf{Preemption}. A small unit of time, called a \textit{Time Quantum}, is defined. If a process's CPU burst exceeds this quantum, the system timer generates an interrupt, causing the OS to preempt the process and move it to the tail of the ready queue.
+        \item \textbf{System Design:} We implement this by assigning a \texttt{time\_slot} to the system. The \texttt{queue.c} module strictly enforces FIFO behavior (\texttt{dequeue} from head, \texttt{enqueue} to tail), which, combined with the timer interrupt in \texttt{os.c}, realizes the Round-Robin logic. This ensures \textbf{fairness} among processes of the same priority and minimizes the average response time.
+    \end{itemize}
+
+    \item \textbf{Inter-Queue Scheduling: Solving Starvation via Time-Slicing:}
+    \begin{itemize}
+        \item \textbf{The Starvation Problem:} A fundamental flaw of fixed-priority scheduling is \textbf{Indefinite Blocking} (or Starvation), where low-priority tasks may never execute if a continuous stream of high-priority tasks arrives.
+        \item \textbf{Theoretical Solution:} The textbook proposes two solutions: \textit{Aging} or \textit{Time Slicing among queues}. In the Time Slicing approach, each queue gets a certain portion of the CPU time (e.g., 80\% for foreground, 20\% for background).
+        \item \textbf{System Design (Slot Mechanism):} We implement the \textbf{Time Slicing} solution using a deterministic slot mechanism. Each queue $i$ is allocated a specific budget: $slot[i] = MAX\_PRIO - i$. 
+        The scheduler iterates through queues; if a high-priority queue consumes its allocated slots, the scheduler is theoretically forced to "yield" to lower-priority queues, even if the high-priority queue is non-empty. This converts the algorithm from "Absolute Priority" to "Proportional Share," mathematically guaranteeing that even the lowest priority queue eventually receives CPU cycles.
+    \end{itemize}
+
+    \item \textbf{Symmetric Multiprocessing (SMP) and Load Balancing:}
+    \begin{itemize}
+        \item \textbf{Theoretical Basis:} \textit{Section 5.5} distinguishes between Asymmetric and Symmetric Multiprocessing. In SMP, each processor is self-scheduling. The textbook highlights two architectural choices for the ready queue: (1) Each processor has its own private queue, or (2) All processors share a \textbf{Common Ready Queue}.
+        \item \textbf{System Design:} We adopt the \textbf{Common Ready Queue} architecture. This design inherently solves the \textit{Load Balancing} problem because no processor sits idle while there are tasks in the global queue (Work Stealing is not needed).
+        \item \textbf{Synchronization Theory:} A critical implication of a shared queue is the potential for \textbf{Race Conditions} (two CPUs picking the same process). To adhere to the mutual exclusion principles (Chapter 6), we implement a coarse-grained locking mechanism using \texttt{pthread\_mutex\_t}. Access to the scheduler (enqueue/dequeue operations) constitutes a \textbf{Critical Section} and is strictly serialized.
     \end{itemize}
 \end{enumerate}
 
@@ -273,32 +274,23 @@ Each entry in the upper-level tables points to the base address of the next lowe
 \paragraph{a. Hierarchical Paging}
 	This method divides the logical address into multiple parts to manage the page table as a tree structure (4-level or 5-level paging in modern systems).
 	
-	\begin{figure}[H] 
-		\centering
-		\includegraphics[width=1\textwidth]{Hierarchical Page Tables}
-		\caption{Hierarchical Page Tables Diagram}
-	\end{figure}
 	
 	\noindent \textbf{Advantages}
 	\begin{itemize}
 		\item \textbf{Memory Efficiency for Sparse Addresses:} The system does not need to allocate memory for the entire page table at once. It solves the problem where a single-level table would require an enormous amount of contiguous memory. It allows dividing the page table into smaller units.
-		 \item \textbf{Hardware Support:} This is the standard implementation for modern architectures, such as the Intel x86-64 (which uses a 4-level hierarchy) and ARMv8 architectures.
+		 \item \textbf{Hardware Support:} This is the standard implementation for modern architectures, such as the Intel x86-64 and ARMv8 architectures.
 	\end{itemize}
 	
 	\noindent \textbf{Disadvantages}
 	\begin{itemize}
-		 \item \textbf{Memory Access Latency:} As the address space expands (e.g., to 64-bit), the number of levels in the hierarchy increases. Without a TLB, a single memory reference might require multiple memory accesses (e.g., 4 accesses) to traverse the page table before accessing the actual data.
+		 \item \textbf{Memory Access Latency:} As the address space expands (e.g., to 64-bit), the number of levels in the hierarchy increases. Without a TLB, a single memory reference might require multiple memory accesses (e.g., 5 accesses) to traverse the page table before accessing the actual data.
 		\item \textbf{Complexity:} Managing a multi-level tree (5 levels) is more complex than a simple flat table.
 	\end{itemize}
 	
 	
 	\paragraph{b. Hashed Page Tables}
 	This method uses a hash function on the virtual page number to locate the physical frame.
-	\begin{figure}[H]
-		\centering
-		\includegraphics[width=1\textwidth]{Hashed Page Tables}
-		\caption{Hashed Page Table Diagram}
-	\end{figure}
+
 	
 	\noindent \textbf{Advantages}
 	\begin{itemize}
@@ -315,11 +307,7 @@ Each entry in the upper-level tables points to the base address of the next lowe
 	
 	\paragraph{c. Inverted Page Tables}
 	 Instead of one page table per process, there is one entry for each real page (frame) of physical memory.
-	 \begin{figure}[H]
-	 	\centering
-	 	\includegraphics[width=1\textwidth]{Inverted Page Tables}
-	 	\caption{Inverted Page Table Diagram}
-	 \end{figure}
+
 	
 	\noindent \textbf{Advantages}
 	\begin{itemize}
@@ -335,7 +323,7 @@ Each entry in the upper-level tables points to the base address of the next lowe
 	
 	\paragraph{d. Reasons for Choosing Hierarchical Page Tables}
 	
-	In this simple operating system simulation project, we selected Hierarchical Page Tables for the following three reasons:
+	In this simple operating system simulation project, we selected Hierarchical Page Tables (5-level Paging Scheme) for the following three reasons:
 	
 	\begin{itemize}
 		\item \textbf{Dynamic Allocation:} \\
@@ -345,9 +333,14 @@ Each entry in the upper-level tables points to the base address of the next lowe
 		The Address-Translation model allows for the assignment of access permissions (Read/Write/Execute) at each level of the tree (from top-level directories down to individual pages). This facilitates the implementation of Memory Protection, allowing for easy setup and granular control over specific memory regions.
 		
 		\item \textbf{Ease of Implementation:} \\
-		Compared to Inverted Page Tables or Hashed Page Tables, the hierarchical structure is easier to implement within a C-based simulation environment. We primarily rely on bitwise shifts and array indexing to decompose virtual addresses into their respective indices (e.g., \texttt{pgd\_idx}, \texttt{p4d\_idx}, etc.).
+		Compared to Inverted Page Tables or Hashed Page Tables, the hierarchical structure is easier to implement within a C-based simulation environment. We primarily rely on bitwise shifts and array indexing to decompose virtual addresses into their respective indices .
 	\end{itemize}
-
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=1\textwidth]{Hierarchical Page Tables}
+		\caption{5-Level Paging Scheme (Address Translation for 57-bit Virtual Address)}
+	\end{figure}
+	
 \pagebreak
 
 \section{Implementation}
@@ -559,7 +552,7 @@ The core design principles enforced in this implementation are:
 \paragraph{b. Implementation Details}
 The following code snippets illustrate the core logic handling VMA organization and the secure User-Kernel interface.
 
-\textbf{1. VMA Data Structure (\texttt{mm.h})} \\
+\textbf{1. VMA Data Structure (\texttt{os\_mm.h})} \\
 The \texttt{vm\_area\_struct} represents a contiguous range of logical addresses $[vm\_start, vm\_end]$.
 \begin{lstlisting}[language=C, caption={Virtual Memory Area Structure}]
 struct vm_area_struct {
@@ -764,7 +757,7 @@ int init_pte(addr_t *pte, int pre, addr_t fpn, int drt, int swp, int swptyp, add
 \end{lstlisting}
 
 \textbf{3. Page Walk Mechanism (\texttt{mm64.c})}
-The \texttt{pg\_getpage} function is the core of translation, traversing 5 table levels.
+The \texttt{ get\_page\_table\_entry} function is the core of translation, traversing 5 table levels.
 \begin{lstlisting}[language=C, caption={Page Walk Logic (Simplified)}]
 uint64_t *get_page_table_entry(struct mm_struct *mm, addr_t addr, int alloc)
 {
