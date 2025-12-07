@@ -764,7 +764,7 @@ int init_pte(addr_t *pte, int pre, addr_t fpn, int drt, int swp, int swptyp, add
 \end{lstlisting}
 
 \textbf{3. Page Walk Mechanism (\texttt{mm64.c})}
-The \texttt{pg\_getpage} function is the core of translation, traversing 5 table levels.
+The \texttt{get\_page\_table\_entry()} function is the core of translation, traversing 5 table levels.
 \begin{lstlisting}[language=C, caption={Page Walk Logic (Simplified)}]
 uint64_t *get_page_table_entry(struct mm_struct *mm, addr_t addr, int alloc)
 {
