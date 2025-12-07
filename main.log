@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2025.12.3)  7 DEC 2025 12:38
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (TeX Live 2025) (preloaded format=pdflatex 2025.12.3)  7 DEC 2025 15:50
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1895,7 +1895,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 [36]
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 1649.
+Package pdftex.def Info: logobk.png  used on input line 1651.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 
@@ -1908,7 +1908,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 [37]
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 1688.
+Package pdftex.def Info: logobk.png  used on input line 1692.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 
@@ -1921,7 +1921,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 [38]
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 1732.
+Package pdftex.def Info: logobk.png  used on input line 1736.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 
@@ -1934,7 +1934,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 [39]
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 1773.
+Package pdftex.def Info: logobk.png  used on input line 1777.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 
@@ -1947,7 +1947,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 [40]
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 1814.
+Package pdftex.def Info: logobk.png  used on input line 1819.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 
@@ -1960,7 +1960,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 [41]
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 1855.
+Package pdftex.def Info: logobk.png  used on input line 1859.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 
@@ -1973,7 +1973,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 [42]
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 1897.
+Package pdftex.def Info: logobk.png  used on input line 1906.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 
@@ -1986,7 +1986,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 [43]
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 1942.
+Package pdftex.def Info: logobk.png  used on input line 1955.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 
@@ -1997,11 +1997,16 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-18.27916pt}.
 
 [44]
+Overfull \hbox (38.81343pt too wide) in paragraph at lines 1993--1995
+[]\T1/cmr/bx/n/10 Eliminates Ex-ter-nal Frag-men-ta-tion: \T1/cmr/m/n/10 In \T1
+/cmtt/m/n/10 vm_map_ram() \T1/cmr/m/n/10 (lines 322-337 of \T1/cmtt/m/n/10 mm64
+.c\T1/cmr/m/n/10 ) and \T1/cmtt/m/n/10 vmap_page_range()
+ []
+
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 1986.
+Package pdftex.def Info: logobk.png  used on input line 1997.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
-
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
 (fancyhdr)                Make it at least 46.27916pt, for example:
@@ -2012,7 +2017,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 [45]
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 2034.
+Package pdftex.def Info: logobk.png  used on input line 2038.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 
@@ -2023,36 +2028,11 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-18.27916pt}.
 
 [46]
-Overfull \hbox (38.81343pt too wide) in paragraph at lines 2045--2047
-[]\T1/cmr/bx/n/10 Eliminates Ex-ter-nal Frag-men-ta-tion: \T1/cmr/m/n/10 In \T1
-/cmtt/m/n/10 vm_map_ram() \T1/cmr/m/n/10 (lines 322-337 of \T1/cmtt/m/n/10 mm64
-.c\T1/cmr/m/n/10 ) and \T1/cmtt/m/n/10 vmap_page_range()
- []
-
-
-Overfull \hbox (3.85669pt too wide) in paragraph at lines 2051--2054
-[]\T1/cmr/bx/n/10 Efficient Han-dling of Large Seg-ments: \T1/cmr/m/n/10 The \T
-1/cmtt/m/n/10 inc_vma_limit() \T1/cmr/m/n/10 func-tion (lines 110-168 of \T1/cm
-tt/m/n/10 mm-vm.c\T1/cmr/m/n/10 )
- []
-
-
-Overfull \hbox (58.8589pt too wide) in paragraph at lines 2055--2056
-[]\T1/cmr/m/n/10 Calls \T1/cmtt/m/n/10 vm_map_ram() \T1/cmr/m/n/10 which al-lo-
-cates frames via \T1/cmtt/m/n/10 alloc_pages_range() \T1/cmr/m/n/10 and maps th
-em via \T1/cmtt/m/n/10 vmap_page_range() 
- []
-
-
-Overfull \hbox (45.42618pt too wide) in paragraph at lines 2071--2073
-\T1/cmr/m/n/10 page ta-ble hi-er-ar-chy. In prac-tice, the im-ple-men-ta-tion u
-ses the page ta-ble di-rectly (via \T1/cmtt/m/n/10 get_page_table_entry()
- []
-
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 2073.
+Package pdftex.def Info: logobk.png  used on input line 2080.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
+
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
 (fancyhdr)                Make it at least 46.27916pt, for example:
@@ -2061,30 +2041,11 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-18.27916pt}.
 
 [47]
-Overfull \hbox (40.8984pt too wide) in paragraph at lines 2074--2076
-\T1/cmr/m/n/10 tained, with each di-rec-tory level con-sum-ing 4KB when al-lo-c
-ated. The \T1/cmtt/m/n/10 symrgtbl \T1/cmr/m/n/10 ar-ray (\T1/cmtt/m/n/10 PAGIN
-G_MAX_SYMTBL_SZ
- []
-
-
-Overfull \hbox (15.10255pt too wide) in paragraph at lines 2077--2079
-[]\T1/cmr/bx/n/10 Complex Over-lap Val-i-da-tion: \T1/cmr/m/n/10 The \T1/cmtt/m
-/n/10 validate_overlap_vm_area() \T1/cmr/m/n/10 func-tion (lines 76-102 of \T1/
-cmtt/m/n/10 mm-vm.c\T1/cmr/m/n/10 )
- []
-
-
-Overfull \hbox (2.41815pt too wide) in paragraph at lines 2092--2094
-[]\T1/cmr/bx/n/10 Synchronization Over-head: \T1/cmr/m/n/10 The \T1/cmtt/m/n/10
- __alloc() \T1/cmr/m/n/10 func-tion uses [][]\T1/cmtt/m/n/10 pthread_mutex_lock
-(&mmvm_lock)  []\T1/cmr/m/n/10 to
- []
-
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 2094.
+Package pdftex.def Info: logobk.png  used on input line 2123.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
+
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
 (fancyhdr)                Make it at least 46.27916pt, for example:
@@ -2093,15 +2054,22 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-18.27916pt}.
 
 [48]
-Overfull \hbox (6.99112pt too wide) in paragraph at lines 2123--2124
-\T1/cmr/m/n/10 in-clud-ing \T1/cmtt/m/n/10 mlq_ready_queue[]\T1/cmr/m/n/10 , \T
-1/cmtt/m/n/10 slot_remaining[]\T1/cmr/m/n/10 , \T1/cmtt/m/n/10 current_queue_in
-dex\T1/cmr/m/n/10 , and \T1/cmtt/m/n/10 running_list\T1/cmr/m/n/10 . Func-
+Overfull \hbox (3.85669pt too wide) in paragraph at lines 2131--2134
+[]\T1/cmr/bx/n/10 Efficient Han-dling of Large Seg-ments: \T1/cmr/m/n/10 The \T
+1/cmtt/m/n/10 inc_vma_limit() \T1/cmr/m/n/10 func-tion (lines 110-168 of \T1/cm
+tt/m/n/10 mm-vm.c\T1/cmr/m/n/10 )
+ []
+
+
+Overfull \hbox (58.8589pt too wide) in paragraph at lines 2135--2136
+[]\T1/cmr/m/n/10 Calls \T1/cmtt/m/n/10 vm_map_ram() \T1/cmr/m/n/10 which al-lo-
+cates frames via \T1/cmtt/m/n/10 alloc_pages_range() \T1/cmr/m/n/10 and maps th
+em via \T1/cmtt/m/n/10 vmap_page_range() 
  []
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 2126.
+Package pdftex.def Info: logobk.png  used on input line 2166.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -2111,23 +2079,11 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-18.27916pt}.
 
 [49]
-Overfull \hbox (3.97333pt too wide) in paragraph at lines 2132--2135
-\T1/cmr/m/n/10 ne-ously call \T1/cmtt/m/n/10 get_mlq_proc() \T1/cmr/m/n/10 and 
-\T1/cmtt/m/n/10 put_mlq_proc()\T1/cmr/m/n/10 , lead-ing to race con-di-tions on
- \T1/cmtt/m/n/10 mlq_ready_queue[]\T1/cmr/m/n/10 .
- []
-
-
-Overfull \hbox (19.34041pt too wide) in paragraph at lines 2140--2143
-[]\T1/cmr/bx/n/10 Scheduler State In-con-sis-tency: \T1/cmr/m/n/10 The sched-ul
-er main-tains state vari-ables \T1/cmtt/m/n/10 slot[] \T1/cmr/m/n/10 and \T1/cm
-tt/m/n/10 mlq_ready_queue
- []
-
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 2160.
+Package pdftex.def Info: logobk.png  used on input line 2211.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
+
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
 (fancyhdr)                Make it at least 46.27916pt, for example:
@@ -2136,16 +2092,11 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-18.27916pt}.
 
 [50]
-Overfull \hbox (15.8525pt too wide) in paragraph at lines 2170--2173
-[]\T1/cmr/bx/n/10 Loader-CPU Race Con-di-tions: \T1/cmr/m/n/10 The \T1/cmtt/m/n
-/10 ld_routine() \T1/cmr/m/n/10 adds pro-cesses to the ready queue via \T1/cmtt
-/m/n/10 add_proc()
- []
-
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 2199.
+Package pdftex.def Info: logobk.png  used on input line 2250.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
+
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
 (fancyhdr)                Make it at least 46.27916pt, for example:
@@ -2156,7 +2107,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 [51]
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 2237.
+Package pdftex.def Info: logobk.png  used on input line 2288.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 
@@ -2169,7 +2120,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 [52]
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 2276.
+Package pdftex.def Info: logobk.png  used on input line 2329.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 
@@ -2180,11 +2131,15 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-18.27916pt}.
 
 [53]
+Overfull \hbox (45.42618pt too wide) in paragraph at lines 2371--2373
+\T1/cmr/m/n/10 page ta-ble hi-er-ar-chy. In prac-tice, the im-ple-men-ta-tion u
+ses the page ta-ble di-rectly (via \T1/cmtt/m/n/10 get_page_table_entry()
+ []
+
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 2318.
+Package pdftex.def Info: logobk.png  used on input line 2373.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
-
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
 (fancyhdr)                Make it at least 46.27916pt, for example:
@@ -2195,7 +2150,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 [54]
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 2357.
+Package pdftex.def Info: logobk.png  used on input line 2403.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 
@@ -2208,7 +2163,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 [55]
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 2375.
+Package pdftex.def Info: logobk.png  used on input line 2438.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 
@@ -2219,11 +2174,16 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-18.27916pt}.
 
 [56]
+Overfull \hbox (2.41815pt too wide) in paragraph at lines 2467--2469
+[]\T1/cmr/bx/n/10 Synchronization Over-head: \T1/cmr/m/n/10 The \T1/cmtt/m/n/10
+ __alloc() \T1/cmr/m/n/10 func-tion uses [][]\T1/cmtt/m/n/10 pthread_mutex_lock
+(&mmvm_lock)  []\T1/cmr/m/n/10 to
+ []
+
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 2411.
+Package pdftex.def Info: logobk.png  used on input line 2472.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
-
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
 (fancyhdr)                Make it at least 46.27916pt, for example:
@@ -2232,9 +2192,52 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-18.27916pt}.
 
 [57]
+Overfull \hbox (6.99112pt too wide) in paragraph at lines 2498--2499
+\T1/cmr/m/n/10 in-clud-ing \T1/cmtt/m/n/10 mlq_ready_queue[]\T1/cmr/m/n/10 , \T
+1/cmtt/m/n/10 slot_remaining[]\T1/cmr/m/n/10 , \T1/cmtt/m/n/10 current_queue_in
+dex\T1/cmr/m/n/10 , and \T1/cmtt/m/n/10 running_list\T1/cmr/m/n/10 . Func-
+ []
+
+
+Overfull \hbox (3.97333pt too wide) in paragraph at lines 2507--2510
+\T1/cmr/m/n/10 ne-ously call \T1/cmtt/m/n/10 get_mlq_proc() \T1/cmr/m/n/10 and 
+\T1/cmtt/m/n/10 put_mlq_proc()\T1/cmr/m/n/10 , lead-ing to race con-di-tions on
+ \T1/cmtt/m/n/10 mlq_ready_queue[]\T1/cmr/m/n/10 .
+ []
+
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 2431.
+Package pdftex.def Info: logobk.png  used on input line 2513.
+(pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
+
+Package fancyhdr Warning: \headheight is too small (28.0pt): 
+(fancyhdr)                Make it at least 46.27916pt, for example:
+(fancyhdr)                \setlength{\headheight}{46.27916pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-18.27916pt}.
+
+[58]
+Overfull \hbox (19.34041pt too wide) in paragraph at lines 2515--2518
+[]\T1/cmr/bx/n/10 Scheduler State In-con-sis-tency: \T1/cmr/m/n/10 The sched-ul
+er main-tains state vari-ables \T1/cmtt/m/n/10 slot[] \T1/cmr/m/n/10 and \T1/cm
+tt/m/n/10 mlq_ready_queue
+ []
+
+File: logobk.png Graphic file (type png)
+<use logobk.png>
+Package pdftex.def Info: logobk.png  used on input line 2551.
+(pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
+
+Package fancyhdr Warning: \headheight is too small (28.0pt): 
+(fancyhdr)                Make it at least 46.27916pt, for example:
+(fancyhdr)                \setlength{\headheight}{46.27916pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-18.27916pt}.
+
+[59]
+File: logobk.png Graphic file (type png)
+<use logobk.png>
+Package pdftex.def Info: logobk.png  used on input line 2594.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 
@@ -2244,7 +2247,142 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-18.27916pt}.
 
-[58] 
+[60]
+Overfull \hbox (15.8525pt too wide) in paragraph at lines 2612--2615
+[]\T1/cmr/bx/n/10 Loader-CPU Race Con-di-tions: \T1/cmr/m/n/10 The \T1/cmtt/m/n
+/10 ld_routine() \T1/cmr/m/n/10 adds pro-cesses to the ready queue via \T1/cmtt
+/m/n/10 add_proc()
+ []
+
+File: logobk.png Graphic file (type png)
+<use logobk.png>
+Package pdftex.def Info: logobk.png  used on input line 2634.
+(pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
+
+Package fancyhdr Warning: \headheight is too small (28.0pt): 
+(fancyhdr)                Make it at least 46.27916pt, for example:
+(fancyhdr)                \setlength{\headheight}{46.27916pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-18.27916pt}.
+
+[61]
+File: logobk.png Graphic file (type png)
+<use logobk.png>
+Package pdftex.def Info: logobk.png  used on input line 2673.
+(pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
+
+
+Package fancyhdr Warning: \headheight is too small (28.0pt): 
+(fancyhdr)                Make it at least 46.27916pt, for example:
+(fancyhdr)                \setlength{\headheight}{46.27916pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-18.27916pt}.
+
+[62]
+File: logobk.png Graphic file (type png)
+<use logobk.png>
+Package pdftex.def Info: logobk.png  used on input line 2717.
+(pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
+
+
+Package fancyhdr Warning: \headheight is too small (28.0pt): 
+(fancyhdr)                Make it at least 46.27916pt, for example:
+(fancyhdr)                \setlength{\headheight}{46.27916pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-18.27916pt}.
+
+[63]
+File: logobk.png Graphic file (type png)
+<use logobk.png>
+Package pdftex.def Info: logobk.png  used on input line 2756.
+(pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
+
+
+Package fancyhdr Warning: \headheight is too small (28.0pt): 
+(fancyhdr)                Make it at least 46.27916pt, for example:
+(fancyhdr)                \setlength{\headheight}{46.27916pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-18.27916pt}.
+
+[64]
+File: logobk.png Graphic file (type png)
+<use logobk.png>
+Package pdftex.def Info: logobk.png  used on input line 2796.
+(pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
+
+
+Package fancyhdr Warning: \headheight is too small (28.0pt): 
+(fancyhdr)                Make it at least 46.27916pt, for example:
+(fancyhdr)                \setlength{\headheight}{46.27916pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-18.27916pt}.
+
+[65]
+File: logobk.png Graphic file (type png)
+<use logobk.png>
+Package pdftex.def Info: logobk.png  used on input line 2839.
+(pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
+
+
+Package fancyhdr Warning: \headheight is too small (28.0pt): 
+(fancyhdr)                Make it at least 46.27916pt, for example:
+(fancyhdr)                \setlength{\headheight}{46.27916pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-18.27916pt}.
+
+[66]
+File: logobk.png Graphic file (type png)
+<use logobk.png>
+Package pdftex.def Info: logobk.png  used on input line 2861.
+(pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
+
+
+Package fancyhdr Warning: \headheight is too small (28.0pt): 
+(fancyhdr)                Make it at least 46.27916pt, for example:
+(fancyhdr)                \setlength{\headheight}{46.27916pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-18.27916pt}.
+
+[67]
+File: logobk.png Graphic file (type png)
+<use logobk.png>
+Package pdftex.def Info: logobk.png  used on input line 2904.
+(pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
+
+
+Package fancyhdr Warning: \headheight is too small (28.0pt): 
+(fancyhdr)                Make it at least 46.27916pt, for example:
+(fancyhdr)                \setlength{\headheight}{46.27916pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-18.27916pt}.
+
+[68]
+File: logobk.png Graphic file (type png)
+<use logobk.png>
+Package pdftex.def Info: logobk.png  used on input line 2906.
+(pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
+
+
+Package fancyhdr Warning: \headheight is too small (28.0pt): 
+(fancyhdr)                Make it at least 46.27916pt, for example:
+(fancyhdr)                \setlength{\headheight}{46.27916pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-18.27916pt}.
+
+[69]
+File: logobk.png Graphic file (type png)
+<use logobk.png>
+Package pdftex.def Info: logobk.png  used on input line 2926.
+(pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
+
+
+Package fancyhdr Warning: \headheight is too small (28.0pt): 
+(fancyhdr)                Make it at least 46.27916pt, for example:
+(fancyhdr)                \setlength{\headheight}{46.27916pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-18.27916pt}.
+
+[70] 
 enddocument/afterlastpage (AED): lastpage setting LastPage.
 (./main.aux)
  ***********
@@ -2258,13 +2396,13 @@ Package logreq Info: Writing requests to 'main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 47241 strings out of 468958
- 1048567 string characters out of 5458609
+ 47838 strings out of 468958
+ 1057098 string characters out of 5458609
  2267393 words of memory out of 5000000
- 74236 multiletter control sequences out of 15000+600000
+ 74346 multiletter control sequences out of 15000+600000
  644036 words of font info for 82 fonts, out of 8000000 for 9000
  286 hyphenation exceptions out of 8191
- 84i,16n,104p,903b,2452s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 84i,16n,104p,903b,2451s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/tex
 live/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb><c:/texlive/2025/
 texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><c:/texlive/2025/texmf-dist
@@ -2280,10 +2418,10 @@ fonts/type1/public/cm-super/sfrm1000.pfb><c:/texlive/2025/texmf-dist/fonts/type
 m-super/sfti1000.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sf
 tt0800.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sftt0900.pfb
 ><c:/texlive/2025/texmf-dist/fonts/type1/public/cm-super/sftt1000.pfb>
-Output written on main.pdf (59 pages, 825679 bytes).
+Output written on main.pdf (71 pages, 888284 bytes).
 PDF statistics:
- 1882 PDF objects out of 2073 (max. 8388607)
- 1763 compressed objects within 18 object streams
- 1147 named destinations out of 1200 (max. 500000)
+ 2524 PDF objects out of 2984 (max. 8388607)
+ 2387 compressed objects within 24 object streams
+ 1634 named destinations out of 1728 (max. 500000)
  297 words of extra memory for PDF output out of 10000 (max. 10000000)
 
