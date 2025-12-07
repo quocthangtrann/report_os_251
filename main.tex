@@ -181,33 +181,34 @@
 
 \subsection{Scheduler}
 
-The scheduler module is the core component responsible for orchestrating process execution. In this assignment, we implement a scheduler for a \textbf{Symmetric Multiprocessing (SMP)} system using a \textbf{Slot-based Multi-Level Queue (MLQ)} algorithm. This design balances the strictness of priority scheduling with fairness mechanisms required to prevent starvation, as mandated by the project specifications.
+The scheduler is the central component of the kernel responsible for deciding which process runs at any given time. Our implementation is grounded in the theoretical framework of CPU Scheduling described in Chapter 5 of \textit{Operating System Concepts}. Specifically, we construct a \textbf{Symmetric Multiprocessing (SMP)} system utilizing a \textbf{Preemptive Multilevel Queue (MLQ)} algorithm with a \textbf{Time-Slicing allocation strategy} to address starvation.
 
 \begin{enumerate}
-    \item \textbf{Multilevel Queue Scheduling (Partitioning):}
-    According to OS theory, a multilevel queue scheduling algorithm partitions the ready queue into several separate queues. In our system, processes are permanently assigned to a specific queue based on their fixed priority (\texttt{prio}). The system defines \texttt{MAX\_PRIO} levels, ranging from 0 (highest priority) to \texttt{MAX\_PRIO - 1} (lowest priority).
-
-    \item \textbf{Intra-Queue Scheduling (Round-Robin):}
-    Within a single priority queue, the assignment specifies that the CPU must run processes in a \textbf{Round-Robin (RR)} style.
+    \item \textbf{Multilevel Queue Scheduling (Theory of Partitioning):}
     \begin{itemize}
-        \item Each process is assigned a \textit{Time Slice} (defined in the system configuration).
-        \item When the time slice expires, if the process has not finished, the CPU is forced to preempt it.
-        \item The preempted process is placed back at the \textbf{tail} of its priority queue, waiting for its next turn. This necessitates a First-In-First-Out (FIFO) queue structure.
+        \item \textbf{Theoretical Basis:} According to \textit{Section 5.3.5}, processes in a system often have different response-time requirements (e.g., interactive/foreground vs. batch/background). A Multilevel Queue (MLQ) algorithm partitions the Ready Queue into several separate queues, each assigned to a different class of processes.
+        \item \textbf{System Design:} In our assignment, we define \texttt{MAX\_PRIO} distinct queues. Processes are permanently assigned to a specific queue based on their \texttt{priority} attribute. Unlike Multilevel Feedback Queues (MLFQ), which allow processes to move between queues to define their behavior dynamically, our standard MLQ implementation reduces runtime overhead ($\mathcal{O}(1)$ queue selection) by maintaining fixed process classification.
     \end{itemize}
 
-    \item \textbf{Inter-Queue Scheduling (Slot-based Allocation):}
-    A critical issue in fixed-priority scheduling is \textit{starvation}, where low-priority processes effectively never execute. To mitigate this, the textbook suggests allocating CPU time among queues:
-    \begin{equation}
-        slot[i] = MAX\_PRIO - i
-    \end{equation}
-    Each queue $i$ is given a budget of $slot[i]$ dispatches. The scheduler iterates through queues; if a high-priority queue exhausts its slots, the scheduler \textbf{must} yield to the next priority level, even if the high-priority queue is not empty. This ensures lower-priority queues eventually receive CPU cycles.
-
-    \item \textbf{Symmetric Multiprocessing (SMP) \& Load Balancing:}
-    The system simulates 2 CPUs sharing a \textbf{Common Ready Queue} (Global Queue). According to SMP theory, this architecture allows for automatic \textit{Load Balancing} and \textit{Process Migration}. 
+    \item \textbf{Intra-Queue Scheduling: Round-Robin (RR) and Preemption:}
     \begin{itemize}
-        \item Any available CPU checks the global \texttt{mlq\_ready\_queue} to pick the next process.
-        \item A process running on CPU 0 may be paused and later resumed on CPU 1.
-        \item To prevent race conditions (e.g., two CPUs picking the same process), we employ a Mutex Lock (\texttt{queue\_lock}) to protect the critical section during queue access.
+        \item \textbf{Theoretical Basis:} To support time-sharing, \textit{Section 5.3.3} introduces Round-Robin (RR) scheduling. RR is theoretically defined as FCFS scheduling with \textbf{Preemption}. A small unit of time, called a \textit{Time Quantum}, is defined. If a process's CPU burst exceeds this quantum, the system timer generates an interrupt, causing the OS to preempt the process and move it to the tail of the ready queue.
+        \item \textbf{System Design:} We implement this by assigning a \texttt{time\_slot} to the system. The \texttt{queue.c} module strictly enforces FIFO behavior (\texttt{dequeue} from head, \texttt{enqueue} to tail), which, combined with the timer interrupt in \texttt{os.c}, realizes the Round-Robin logic. This ensures \textbf{fairness} among processes of the same priority and minimizes the average response time.
+    \end{itemize}
+
+    \item \textbf{Inter-Queue Scheduling: Solving Starvation via Time-Slicing:}
+    \begin{itemize}
+        \item \textbf{The Starvation Problem:} A fundamental flaw of fixed-priority scheduling is \textbf{Indefinite Blocking} (or Starvation), where low-priority tasks may never execute if a continuous stream of high-priority tasks arrives.
+        \item \textbf{Theoretical Solution:} The textbook proposes two solutions: \textit{Aging} or \textit{Time Slicing among queues}. In the Time Slicing approach, each queue gets a certain portion of the CPU time (e.g., 80\% for foreground, 20\% for background).
+        \item \textbf{System Design (Slot Mechanism):} We implement the \textbf{Time Slicing} solution using a deterministic slot mechanism. Each queue $i$ is allocated a specific budget: $slot[i] = MAX\_PRIO - i$. 
+        The scheduler iterates through queues; if a high-priority queue consumes its allocated slots, the scheduler is theoretically forced to "yield" to lower-priority queues, even if the high-priority queue is non-empty. This converts the algorithm from "Absolute Priority" to "Proportional Share," mathematically guaranteeing that even the lowest priority queue eventually receives CPU cycles.
+    \end{itemize}
+
+    \item \textbf{Symmetric Multiprocessing (SMP) and Load Balancing:}
+    \begin{itemize}
+        \item \textbf{Theoretical Basis:} \textit{Section 5.5} distinguishes between Asymmetric and Symmetric Multiprocessing. In SMP, each processor is self-scheduling. The textbook highlights two architectural choices for the ready queue: (1) Each processor has its own private queue, or (2) All processors share a \textbf{Common Ready Queue}.
+        \item \textbf{System Design:} We adopt the \textbf{Common Ready Queue} architecture. This design inherently solves the \textit{Load Balancing} problem because no processor sits idle while there are tasks in the global queue (Work Stealing is not needed).
+        \item \textbf{Synchronization Theory:} A critical implication of a shared queue is the potential for \textbf{Race Conditions} (two CPUs picking the same process). To adhere to the mutual exclusion principles (Chapter 6), we implement a coarse-grained locking mechanism using \texttt{pthread\_mutex\_t}. Access to the scheduler (enqueue/dequeue operations) constitutes a \textbf{Critical Section} and is strictly serialized.
     \end{itemize}
 \end{enumerate}
 
@@ -227,16 +228,24 @@ According to \textbf{Chapter 9.1.3}, the central concept of memory management is
 
 
 \paragraph{b. Process Memory Layout}
-Although the virtual address space is linear, logically, a process is typically organized into distinct sections to manage access rights and usage purposes (referencing \textbf{Chapter 9.3}):
+Although the virtual address space is linear, logically a process is typically organized into distinct sections to separate access rights and usage purposes (Chapter 9.3):
 
 \begin{itemize}
-    \item \textbf{Text Section:} Contains the executable code of the program (typically Read-Only).
-    \item \textbf{Data Section:} Contains global and static variables.
-    \item \textbf{Heap:} The memory region for dynamic allocation, which grows upward in the address space.
-    \item \textbf{Stack:} Contains stack frames for function calls and local variables, which grows downward.
+    \item \textbf{Text section:} contains the executable code of the program (usually read-only).
+    \item \textbf{Data section:} stores global and static variables.
+    \item \textbf{Heap:} region for dynamic allocations that conceptually grows upward.
+    \item \textbf{Stack:} holds stack frames and local variables, growing downward.
 \end{itemize}
 
-The operating system manages these segments as \textbf{Virtual Memory Areas (VMAs)}. Each VMA is characterized by a start address, an end address, and permission flags (read/write/execute).
+In full-featured UNIX-like systems, each of the above logical sections is usually represented by one or more Virtual Memory Areas (VMAs) maintained in a linked list inside the process's \texttt{mm\_struct}.
+
+In our simple OS implementation, we adopt a slightly different but simpler model. Each process owns a single user \texttt{vm\_area\_struct} that covers its whole logical user space (\texttt{vmaid = 0}). Inside this VMA, we represent individual logical ``segments'' by region descriptors \texttt{vm\_rg\_struct}, whose start and end addresses (\texttt{rg\_start}, \texttt{rg\_end}) are recorded in the symbol region table \texttt{symrgtbl[]}. Free holes between regions are maintained in the VMA's \texttt{vm\_freerg\_list}.
+
+Therefore, in this project:
+\begin{itemize}
+    \item segment $\approx$ \texttt{vm\_rg\_struct} region inside one VMA,
+    \item while the VMA itself simply defines the outer bounds of the user address space for the process.
+\end{itemize}
 
 
 \subsubsection{Multi-level paging}
@@ -273,32 +282,23 @@ Each entry in the upper-level tables points to the base address of the next lowe
 \paragraph{a. Hierarchical Paging}
 	This method divides the logical address into multiple parts to manage the page table as a tree structure (4-level or 5-level paging in modern systems).
 	
-	\begin{figure}[H] 
-		\centering
-		\includegraphics[width=1\textwidth]{Hierarchical Page Tables}
-		\caption{Hierarchical Page Tables Diagram}
-	\end{figure}
 	
 	\noindent \textbf{Advantages}
 	\begin{itemize}
 		\item \textbf{Memory Efficiency for Sparse Addresses:} The system does not need to allocate memory for the entire page table at once. It solves the problem where a single-level table would require an enormous amount of contiguous memory. It allows dividing the page table into smaller units.
-		 \item \textbf{Hardware Support:} This is the standard implementation for modern architectures, such as the Intel x86-64 (which uses a 4-level hierarchy) and ARMv8 architectures.
+		 \item \textbf{Hardware Support:} This is the standard implementation for modern architectures, such as the Intel x86-64 and ARMv8 architectures.
 	\end{itemize}
 	
 	\noindent \textbf{Disadvantages}
 	\begin{itemize}
-		 \item \textbf{Memory Access Latency:} As the address space expands (e.g., to 64-bit), the number of levels in the hierarchy increases. Without a TLB, a single memory reference might require multiple memory accesses (e.g., 4 accesses) to traverse the page table before accessing the actual data.
+		 \item \textbf{Memory Access Latency:} As the address space expands (e.g., to 64-bit), the number of levels in the hierarchy increases. Without a TLB, a single memory reference might require multiple memory accesses (e.g., 5 accesses) to traverse the page table before accessing the actual data.
 		\item \textbf{Complexity:} Managing a multi-level tree (5 levels) is more complex than a simple flat table.
 	\end{itemize}
 	
 	
 	\paragraph{b. Hashed Page Tables}
 	This method uses a hash function on the virtual page number to locate the physical frame.
-	\begin{figure}[H]
-		\centering
-		\includegraphics[width=1\textwidth]{Hashed Page Tables}
-		\caption{Hashed Page Table Diagram}
-	\end{figure}
+
 	
 	\noindent \textbf{Advantages}
 	\begin{itemize}
@@ -315,11 +315,7 @@ Each entry in the upper-level tables points to the base address of the next lowe
 	
 	\paragraph{c. Inverted Page Tables}
 	 Instead of one page table per process, there is one entry for each real page (frame) of physical memory.
-	 \begin{figure}[H]
-	 	\centering
-	 	\includegraphics[width=1\textwidth]{Inverted Page Tables}
-	 	\caption{Inverted Page Table Diagram}
-	 \end{figure}
+
 	
 	\noindent \textbf{Advantages}
 	\begin{itemize}
@@ -335,7 +331,7 @@ Each entry in the upper-level tables points to the base address of the next lowe
 	
 	\paragraph{d. Reasons for Choosing Hierarchical Page Tables}
 	
-	In this simple operating system simulation project, we selected Hierarchical Page Tables for the following three reasons:
+	In this simple operating system simulation project, we selected Hierarchical Page Tables (5-level Paging Scheme) for the following three reasons:
 	
 	\begin{itemize}
 		\item \textbf{Dynamic Allocation:} \\
@@ -345,9 +341,14 @@ Each entry in the upper-level tables points to the base address of the next lowe
 		The Address-Translation model allows for the assignment of access permissions (Read/Write/Execute) at each level of the tree (from top-level directories down to individual pages). This facilitates the implementation of Memory Protection, allowing for easy setup and granular control over specific memory regions.
 		
 		\item \textbf{Ease of Implementation:} \\
-		Compared to Inverted Page Tables or Hashed Page Tables, the hierarchical structure is easier to implement within a C-based simulation environment. We primarily rely on bitwise shifts and array indexing to decompose virtual addresses into their respective indices (e.g., \texttt{pgd\_idx}, \texttt{p4d\_idx}, etc.).
+		Compared to Inverted Page Tables or Hashed Page Tables, the hierarchical structure is easier to implement within a C-based simulation environment. We primarily rely on bitwise shifts and array indexing to decompose virtual addresses into their respective indices .
 	\end{itemize}
-
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=1\textwidth]{Hierarchical Page Tables}
+		\caption{5-Level Paging Scheme (Address Translation for 57-bit Virtual Address)}
+	\end{figure}
+	
 \pagebreak
 
 \section{Implementation}
@@ -547,19 +548,29 @@ This section presented the implementation of a \textbf{Slot-based Multi-Level Qu
 \subsubsection{Memory management}
 
 \paragraph{a. Overview}
-The objective of this module is to implement memory management at the \textbf{Logical Level} (Process View), adhering to the principles outlined in Chapter 9 of \textit{Silberschatz}. In this simulation, each process possesses a distinct Logical Address Space, which is segmented into functional areas (VMAs - Virtual Memory Areas) such as Code, Data, Heap, and Stack.
 
-The core design principles enforced in this implementation are:
+This module implements logical memory management per process in a simplified way. Each process owns an \texttt{mm\_struct} that contains:
 \begin{itemize}
-    \item \textbf{VMA Management:} Organizing virtual memory regions as a linked list of \texttt{vm\_area\_struct}.
-    \item \textbf{Separable User/Kernel Space:} A strict isolation between User Mode and Kernel Mode. User programs are prohibited from directly accessing Kernel data structures (such as \texttt{pcb\_t} or \texttt{mm\_struct}). All interactions must occur via System Calls using only the Process ID (\texttt{PID}) as an identifier.
-    \item \textbf{Allocation Strategy:} The system prioritizes the \textit{Reuse} of freed memory holes (via \texttt{vm\_freerg\_list}) before performing \textit{Expansion} of the address space to minimize external fragmentation.
+    \item One user \texttt{vm\_area\_struct} (\texttt{vmaid = 0}) acting as the container for the whole user address space,
+    \item A fixed-size symbol region table \texttt{symrgtbl[]} that stores allocated regions by \texttt{rgid},
+    \item And the root pointers to the multi-level page tables handled by \texttt{mm64.c}.
+\end{itemize}
+
+Instead of multiple VMAs for text/data/heap/stack, our design keeps a single user VMA and represents logical ``segments'' as virtual memory regions (\texttt{vm\_rg\_struct}, VMR) inside that VMA. Each VMR is a contiguous range \texttt{[rg\_start, rg\_end)}, recorded in \texttt{symrgtbl[rgid]}, while free gaps are chained in \texttt{vm\_freerg\_list} for reuse.
+
+The core design principles are:
+\begin{itemize}
+    \item \textbf{VMA / region management:} All user regions live inside one user \texttt{vm\_area\_struct}; logical segments are \texttt{vm\_rg\_struct} descriptors, and free holes are kept in \texttt{vm\_freerg\_list}.
+    
+    \item \textbf{User / Kernel separation:} User code never touches kernel structures (\texttt{pcb\_t}, \texttt{mm\_struct}); it uses system calls and PID, and the kernel side looks up the correct PCB/MM before operating.
+    
+    \item \textbf{Allocation strategy:} Always try to reuse holes from \texttt{vm\_freerg\_list} first; if none fits, expand the VMA (\texttt{sbrk} / \texttt{vm\_end}) via the \texttt{SYSMEM\_INC\_OP} syscall, then let the paging module map the new pages.
 \end{itemize}
 
 \paragraph{b. Implementation Details}
 The following code snippets illustrate the core logic handling VMA organization and the secure User-Kernel interface.
 
-\textbf{1. VMA Data Structure (\texttt{mm.h})} \\
+\textbf{1. VMA Data Structure (\texttt{os\_mm.h})} \\
 The \texttt{vm\_area\_struct} represents a contiguous range of logical addresses $[vm\_start, vm\_end]$.
 \begin{lstlisting}[language=C, caption={Virtual Memory Area Structure}]
 struct vm_area_struct {
@@ -679,15 +690,16 @@ int enlist_vm_freerg_list(struct mm_struct *mm, struct vm_rg_struct *rg_elmt)
 To ensure memory safety (referencing \textit{Silberschatz Chapter 2}), the allocation process begins with a System Call:
 \begin{itemize}
     \item \textbf{User Request:} The user program calls a library function (e.g., \texttt{malloc}), which triggers the wrapper \texttt{libsyscall}.
-    \item \textbf{Trap to OS:} \texttt{libsyscall} passes the Process ID (\texttt{PID}) and the operation code (e.g., \texttt{SYSMEM\_MAP\_OP}) to the Kernel via a software interrupt/trap.
+   \item \textbf{Trap to OS:} \texttt{libsyscall} passes the Process ID (\texttt{PID}) and an operation code (such as \texttt{SYSMEM\_INC\_OP} in our allocation path, or \texttt{SYSMEM\_MAP\_OP} in other mapping scenarios) to the Kernel via a software interrupt/trap.
     \item \textbf{Authentication:} Upon entering Kernel Mode, the kernel uses the provided \texttt{PID} to traverse the process table and retrieve the correct \texttt{pcb\_t} pointer. This prevents any user process from manipulating the memory of another process.
 \end{itemize}
 
 \textbf{Step 2: VMA Management (\texttt{get\_vma\_by\_num})} \\
 Once in Kernel Mode, the system must identify which memory region the process is requesting.
 \begin{itemize}
-    \item \textbf{Activity:} The function \texttt{get\_vma\_by\_num} traverses the linked list \texttt{mm->mmap}.
-    \item \textbf{Purpose:} It locates the \texttt{vm\_area\_struct} with a \texttt{vm\_id} matching the request (e.g., \texttt{vm\_id = 1} for the Data segment). This enforces the logical separation between data, code, and stack.
+    \item \textbf{Activity:} The function \texttt{get\_vma\_by\_num} traverses the linked list \texttt{mm->mmap} to find the VMA whose \texttt{vm\_id} equals the requested \texttt{vmaid}.
+    
+    \item \textbf{Purpose:} In our implementation, there is exactly one user VMA per process (\texttt{vmaid = 0}), which acts as the container for all user regions. The logical separation between different user ``segments'' (variables/objects) is handled by \texttt{vm\_rg\_struct} entries stored in \texttt{mm->symrgtbl[]}, rather than by multiple VMAs.
 \end{itemize}
 
 \textbf{Step 3: Memory Allocation (\texttt{\_\_alloc})} \\
@@ -764,7 +776,7 @@ int init_pte(addr_t *pte, int pre, addr_t fpn, int drt, int swp, int swptyp, add
 \end{lstlisting}
 
 \textbf{3. Page Walk Mechanism (\texttt{mm64.c})}
-The \texttt{pg\_getpage} function is the core of translation, traversing 5 table levels.
+The \texttt{ get\_page\_table\_entry} function is the core of translation, traversing 5 table levels.
 \begin{lstlisting}[language=C, caption={Page Walk Logic (Simplified)}]
 uint64_t *get_page_table_entry(struct mm_struct *mm, addr_t addr, int alloc)
 {
@@ -1564,22 +1576,7 @@ Based on the Simple OS implementation, dividing the address into more than 2 lev
 	\item \textbf{Offset:} 10 bits (\texttt{OFFSET\_LEN}) = 1KB pages
 \end{itemize}
 This creates a hierarchical structure with \texttt{page\_table\_t} containing pointers to \texttt{trans\_table\_t} entries, requiring 2 memory accesses for address translation. The total virtual address space is limited to 1 MB (2$^{20}$ bytes).
-\begin{lstlisting}[language=C, caption=20-Bit Address Space]
-	// common.h
-	/* Address geometry (two-level page tables):
-	* ADDRESS_SIZE: total VA bits.
-	* OFFSET_LEN:   bits within a page (page size = 1 << OFFSET_LEN).
-	* FIRST_LV_LEN: bits used by first-level index (L1).
-	* SECOND_LV_LEN:bits used by second-level index (L2).
-	* SEGMENT_LEN/PAGE_LEN: aliases to L1/L2 lengths.
-	*/
-	#define ADDRESS_SIZE 20
-	#define OFFSET_LEN 10
-	#define FIRST_LV_LEN 5
-	#define SECOND_LV_LEN 5
-	#define SEGMENT_LEN FIRST_LV_LEN
-	#define PAGE_LEN SECOND_LV_LEN
-\end{lstlisting}
+
 
     % --- 2. 5-Level Paging (64-bit Implementation) ---
     \item \textbf{5-Level Paging (64-bit Implementation)}
@@ -1594,40 +1591,7 @@ This creates a hierarchical structure with \texttt{page\_table\_t} containing po
 	\item \textbf{Offset:} bits 11-0 (12 bits = 4KB pages)
 \end{itemize}
 This expands the virtual address space from 1 MB (20-bit) to 128 PiB (57-bit canonical address space), as implemented in \texttt{mm64.c}.
-\begin{lstlisting}[language=C, caption=64-Bit 5 Level Paging]
-	// mm64.h
-	#define MM64_BITS_PER_LONG 64
-	
-	#define PAGING64_CPU_BUS_WIDTH 57 /* 57-bit canonical VA space */
-	#define PAGING64_PAGESZ 4096      /* 4KB or 12-bits PAGE NUMBER */
-	
-	// ...
-	
-	/* OFFSET */
-	#define PAGING64_ADDR_OFFST_HIBIT 11
-	#define PAGING64_ADDR_OFFST_LOBIT 0
-	
-	/* PT */
-	#define PAGING64_ADDR_PT_HIBIT 20
-	#define PAGING64_ADDR_PT_LOBIT 12
-	#define PAGING64_ADDR_PT_SHIFT 12
-	
-	/* PMD */
-	#define PAGING64_ADDR_PMD_HIBIT 29
-	#define PAGING64_ADDR_PMD_LOBIT 21
-	
-	/* PUD */
-	#define PAGING64_ADDR_PUD_HIBIT 38
-	#define PAGING64_ADDR_PUD_LOBIT 30
-	
-	/* P4D */
-	#define PAGING64_ADDR_P4D_HIBIT 47
-	#define PAGING64_ADDR_P4D_LOBIT 39
-	
-	/* PGD */
-	#define PAGING64_ADDR_PGD_HIBIT 56
-	#define PAGING64_ADDR_PGD_LOBIT 48
-\end{lstlisting}
+
     % --- 3. Key Consequences of Multi-Level Paging ---
     \item \textbf{Key Consequences of Multi-Level Paging}
     
@@ -1636,24 +1600,9 @@ This expands the virtual address space from 1 MB (20-bit) to 128 PiB (57-bit can
         % a. Address Space Expansion
    	\item \textbf{Address Space Expansion:} 
 	The 5-level scheme supports up to 128 petabytes of virtual memory, compared to the 2-level system's 1 MB limit. The function \texttt{get\_pd\_from\_address()} in \texttt{mm64.c} (lines 149-157) extracts all 5 directory indices from a single address using bit masks and shifts, enabling this massive expansion. Each level uses 9 bits, allowing 512 entries per directory table.
-	\begin{lstlisting}[language=C, caption=get\_pd\_from\_address() in mm64.c]
-		// mm64.c
-		/*
-		* get_pd_from_address - Parse address to 5 page directory level
-		*/
-		int get_pd_from_address(addr_t addr, addr_t *pgd, addr_t *p4d, addr_t *pud, addr_t *pmd, addr_t *pt)
-		{
-			*pgd = (addr & PAGING64_ADDR_PGD_MASK) >> PAGING64_ADDR_PGD_LOBIT;
-			*p4d = (addr & PAGING64_ADDR_P4D_MASK) >> PAGING64_ADDR_P4D_LOBIT;
-			*pud = (addr & PAGING64_ADDR_PUD_MASK) >> PAGING64_ADDR_PUD_LOBIT;
-			*pmd = (addr & PAGING64_ADDR_PMD_MASK) >> PAGING64_ADDR_PMD_LOBIT;
-			*pt = (addr & PAGING64_ADDR_PT_MASK) >> PAGING64_ADDR_PT_LOBIT;
-			return 0;
-		}
-	\end{lstlisting}
 	
 	\item \textbf{Increased Translation Overhead:}
-	Each address translation requires traversing all 5 levels (PGD $\rightarrow$ P4D $\rightarrow$ PUD $\rightarrow$ PMD $\rightarrow$ PT), requiring 5 memory accesses instead of 2. The implementation in \texttt{get\_page\_table\_entry()} (Listing 12) demonstrates this hierarchical traversal. Modern CPUs use Translation Lookaside Buffers (TLB) to cache recent translations, mitigating this overhead in practice.
+	Each address translation requires traversing all 5 levels (PGD $\rightarrow$ P4D $\rightarrow$ PUD $\rightarrow$ PMD $\rightarrow$ PT), requiring 5 memory accesses instead of 2. The implementation in \texttt{get\_page\_table\_entry()} (lines 101-144 of \texttt{mm64.c}) demonstrates this hierarchical traversal. Modern CPUs use Translation Lookaside Buffers (TLB) to cache recent translations, mitigating this overhead in practice.
 	
 	\item \textbf{Sparse Allocation and Memory Efficiency:}
 	The implementation uses \textbf{on-demand allocation} through the \texttt{get\_next\_level()} function (lines 72-96 of \texttt{mm64.c}). Page tables are allocated only when actually needed, not for the entire address space. This sparse allocation strategy is critical because:
@@ -1663,122 +1612,14 @@ This expands the virtual address space from 1 MB (20-bit) to 128 PiB (57-bit can
 		\item Each table is 4KB (512 entries $\times$ 8 bytes), allocated via \texttt{alloc\_aligned\_table()}
 		\item The \texttt{mm\_struct->pgd} pointer starts as NULL and is allocated on first use
 	\end{itemize}
-	\begin{lstlisting}[language=C, caption=get\_next\_level() in mm64.c]
-		// mm64.c
-		/*
-		* Helper: Get or Allocate Next Level (Directory Navigation)
-		*/
-		void *get_next_level(uint64_t *entry, int alloc)
-		{
-			/* Check Real Hardware Present Bit (Bit 0) */
-			if (*entry & X86_PRESENT)
-			{
-				/* Mask off the bottom 12 bits to get the pointer */
-				return (void *)(*entry & X86_ADDR_MASK);
-			}
-			
-			if (!alloc)
-			return NULL;
-			
-			/* Allocate 4KB Aligned Table */
-			void *new_table = alloc_aligned_table();
-			if (new_table == NULL)
-			return NULL;
-			
-			/* * Write the Entry:
-			* Pointer (Already 4KB aligned, so bottom 12 bits are 0)
-			* OR with X86 Flags (Present + Write + User)
-			*/
-			*entry = (uint64_t)new_table | X86_PRESENT | X86_WRITE | X86_USER;
-			
-			return new_table;
-		}
-	\end{lstlisting}
 	
 	\item \textbf{Page Table Entry Operations Complexity:}
 	All PTE operations must traverse the full 5-level hierarchy:
 	\begin{itemize}
 		\item \texttt{pte\_set\_fpn()} (lines 192-208): Walks 5 levels to set frame number
-		\begin{lstlisting}[language=C, caption=pte\_set\_fpn() in mm64.c]
-		// mm64.c
-		/*
-		* pte_set_fpn - Set PTE entry for on-line page
-		*/
-		int pte_set_fpn(struct pcb_t *caller, addr_t pgn, addr_t fpn)
-		{
-			addr_t addr = pgn << PAGING64_ADDR_PT_SHIFT;
-			uint64_t *pte = get_page_table_entry(caller->mm, addr, 1);
-			if (pte == NULL)
-			return -1;
-			
-			*pte = 0; // Clear old data
-			
-			// Mark page present in RAM
-			SETBIT(*pte, PAGING_PTE_PRESENT_MASK);
-			CLRBIT(*pte, PAGING_PTE_SWAPPED_MASK);
-			
-			SETVAL(*pte, fpn, PAGING_PTE_FPN_MASK, PAGING_PTE_FPN_LOBIT);
-			
-			return 0;
-		}
-		\end{lstlisting}
 		\item \texttt{pte\_set\_swap()} (lines 171-187): Walks 5 levels to set swap information
-		\begin{lstlisting}[language=C, caption=pte\_set\_swap() in mm64.c]
-		// mm64.c
-		/*
-		* pte_set_swap - Set PTE entry for swapped page
-		*/
-		int pte_set_swap(struct pcb_t *caller, addr_t pgn, int swptyp, addr_t swpoff)
-		{
-			addr_t addr = pgn << PAGING64_ADDR_PT_SHIFT;
-			uint64_t *pte = get_page_table_entry(caller->mm, addr, 1);
-			if (pte == NULL)
-			return -1;
-			
-			*pte = 0; // Clear old data
-			
-			// Swapped pages keep Present=0 and only carry swap metadata
-			SETBIT(*pte, PAGING_PTE_SWAPPED_MASK);
-			
-			SETVAL(*pte, swptyp, PAGING_PTE_SWPTYP_MASK, PAGING_PTE_SWPTYP_LOBIT);
-			SETVAL(*pte, swpoff, PAGING_PTE_SWPOFF_MASK, PAGING_PTE_SWPOFF_LOBIT);
-			
-			return 0;
-		}
-		\end{lstlisting}
 		\item \texttt{pte\_get\_entry()} (lines 211-218): Walks 5 levels to read PTE
-		\begin{lstlisting}[language=C, caption=pte\_get\_entry() in mm64.c]
-		// mm64.c
-		/* Get PTE page table entry */
-		uint64_t pte_get_entry(struct pcb_t *caller, addr_t pgn)
-		{
-			addr_t addr = pgn << PAGING64_ADDR_PT_SHIFT;
-			uint64_t *pte = get_page_table_entry(caller->mm, addr, 0);
-			if (pte == NULL)
-			return 0;
-			return *pte;
-		}
-		\end{lstlisting}
 		\item \texttt{vmap\_pgd\_memset()} (lines 234-246): Must walk 5 levels for each page mapped
-		\begin{lstlisting}[language=C, caption=vmap\_pgd\_memset() in mm64.c]
-		// mm64.c
-		/*
-		* vmap_pgd_memset - map a range of page at aligned address
-		*/
-		int vmap_pgd_memset(struct pcb_t *caller, addr_t addr, int pgnum)
-		{
-			for (int i = 0; i < pgnum; i++)
-			{
-				addr_t current_addr = addr + (i * PAGING64_PAGESZ);
-				uint64_t *pte = get_page_table_entry(caller->mm, current_addr, 1);
-				if (pte)
-				{
-					*pte = 0; // Clear the LEAF entry (Not Present)
-				}
-			}
-			return 0;
-		}
-		\end{lstlisting}
 	\end{itemize}
 	Each operation calls \texttt{get\_page\_table\_entry()} which performs the full traversal, allocating intermediate directories as needed.
 	
@@ -1786,144 +1627,11 @@ This expands the virtual address space from 1 MB (20-bit) to 128 PiB (57-bit can
 	The 5-level implementation is significantly more complex than the 2-level system:
 	\begin{itemize}
 		\item \texttt{init\_mm()} (lines 358-386): Initializes the root PGD pointer as NULL, with VM area structures
-		\begin{lstlisting}[language=C, caption=init\_mm() in mm64.c]
-		// mm64.c
-		/* init_mm */
-		int init_mm(struct mm_struct *mm, struct pcb_t *caller)
-		{
-			struct vm_area_struct *vma0 = malloc(sizeof(struct vm_area_struct));
-			mm->pgd = NULL;
-			
-			vma0->vm_id = 0;
-			vma0->vm_start = 0;
-			vma0->vm_end = vma0->vm_start;
-			vma0->sbrk = vma0->vm_start;
-			vma0->vm_freerg_list = NULL;
-			
-			struct vm_rg_struct *first_rg = init_vm_rg(vma0->vm_start, vma0->vm_end);
-			enlist_vm_rg_node(&vma0->vm_freerg_list, first_rg);
-			
-			vma0->vm_next = NULL;
-			vma0->vm_mm = mm;
-			mm->mmap = vma0;
-			
-			for (int i = 0; i < PAGING_MAX_SYMTBL_SZ; i++)
-			{
-				mm->symrgtbl[i].rg_start = 0;
-				mm->symrgtbl[i].rg_end = 0;
-				mm->symrgtbl[i].rg_next = NULL;
-			}
-			
-			mm->fifo_pgn = NULL;
-			
-			return 0;
-		}
-		\end{lstlisting}
-		\item \texttt{get\_page\_table\_entry()}: Implements recursive tree traversal with dynamic allocation (Listing 12)
+		\item \texttt{get\_page\_table\_entry()}: Implements recursive tree traversal with dynamic allocation
 		\item \texttt{print\_pgtbl\_recursive()} (lines 546-595): Recursive function to traverse and print all 5 levels
-		\begin{lstlisting}[language=C, caption=print\_pgtbl\_recursive() in mm64.c]
-		void print_pgtbl_recursive(void *table_ptr, int level, addr_t current_va)
-		{
-			if (table_ptr == NULL)
-			return;
-			
-			// Base case: Level 5 (PT), entries are actual PTEs
-			if (level == 5)
-			{
-				struct pt_t *pt = (struct pt_t *)table_ptr;
-				for (int i = 0; i < 512; i++)
-				{
-					// Check LEAF PRESENT Bit (31)
-					if (pt->entries[i] & PAGING_PTE_PRESENT_MASK)
-					{
-						printf("%016llx: %016llx\n", current_va | ((addr_t)i << 12), pt->entries[i]);
-					}
-				}
-				return;
-			}
-			
-			// Recursive case: Levels 1-4 (PGD, P4D, PUD, PMD)
-			uint64_t *entries = (uint64_t *)table_ptr;
-			int shift = 0;
-			switch (level)
-			{
-				case 1:
-				shift = 48;
-				break; // PGD
-				case 2:
-				shift = 39;
-				break; // P4D
-				case 3:
-				shift = 30;
-				break; // PUD
-				case 4:
-				shift = 21;
-				break; // PMD
-			}
-			
-			for (int i = 0; i < 512; i++)
-			{
-				// Check DIRECTORY PRESENT Bit (0)
-				if (entries[i] & PAGING_PRESENT)
-				{
-					void *next_table = EXTRACT_NEXT_ADDR(entries[i]);
-					addr_t next_va = current_va | ((addr_t)i << shift);
-					print_pgtbl_recursive(next_table, level + 1, next_va);
-				}
-			}
-		}
-		\end{lstlisting}
-		\item Address extraction in \texttt{get\_pd\_from\_address()}: Complex bit manipulation across 5 levels (Listing 16)
+		\item Address extraction in \texttt{get\_pd\_from\_address()}: Complex bit manipulation across 5 levels
 	\end{itemize}
 	The code structure shows separate directory types (\texttt{pgd\_t}, \texttt{p4d\_t}, \texttt{pud\_t}, \texttt{pmd\_t}, \texttt{pt\_t}) defined in \texttt{os-mm.h}, each containing 512 entries.
-	\begin{lstlisting}[language=C, caption=Directory Structs defined in os-mm.h]
-	// os-mm.h
-	#define MM_PAGING
-	#define PAGING_MAX_MMSWP 4 /* max number of supported swapped space */
-	#define PAGING_MAX_SYMTBL_SZ 30
-	
-	/* 64-bit Paging Constants */
-	#define PAGING64_ENTRY_COUNT 512 // 9 bits per level = 512 entries
-	
-	/*
-	* @bksysnet: in long address mode of 64bit or original 32bit
-	* the address type need to be redefined
-	*/
-	
-	#ifdef MM64
-	typedef uint64_t addr_t;
-	typedef char BYTE;
-	
-	// Page Table (Level 1) - Points to Physical Frame
-	struct pt_t
-	{
-		uint64_t entries[PAGING64_ENTRY_COUNT];
-	};
-	
-	// Page Middle Directory (Level 2) - Points to PT
-	struct pmd_t
-	{
-		uint64_t entries[PAGING64_ENTRY_COUNT];
-	};
-	
-	// Page Upper Directory (Level 3) - Points to PMD
-	struct pud_t
-	{
-		uint64_t entries[PAGING64_ENTRY_COUNT];
-	};
-	
-	// Page Level-4 Directory (Level 4) - Points to PUD
-	struct p4d_t
-	{
-		uint64_t entries[PAGING64_ENTRY_COUNT];
-	};
-	
-	// Page Global Directory (Level 5) - Points to P4D
-	struct pgd_t
-	{
-		uint64_t entries[PAGING64_ENTRY_COUNT];
-	};
-	\end{lstlisting}
 	
 	\item \textbf{Storage Space Trade-offs:}
 	The implementation demonstrates careful design decisions to balance:
@@ -1933,39 +1641,6 @@ This expands the virtual address space from 1 MB (20-bit) to 128 PiB (57-bit can
 		\item \textbf{Storage space:} Only allocated tables consume memory, not theoretical maximum
 	\end{itemize}
 	The \texttt{vmap\_page\_range()} function (lines 251-278) shows how pages are mapped efficiently, tracking mapped pages in the \texttt{fifo\_pgn} list for replacement algorithms.
-	\begin{lstlisting}[language=C, caption=vmap\_page\_range in os-mm.h]
-		/*
-		* vmap_page_range - map a range of page at aligned address
-		*/
-		addr_t vmap_page_range(struct pcb_t *caller,
-		addr_t addr,
-		int pgnum,
-		struct framephy_struct *frames,
-		struct vm_rg_struct *ret_rg)
-		{
-			struct framephy_struct *fpit = frames;
-			int pgit = 0;
-			addr_t pgn;
-			
-			ret_rg->rg_start = addr;
-			ret_rg->rg_end = addr + (pgnum * PAGING64_PAGESZ);
-			
-			for (pgit = 0; pgit < pgnum; pgit++)
-			{
-				if (fpit == NULL)
-				return -1;
-				
-				pgn = (addr + (pgit * PAGING64_PAGESZ)) >> PAGING64_ADDR_PT_SHIFT;
-				
-				pte_set_fpn(caller, pgn, fpit->fpn);
-				enlist_pgn_node(&caller->mm->fifo_pgn, pgn);
-				
-				fpit = fpit->fp_next;
-			}
-			
-			return 0;
-		}
-	\end{lstlisting}
     \end{enumerate}
     
     \item \textbf{Design Strategies Used:}
@@ -2044,24 +1719,376 @@ struct mm_struct
     \begin{enumerate}[label=\textbf{\alph*.}]
   	\item \textbf{Eliminates External Fragmentation:}  
 	In \texttt{vm\_map\_ram()} (lines 322-337 of \texttt{mm64.c}) and \texttt{vmap\_page\_range()} (Listing 25), physical memory is allocated in fixed-size 4KB frames. The \texttt{framephy\_struct} linked list (defined in \texttt{os-mm.h} lines 155-162) manages non-contiguous frames, eliminating external fragmentation entirely since segments are paged. The \texttt{alloc\_pages\_range()} function (lines 283-317) allocates frames individually and links them, allowing a VM area to span multiple non-contiguous physical frames.
+	\begin{lstlisting}[language=C, caption=vm\_map\_ram() in mm64.c]
+// mm64.c
+/*
+* vm_map_ram - do the mapping all vm are to ram storage device
+*/
+addr_t vm_map_ram(struct pcb_t *caller, addr_t astart, addr_t aend, addr_t mapstart, int incpgnum, struct vm_rg_struct *ret_rg)
+{
+	struct framephy_struct *frm_lst = NULL;
+	addr_t ret_alloc = 0;
+	
+	ret_alloc = alloc_pages_range(caller, incpgnum, &frm_lst);
+	
+	if (ret_alloc == -3000)
+	return -1;
+	if (ret_alloc < 0)
+	return -1;
+	
+	vmap_page_range(caller, mapstart, incpgnum, frm_lst, ret_rg);
+	
+	return 0;
+}
+
+	\end{lstlisting}
+	\begin{lstlisting}[language=C, caption=alloc\_pages\_range() in mm64.c]
+// mm64.c
+/*
+* alloc_pages_range - allocate req_pgnum of frame in ram
+*/
+addr_t alloc_pages_range(struct pcb_t *caller, int req_pgnum, struct framephy_struct **frm_lst)
+{
+	int pgit;
+	addr_t fpn;
+	
+	*frm_lst = NULL;
+	struct framephy_struct *tail = NULL;
+	
+	for (pgit = 0; pgit < req_pgnum; pgit++)
+	{
+		if (MEMPHY_get_freefp(caller->krnl->mram, &fpn) == 0)
+		{
+			struct framephy_struct *new_node = malloc(sizeof(struct framephy_struct));
+			new_node->fpn = fpn;
+			new_node->fp_next = NULL;
+			new_node->owner = caller->mm;
+			
+			if (*frm_lst == NULL)
+			{
+				*frm_lst = new_node;
+				tail = new_node;
+			}
+			else
+			{
+				tail->fp_next = new_node;
+				tail = new_node;
+			}
+		}
+		else
+		{
+			return -3000;
+		}
+	}
+	return 0;
+}
+
+	\end{lstlisting}
 	
 	\item \textbf{Logical Memory Organization:}  
 	VM areas provide logical organization of memory, separating different memory regions (code, data, heap) conceptually. Functions like \texttt{get\_vma\_by\_num()} (lines 12-31 of \texttt{mm-vm.c}) traverse the VM area list to find segments by ID, and \texttt{validate\_overlap\_vm\_area()} (lines 76-102) ensures distinct logical regions don't overlap, allowing the OS to treat different memory areas as separate segments while using paging for physical allocation.
+	\begin{lstlisting}[language=C, caption=get\_vma\_by\_num() in mm-vm.c]
+// mm-vm.c
+/*get_vma_by_num - get vm area by numID
+*@mm: memory region
+*@vmaid: ID vm area to alloc memory region
+*
+*/
+struct vm_area_struct *get_vma_by_num(struct mm_struct *mm, int vmaid)
+{
+	struct vm_area_struct *pvma = mm->mmap;
+	
+	if (mm->mmap == NULL)
+	return NULL;
+	
+	// Iterate through the entire list
+	while (pvma != NULL)
+	{
+		// Check for exact match
+		if (pvma->vm_id == vmaid)
+		return pvma;
+		
+		pvma = pvma->vm_next;
+	}
+	
+	// If we reach here, the ID was not found
+	return NULL;
+}
+
+	\end{lstlisting}
+	\begin{lstlisting}[language=C, caption=validate\_overlap\_vm\_area() in mm-vm.c]
+// mm-vm.c
+/*validate_overlap_vm_area
+*@caller: caller
+*@vmaid: ID vm area to alloc memory region
+*@vmastart: vma end
+*@vmaend: vma end
+*
+*/
+int validate_overlap_vm_area(struct pcb_t *caller, int vmaid, addr_t vmastart, addr_t vmaend)
+{
+	if (vmastart >= vmaend)
+	{
+		return -1; // Invalid range
+	}
+	
+	struct vm_area_struct *vma = caller->mm->mmap;
+	
+	// Traverse the linked list of VM Areas
+	while (vma != NULL)
+	{
+		// Skip self if we are checking against our own ID (though typically we check new vs old)
+		if (vma->vm_id != vmaid)
+		{
+			// Check for overlap: OVERLAP(Start1, End1, Start2, End2)
+			// Logic: (Start1 < End2) && (Start2 < End1)
+			if ((vmastart < vma->vm_end) && (vma->vm_start < vmaend))
+			{
+				return -1; // Overlap detected
+			}
+		}
+		vma = vma->vm_next;
+	}
+	
+	return 0;
+}
+		
+	\end{lstlisting}
 	
 	\item \textbf{Efficient Handling of Large Segments:}  
 	The \texttt{inc\_vma\_limit()} function (lines 110-168 of \texttt{mm-vm.c}) demonstrates how large VM areas can grow dynamically. Since these segments are paged, they don't require contiguous physical memory. The function:
 	\begin{itemize}
-		\item Calculates page-aligned size using \texttt{DIV\_ROUND\_UP(inc\_amt, PAGING\_PAGESZ)} (line 124)
+		\item Calculates page-aligned size using \texttt{DIV\_ROUND\_UP(inc\_amt, PAGING\_PAGESZ)} 
 		\item Calls \texttt{vm\_map\_ram()} which allocates frames via \texttt{alloc\_pages\_range()} and maps them via \texttt{vmap\_page\_range()}
-		\item Updates the \texttt{sbrk} pointer (line 158) to track the new segment boundary
+		\item Updates the \texttt{sbrk} pointer to track the new segment boundary
+		\begin{lstlisting}[language=C, caption=inc\_vma\_limit() in mm-vm.c]
+			// mm-vm.c
+/*inc_vma_limit - increase vm area limits to reserve space for new variable
+*@caller: caller
+*@vmaid: ID vm area to alloc memory region
+*@inc_sz: increment size
+*
+*/
+int inc_vma_limit(struct pcb_t *caller, int vmaid, addr_t inc_sz)
+{
+	struct vm_rg_struct *newrg = malloc(sizeof(struct vm_rg_struct));
+	int inc_amt = (int)inc_sz;
+	
+	// Retrieve current VMA
+	struct vm_area_struct *cur_vma = get_vma_by_num(caller->mm, vmaid);
+	if (!cur_vma)
+	{
+		free(newrg);
+		return -1;
+	}
+	
+	// Calculate number of pages needed for this increase
+	int incnumpage = DIV_ROUND_UP(inc_amt, PAGING_PAGESZ);
+	
+	// Calculate new boundaries
+	struct vm_rg_struct *area = get_vm_area_node_at_brk(caller, vmaid, inc_sz, inc_amt);
+	if (!area)
+	{
+		free(newrg);
+		return -1;
+	}
+	
+	// Store old sbrk to define the map start
+	addr_t old_sbrk = cur_vma->sbrk;
+	
+	// Validate that expanding this VMA won't collide with another VMA
+	if (validate_overlap_vm_area(caller, vmaid, area->rg_start, area->rg_end) < 0)
+	{
+		free(newrg);
+		free(area);
+		return -1; /* Overlap and failed allocation */
+	}
+	
+	// Call the Hardware Mapper:
+	// 1. Allocates physical frames (alloc_pages_range)
+	// 2. Updates Page Tables (vmap_page_range)
+	if (vm_map_ram(caller, area->rg_start, area->rg_end,
+	old_sbrk, incnumpage, newrg) < 0)
+	{
+		free(newrg);
+		free(area);
+		return -1; /* Map the memory to MEMRAM failed (OOM) */
+	}
+	
+	// Update the VMA's Break Pointer (sbrk)
+	// This officially "commits" the expansion
+	cur_vma->sbrk += inc_sz;
+	cur_vma->vm_end += inc_sz; // Assuming vm_end tracks the used limit in this simple model
+	
+	// Cleanup: we used newrg in vm_map_ram via pointer,
+	// but the actual region tracking is often added to the free list
+	// or symbol table by the caller (libmem).
+	free(newrg);
+	free(area);
+	
+	return 0;
+}
+			
+		\end{lstlisting}
 	\end{itemize}
 	This allows segments to grow without requiring contiguous physical memory allocation.
 	
 	\item \textbf{Reduced Internal Fragmentation:}  
-	The \texttt{vm\_freerg\_list} within each VM area tracks free regions, allowing efficient reuse of freed memory within segments. The \texttt{get\_free\_vmrg\_area()} function (lines 384-437 of \texttt{libmem.c}) searches the free list for regions large enough to satisfy allocation requests, reducing internal fragmentation. The symbol table (\texttt{symrgtbl}) with \texttt{PAGING\_MAX\_SYMTBL\_SZ = 30} entries enables tracking of variables within logical segments, and the \texttt{\_\_alloc()} function (lines 39-101) first attempts to reuse free regions before expanding the segment.
+	The \texttt{vm\_freerg\_list} within each VM area tracks free regions, allowing efficient reuse of freed memory within segments. The \texttt{get\_free\_vmrg\_area()} function (lines 384-437 of \texttt{libmem.c}) searches the free list for regions large enough to satisfy allocation requests, reducing internal fragmentation. The symbol table (\texttt{symrgtbl}) with \texttt{PAGING\_MAX\_SYMTBL\_SZ = 30} entries enables tracking of variables within logical segments, and the \texttt{\_\_alloc()} function first attempts to reuse free regions before expanding the segment.
+	\begin{lstlisting}[language=C, caption=get\_free\_vmrg\_area() in libmem.c]
+// libmem.c
+/* get_free_vmrg_area - get a free vm region */
+int get_free_vmrg_area(struct pcb_t *caller, int vmaid, int size, struct vm_rg_struct *newrg)
+{
+	struct vm_area_struct *cur_vma = get_vma_by_num(caller->mm, vmaid);
+	if (!cur_vma)
+	return -1;
+	
+	struct vm_rg_struct *rgit = cur_vma->vm_freerg_list;
+	if (rgit == NULL)
+	return -1;
+	
+	newrg->rg_start = newrg->rg_end = -1;
+	
+	// Traverse free list
+	while (rgit != NULL)
+	{
+		if (rgit->rg_start + size <= rgit->rg_end)
+		{
+			/* Found fit */
+			newrg->rg_start = rgit->rg_start;
+			newrg->rg_end = rgit->rg_start + size;
+			
+			/* Update free node */
+			if (rgit->rg_start + size < rgit->rg_end)
+			{
+				rgit->rg_start += size;
+			}
+			else
+			{
+				/* Perfectly matches, remove this free node */
+				struct vm_rg_struct *nextrg = rgit->rg_next;
+				if (nextrg)
+				{
+					rgit->rg_start = nextrg->rg_start;
+					rgit->rg_end = nextrg->rg_end;
+					rgit->rg_next = nextrg->rg_next;
+					free(nextrg);
+				}
+				else
+				{
+					// This was the last node, mark as invalid/empty
+					rgit->rg_start = rgit->rg_end = 0;
+					rgit->rg_next = NULL;
+					// Ideally we should remove rgit from the list head if it's the head
+					// But standard linked list removal is tricky with just 'rgit' ptr
+					// Assuming list management handles this or next alloc handles 0-size
+				}
+			}
+			return 0;
+		}
+		rgit = rgit->rg_next;
+	}
+	return -1; // No fit found
+}
+	
+	\end{lstlisting}
 	
 	\item \textbf{Support for Dynamic Growth:}  
-	The \texttt{sbrk} pointer in each VM area allows segments to grow dynamically. The \texttt{get\_vm\_area\_node\_at\_brk()} function (lines 47-67 of \texttt{mm-vm.c}) creates new regions starting at the current \texttt{sbrk} position. When \texttt{get\_free\_vmrg\_area()} fails (line 45 of \texttt{libmem.c}), the system expands the heap via \texttt{inc\_vma\_limit()}, which calls \texttt{vm\_map\_ram()} to allocate and map new pages. This enables processes to extend their segments on demand without pre-allocation.
+	The \texttt{sbrk} pointer in each VM area allows segments to grow dynamically. The \texttt{get\_vm\_area\_node\_at\_brk()} function (lines 47-67 of \texttt{mm-vm.c}) creates new regions starting at the current \texttt{sbrk} position. When \texttt{get\_free\_vmrg\_area()} fails (line 45 of \texttt{libmem.c}, inside \texttt{\_\_alloc()} function), the system expands the heap via \texttt{inc\_vma\_limit()}, which calls \texttt{vm\_map\_ram()} to allocate and map new pages. This enables processes to extend their segments on demand without pre-allocation.
+	\begin{lstlisting}[language=C, caption=get\_vm\_area\_node\_at\_brk() in mm-vm.c]
+// mm-vm.c
+struct vm_rg_struct *get_vm_area_node_at_brk(struct pcb_t *caller, int vmaid, addr_t size, addr_t alignedsz)
+{
+	struct vm_rg_struct *newrg;
+	
+	// Retrieve the VMA (usually ID 0 for data/heap)
+	struct vm_area_struct *cur_vma = get_vma_by_num(caller->mm, vmaid);
+	if (!cur_vma)
+	return NULL;
+	
+	newrg = malloc(sizeof(struct vm_rg_struct));
+	
+	// The new region starts where the current Heap ends (sbrk)
+	newrg->rg_start = cur_vma->sbrk;
+	
+	// It ends after 'size' bytes
+	newrg->rg_end = newrg->rg_start + size;
+	
+	newrg->rg_next = NULL;
+	
+	return newrg;
+}
+		
+	\end{lstlisting}
+	\begin{lstlisting}[language=C, caption=\_\_alloc() in libmem.c]
+// libmem.c
+/* __alloc - allocate a region memory */
+int __alloc(struct pcb_t *caller, int vmaid, int rgid, addr_t size, addr_t *alloc_addr)
+{
+	pthread_mutex_lock(&mmvm_lock);
+	struct vm_rg_struct rgnode;
+	
+	// Check if we can reuse a free region
+	if (get_free_vmrg_area(caller, vmaid, size, &rgnode) == 0)
+	{
+		caller->mm->symrgtbl[rgid].rg_start = rgnode.rg_start;
+		caller->mm->symrgtbl[rgid].rg_end = rgnode.rg_end;
+		*alloc_addr = rgnode.rg_start;
+		pthread_mutex_unlock(&mmvm_lock);
+		return 0;
+	}
+	
+	/* If get_free_vmrg_area FAILED, we must expand the heap */
+	struct vm_area_struct *cur_vma = get_vma_by_num(caller->mm, vmaid);
+	if (!cur_vma)
+	{
+		pthread_mutex_unlock(&mmvm_lock);
+		return -1;
+	}
+	
+	addr_t inc_sz = PAGING_PAGE_ALIGNSZ(size);
+	// Usually aligning to page size is good practice, or use exact size if your inc_vma handles it.
+	// The provided skeleton had some ifdef logic, let's stick to standard alignment.
+	
+	addr_t old_sbrk = cur_vma->sbrk;
+	
+	/* SYSCALL to increase limit */
+	struct sc_regs regs;
+	regs.a1 = SYSMEM_INC_OP;
+	regs.a2 = vmaid;
+	regs.a3 = inc_sz; // Request expansion
+	
+	// Note: In real syscall, we don't pass PCB, but here we simulate it via wrapper
+	// The wrapper 'syscall' takes (krnl, pid, nr, regs)
+	if (syscall(caller->krnl, caller->pid, 17, &regs) < 0)
+	{
+		pthread_mutex_unlock(&mmvm_lock);
+		return -1; // Failed to expand
+	}
+	
+	/* Successful increase limit */
+	caller->mm->symrgtbl[rgid].rg_start = old_sbrk;
+	caller->mm->symrgtbl[rgid].rg_end = old_sbrk + size;
+	*alloc_addr = old_sbrk;
+	
+	// The remaining space (inc_sz - size) should technically be added to free list
+	// to avoid internal fragmentation, but for this simple assignment we might skip it
+	// or add logic:
+	if (inc_sz > size)
+	{
+		struct vm_rg_struct *fragment = malloc(sizeof(struct vm_rg_struct));
+		fragment->rg_start = old_sbrk + size;
+		fragment->rg_end = old_sbrk + inc_sz;
+		fragment->rg_next = NULL;
+		enlist_vm_freerg_list(caller->mm, fragment);
+	}
+	
+	pthread_mutex_unlock(&mmvm_lock);
+	return 0;
+}
+		
+	\end{lstlisting}
     \end{enumerate}
 
     % --- 3. Disadvantages ---
@@ -2069,16 +2096,58 @@ struct mm_struct
     
     \begin{enumerate}[label=\textbf{\alph*.}]
     	\item \textbf{Increased Translation Complexity:}  
-	Address translation requires two conceptual steps: first identifying the VM area (segment) that contains the address, then translating the address through the page table hierarchy. In practice, the implementation uses the page table directly (via \texttt{get\_page\_table\_entry()} in \texttt{mm64.c}), but VM area validation adds overhead. In 64-bit mode, address translation involves extracting indices from PGD, P4D, PUD, PMD, and PT levels (as in \texttt{get\_pd\_from\_address()}, lines 149-157 of \texttt{mm64.c}), requiring 5 memory accesses. Additionally, functions like \texttt{\_\_read()} (lines 279-290 of \texttt{libmem.c}) must first validate the address is within the correct VM area region via \texttt{get\_symrg\_byid()} before performing page translation.
+	Address translation requires two conceptual steps: first identifying the VM area (segment) that contains the address, then translating the address through the page table hierarchy. In practice, the implementation uses the page table directly (via \texttt{get\_page\_table\_entry()} in \texttt{mm64.c}, Listing 12), but VM area validation adds overhead. In 64-bit mode, address translation involves extracting indices from PGD, P4D, PUD, PMD, and PT levels (as in \texttt{get\_pd\_from\_address()}, lines 149-157 of \texttt{mm64.c}, Listing 16), requiring 5 memory accesses. Additionally, functions like \texttt{\_\_read()} (lines 279-290 of \texttt{libmem.c}) must first validate the address is within the correct VM area region via \texttt{get\_symrg\_byid()} before performing page translation.
+		\begin{lstlisting}[language=C, caption=\_\_read() in libmem.c]
+// libmem.c
+/* __read - read value in region memory */
+int __read(struct pcb_t *caller, int vmaid, int rgid, addr_t offset, BYTE *data)
+{
+	struct vm_rg_struct *currg = get_symrg_byid(caller->mm, rgid);
+	if (!currg)
+	return -1;
+	
+	// Bounds check
+	if (currg->rg_start + offset >= currg->rg_end)
+	return -1;
+	
+	return pg_getval(caller->mm, currg->rg_start + offset, data, caller);
+}
+	\end{lstlisting}
 	
 	\item \textbf{Memory Overhead for Management Structures:}  
-	Each process maintains a linked list of VM areas (\texttt{mm\_struct->mmap}, line 136 of \texttt{os-mm.h}), each with its own free region list (\texttt{vm\_freerg\_list}). Additionally, the hierarchical page table structure (\texttt{mm\_struct->pgd} in 64-bit mode) must be maintained, with each directory level consuming 4KB when allocated. The \texttt{symrgtbl} array (\texttt{PAGING\_MAX\_SYMTBL\_SZ = 30}, line 139) adds further overhead for tracking memory regions within segments. Each VM area structure itself consumes memory, and the free region lists within each VM area add additional overhead compared to a pure paging system.
+	Each process maintains a linked list of VM areas (\texttt{mm\_struct->mmap}), each with its own free region list (\texttt{vm\_freerg\_list}). Additionally, the hierarchical page table structure (\texttt{mm\_struct->pgd} in 64-bit mode) must be maintained, with each directory level consuming 4KB when allocated. The \texttt{symrgtbl} array (\texttt{PAGING\_MAX\_SYMTBL\_SZ = 30}) adds further overhead for tracking memory regions within segments. Each VM area structure itself consumes memory, and the free region lists within each VM area add additional overhead compared to a pure paging system.
 	
 	\item \textbf{Complex Overlap Validation:}  
-	The \texttt{validate\_overlap\_vm\_area()} function (lines 76-102 of \texttt{mm-vm.c}) must check all VM areas to prevent overlaps, requiring traversal of the entire \texttt{mmap} linked list. This adds O(n) overhead during memory allocation operations, as seen in \texttt{inc\_vma\_limit()} (line 138) and \texttt{\_\_alloc()} when expanding segments. The overlap check logic (lines 93-96) compares the new region against all existing VM areas, which becomes expensive as the number of VM areas grows.
+	The \texttt{validate\_overlap\_vm\_area()} function in \texttt{mm-vm.c} (Listing 29) must check all VM areas to prevent overlaps, requiring traversal of the entire \texttt{mmap} linked list. This adds O(n) overhead during memory allocation operations, as seen in \texttt{inc\_vma\_limit()} and \texttt{\_\_alloc()} when expanding segments. The overlap check logic (lines 15-18 below) compares the new region against all existing VM areas, which becomes expensive as the number of VM areas grows.
+	\begin{lstlisting}[language=C, caption=Overlap check logic]
+// mm-vm.c
+int validate_overlap_vm_area(struct pcb_t *caller, int vmaid, addr_t vmastart, addr_t vmaend)
+{
+    /*
+    ...
+    */
+    
+	while (vma != NULL)
+	{
+		// Skip self if we are checking against our own ID (though typically we check new vs old)
+		if (vma->vm_id != vmaid)
+		{
+			// Check for overlap: OVERLAP(Start1, End1, Start2, End2)
+			// Logic: (Start1 < End2) && (Start2 < End1)
+			if ((vmastart < vma->vm_end) && (vma->vm_start < vmaend))
+			{
+				return -1; // Overlap detected
+			}
+		}
+		vma = vma->vm_next;
+	}
+	
+	return 0;
+}
+	\end{lstlisting}
 	
 	\item \textbf{Page Table Management Complexity:}  
-	The \texttt{mm\_struct} must maintain both VM area structures and page table structures simultaneously. In 64-bit mode, the structure contains the root PGD pointer (\texttt{mm->pgd}), and the initialization in \texttt{init\_mm()} (lines 358-386 of \texttt{mm64.c}) shows the complexity of managing both segment-like VM areas (initializing \texttt{mmap}, \texttt{symrgtbl}) and hierarchical page tables (initializing \texttt{pgd} as NULL). The \texttt{vmap\_page\_range()} function must walk the 5-level page table hierarchy while also tracking which VM area the pages belong to, adding complexity to memory mapping operations.
+	The \texttt{mm\_struct} must maintain both VM area structures and page table structures simultaneously. In 64-bit mode, the structure contains the root PGD pointer (\texttt{mm->pgd}), and the initialization in \texttt{init\_mm()} (\texttt{mm64.c}, Listing 22) shows the complexity of managing both segment-like VM areas (initializing \texttt{mmap}, \texttt{symrgtbl}) and hierarchical page tables (initializing \texttt{pgd} as NULL). The \texttt{vmap\_page\_range()} function must walk the 5-level page table hierarchy while also tracking which VM area the pages belong to, adding complexity to memory mapping operations.
 	
 	\item \textbf{Swapping Complexity:}  
 	The swapping mechanism operates at the page level via \texttt{pg\_getpage()} (lines 177-237 of \texttt{libmem.c}), but the VM area structure adds complexity because:
@@ -2088,12 +2157,45 @@ struct mm_struct
 		\item The \texttt{find\_victim\_page()} function (lines 352-381 of \texttt{libmem.c}) selects victims from the FIFO list without considering VM area boundaries, which could lead to swapping pages from different logical segments
 	\end{itemize}
 	The \texttt{\_\_mm\_swap\_page()} function (lines 33-37 of \texttt{mm-vm.c}) handles the actual swap copy, but the coordination between VM area tracking and page-level swapping adds complexity.
+	\begin{lstlisting}[language=C, caption=find\_victim\_page() in libmem.c]
+// libmem.c
+/* find_victim_page - FIFO replacement policy */
+int find_victim_page(struct mm_struct *mm, addr_t *retpgn)
+{
+	struct pgn_t *pg = mm->fifo_pgn;
+	if (!pg)
+	return -1; // Empty list
 	
+	struct pgn_t *prev = NULL;
+	
+	// Traverse to the end of the list (Oldest item)
+	while (pg->pg_next)
+	{
+		prev = pg;
+		pg = pg->pg_next;
+	}
+	
+	*retpgn = pg->pgn;
+	
+	// Unlink
+	if (prev)
+	{
+		prev->pg_next = NULL;
+	}
+	else
+	{
+		mm->fifo_pgn = NULL; // Only one item was in list
+	}
+	
+	free(pg);
+	return 0;
+}
+\end{lstlisting}
 	\item \textbf{Synchronization Overhead:}  
 	The \texttt{\_\_alloc()} function uses \verb|pthread_mutex_lock(&mmvm_lock) | to synchronize access to VM areas and page tables. This mutex protects both segment-level operations (VM area list traversal, free region management) and page-level operations (page table updates). The \texttt{\_\_write()} function (line 312) also acquires this lock, and \texttt{\_\_read()} performs page table operations that may require synchronization. This single mutex protects multiple data structures, potentially creating contention points that wouldn't exist in a pure paging system where only page tables need protection.
 	
 	\item \textbf{Free Region List Management Overhead:}  
-	The \texttt{get\_free\_vmrg\_area()} function (lines 384-437 of \texttt{libmem.c}) must traverse the free region list within a VM area to find suitable regions, which can be O(n) in the number of free regions. When regions are freed via \texttt{\_\_free()} (lines 104-139), the function must create new free region nodes and insert them into the list (line 135), potentially fragmenting the free list. The \texttt{enlist\_vm\_freerg\_list()} function (lines 13-27) adds regions to the head of the list, which is efficient but doesn't merge adjacent free regions, potentially leading to fragmentation.   
+	The \texttt{get\_free\_vmrg\_area()} function (\texttt{libmem.c}) must traverse the free region list within a VM area to find suitable regions, which can be O(n) in the number of free regions. When regions are freed via \texttt{\_\_free()}, the function must create new free region nodes and insert them into the list, potentially fragmenting the free list. The \texttt{enlist\_vm\_freerg\_list()} function  adds regions to the head of the list, which is efficient but doesn't merge adjacent free regions, potentially leading to fragmentation.   
 	 \end{enumerate}
 
 \end{enumerate}
@@ -2148,8 +2250,75 @@ The Simple OS uses a multi-threaded architecture where multiple CPU threads (fro
 	The timer mechanism in \texttt{timer\_routine()} coordinates all threads by waiting for each device's \texttt{done} flag before advancing time slots. Without proper mutex protection:
 	\begin{itemize}
 		\item \textbf{Time Slot Skips:} If multiple threads call \texttt{next\_slot()} simultaneously, the timer might advance before all threads complete their work, causing some threads to miss time slots or execute out of order.
-		\item \textbf{Deadlock in Timer:} The condition variable waits in \texttt{timer\_routine()} (lines 36-38) and \texttt{next\_slot()} (lines 79-81) could deadlock if mutexes are not properly acquired, freezing the entire system.
+		\item \textbf{Deadlock in Timer:} The condition variable waits in \texttt{timer\_routine()} (lines 18-20 below) and \texttt{next\_slot()} (lines 61-63 below) could deadlock if mutexes are not properly acquired, freezing the entire system.
 		\item \textbf{Inconsistent Time Perception:} Different CPU threads might observe different values of \texttt{current\_time()} if the timer advances while threads are reading it, leading to incorrect process scheduling decisions.
+			\begin{lstlisting}[language=C, caption=timer\_routine() and next\_slot() in timer.c]
+// timer.c
+static void *timer_routine(void *args)
+{
+	while (!timer_stop)
+	{
+		printf("Time slot %3llu\n", current_time());
+		int fsh = 0;
+		int event = 0;
+		/* Wait for all devices have done the job in current
+		* time slot */
+		struct timer_id_container_t *temp;
+		for (temp = dev_list; temp != NULL; temp = temp->next)
+		{
+			pthread_mutex_lock(&temp->id.event_lock);
+			while (!temp->id.done && !temp->id.fsh)
+			{
+				pthread_cond_wait(
+				&temp->id.event_cond,
+				&temp->id.event_lock);
+			}
+			if (temp->id.fsh)
+			{
+				fsh++;
+			}
+			event++;
+			pthread_mutex_unlock(&temp->id.event_lock);
+		}
+		
+		/* Increase the time slot */
+		_time++;
+		
+		/* Let devices continue their job */
+		for (temp = dev_list; temp != NULL; temp = temp->next)
+		{
+			pthread_mutex_lock(&temp->id.timer_lock);
+			temp->id.done = 0;
+			pthread_cond_signal(&temp->id.timer_cond);
+			pthread_mutex_unlock(&temp->id.timer_lock);
+		}
+		if (fsh == event)
+		{
+			break;
+		}
+	}
+	pthread_exit(args);
+}
+
+void next_slot(struct timer_id_t *timer_id)
+{
+	/* Tell to timer that we have done our job in current slot */
+	pthread_mutex_lock(&timer_id->event_lock);
+	timer_id->done = 1;
+	pthread_cond_signal(&timer_id->event_cond);
+	pthread_mutex_unlock(&timer_id->event_lock);
+	
+	/* Wait for going to next slot */
+	pthread_mutex_lock(&timer_id->timer_lock);
+	while (timer_id->done)
+	{
+		pthread_cond_wait(
+		&timer_id->timer_cond,
+		&timer_id->timer_lock);
+	}
+	pthread_mutex_unlock(&timer_id->timer_lock);
+}
+		\end{lstlisting}
 	\end{itemize}
 	
 	\item \textbf{Memory Management Corruption:}
@@ -2189,7 +2358,7 @@ The Simple OS uses a multi-threaded architecture where multiple CPU threads (fro
     % --- 4. Experimental Demonstration ---
     \item \textbf{Experimental Demonstration: Removing Timer Synchronization}
     
-    To demonstrate the consequences of missing synchronization, we removed all mutex protection from \texttt{timer\_routine()} (lines 20-64 of \texttt{timer.c}) and \texttt{next\_slot()} (lines 66-83) functions. This eliminates the critical synchronization mechanism that coordinates time slot advancement across all CPU threads and the loader thread.
+    To demonstrate the consequences of missing synchronization, we removed all mutex protection from \texttt{timer\_routine()} (\texttt{timer.c}) and \texttt{next\_slot()} functions. This eliminates the critical synchronization mechanism that coordinates time slot advancement across all CPU threads and the loader thread.
     
     \begin{enumerate}[label=\textbf{\alph*.}]
         \item \textbf{Experimental Setup}
@@ -2197,9 +2366,62 @@ The Simple OS uses a multi-threaded architecture where multiple CPU threads (fro
     The mutexes \texttt{event\_lock} and \texttt{timer\_lock} (defined per device in \texttt{struct timer\_id\_t}), along with their associated condition variables (\texttt{event\_cond} and \texttt{timer\_cond}), were removed from the timer synchronization code. Specifically:
 \begin{itemize}
 	\item In \texttt{timer\_routine()}: Removed mutex locks at lines 32, 44, 53, 56 that protect the \texttt{done} flag checks and updates
+	\begin{lstlisting}[language=C, caption=Removed muxtex timer\_routine()]
+// timer.c
+static void *timer_routine(void *args)
+{
+			/*...*/
+		for (temp = dev_list; temp != NULL; temp = temp->next)
+		{
+//line 32	pthread_mutex_lock(&temp->id.event_lock);
+			while (!temp->id.done && !temp->id.fsh)
+			{
+				pthread_cond_wait(
+				&temp->id.event_cond,
+				&temp->id.event_lock);
+			}
+			if (temp->id.fsh)
+			{
+				fsh++;
+			}
+			event++;
+//line 44	pthread_mutex_unlock(&temp->id.event_lock);
+		}
+			/*...*/
+		for (temp = dev_list; temp != NULL; temp = temp->next)
+		{
+//line 53	pthread_mutex_lock(&temp->id.timer_lock);
+			temp->id.done = 0;
+			pthread_cond_signal(&temp->id.timer_cond);
+//line 56	pthread_mutex_unlock(&temp->id.timer_lock);
+		}
+			/*...*/
+}
+	\end{lstlisting}
 	\item In \texttt{next\_slot()}: Removed mutex locks at lines 69, 72, 75, 82 that coordinate between threads and the timer
+	\begin{lstlisting}[language=C, caption=Removed muxtex next\_slot()]
+// timer.c
+void next_slot(struct timer_id_t *timer_id)
+{
+			/* Tell to timer that we have done our job in current slot */
+//line 69	pthread_mutex_lock(&timer_id->event_lock);
+			timer_id->done = 1;
+			pthread_cond_signal(&timer_id->event_cond);
+//line 72	pthread_mutex_unlock(&timer_id->event_lock);
+			
+			/* Wait for going to next slot */
+//line 75	pthread_mutex_lock(&timer_id->timer_lock);
+			while (timer_id->done)
+			{
+				pthread_cond_wait(
+				&timer_id->timer_cond,
+				&timer_id->timer_lock);
+			}
+//line 82	pthread_mutex_unlock(&timer_id->timer_lock);
+}
+	\end{lstlisting}
 \end{itemize}
-This allows multiple threads (CPU threads from \texttt{cpu\_routine()} in \texttt{os.c} and the loader thread from \texttt{ld\_routine()}) to access and modify the timer state (\texttt{\_time}, line 15 of \texttt{timer.c}) and device \texttt{done} flags concurrently without any protection.
+This allows multiple threads (CPU threads from \texttt{cpu\_routine()} in \texttt{os.c} and the loader thread from \texttt{ld\_routine()}) to access and modify the timer state (\texttt{\_time} of \texttt{timer.c}) and device \texttt{done} flags concurrently without any protection.
         
         \item \textbf{Observed Output}
         
@@ -2209,7 +2431,7 @@ This allows multiple threads (CPU threads from \texttt{cpu\_routine()} in \textt
 Time slot   0
 ld_routine
     Loaded a process at input/proc/p0s, PID: 1 PRIO: 0
-
+	
 Time slot   1
     CPU 0: Dispatched process  1
     Loaded a process at input/proc/p1s, PID: 2 PRIO: 15
@@ -2373,7 +2595,7 @@ Time slot   25
 	\begin{itemize}
 		\item Crash due to corrupted pointers or invalid memory accesses
 		\item Produce incorrect results due to data corruption
-		\item Deadlock if threads wait on condition variables without proper mutex protection (the condition variable waits in \texttt{timer\_routine()} lines 35-37 and \texttt{next\_slot()} lines 78-80 require mutexes to function correctly)
+		\item Deadlock if threads wait on condition variables without proper mutex protection (the condition variable waits in \texttt{timer\_routine()} and \texttt{next\_slot()} require mutexes to function correctly)
 		\item Exhibit different execution orders, making debugging and testing impossible
 	\end{itemize}
 \end{itemize}
@@ -2406,6 +2628,7 @@ The concurrent operations observed at time slots 6 and 13 provide concrete evide
 
 \vspace{0.5cm}
 In summary, synchronization is essential for the Simple OS's correctness. The mutex-protected critical sections in \texttt{timer.c} (protecting \texttt{\_time} and \texttt{done} flags), \texttt{sched.c} (protecting queue operations), and \texttt{libmem.c} (protecting memory management structures) ensure that shared data structures are accessed atomically, preventing race conditions, data corruption, and system failures. The experimental removal of timer synchronization demonstrates that even when a run appears successful, the underlying race conditions create non-deterministic behavior. The concurrent operations observed in the output show that threads are not properly coordinated, which can lead to subtle bugs, data corruption, and unpredictable system behavior in subsequent runs.
+
 
     \pagebreak
     
