@@ -1843,30 +1843,6 @@ int validate_overlap_vm_area(struct pcb_t *caller, int vmaid,
 }
 		\end{lstlisting}
 		This function is called in \texttt{inc\_vma\_limit()} (line 138 of \texttt{mm-vm.c}) and during memory allocation operations, adding overhead to every segment expansion.
-		
-		\item \textbf{Page Table Management Complexity}
-		
-		Segmentation with paging requires coordinating two different abstraction levels: segment management and page table management. The system must maintain both segment structures (for logical organization) and page table structures (for physical mapping) simultaneously. Memory mapping operations must coordinate between these two levels, walking the page table hierarchy while also tracking which segment the pages belong to. This dual-level management adds complexity to operations such as memory allocation, deallocation, and address translation.
-		
-		In the Simple OS implementation, this complexity is evident in the \texttt{init\_mm()} function (\texttt{mm64.c}, lines 357-375), which must initialize both structures:
-		\begin{lstlisting}
-int init_mm(struct mm_struct *mm, struct pcb_t *caller)
-{
-	struct vm_area_struct *vma0 = malloc(sizeof(struct vm_area_struct));
-	mm->pgd = NULL;  // Page table root (lazy allocation)
-	
-	// Initialize VM area (segment-like structure)
-	vma0->vm_id = 0;
-	vma0->vm_start = 0;
-	vma0->vm_end = vma0->vm_start;
-	vma0->sbrk = vma0->vm_start;
-	vma0->vm_freerg_list = NULL;
-	
-	mm->mmap = vma0;  // Link VM area to mm_struct
-	// ... initialize symrgtbl ...
-}
-		\end{lstlisting}
-		The \texttt{vmap\_page\_range()} function (lines 251-278 of \texttt{mm64.c}) must coordinate both page table updates and VM area tracking.
 	\end{enumerate}
 	
 	% --- 3. Advantages ---
@@ -1979,25 +1955,6 @@ int __alloc(struct pcb_t *caller, int vmaid, int rgid, addr_t size,
 	// Only expand heap if no free region available
 }
 		\end{lstlisting}
-		
-		\item \textbf{Support for Dynamic Growth}
-		
-		Segmentation with paging supports dynamic segment growth, allowing processes to extend their segments (particularly the heap) on demand without pre-allocation. This enables efficient memory usage by allocating memory only when needed, rather than reserving large contiguous blocks upfront. The ability to grow segments dynamically is essential for modern applications with unpredictable memory requirements.
-		
-		In the Simple OS implementation, the \texttt{get\_vm\_area\_node\_at\_brk()} function (lines 47-67 of \texttt{mm-vm.c}) creates new regions starting at the current \texttt{sbrk} position:
-		\begin{lstlisting}
-struct vm_rg_struct *get_vm_area_node_at_brk(struct pcb_t *caller, 
-int vmaid, addr_t size, 
-addr_t alignedsz)
-{
-	struct vm_area_struct *cur_vma = get_vma_by_num(caller->mm, vmaid);
-	newrg->rg_start = cur_vma->sbrk;  // Sequential allocation
-	newrg->rg_end = newrg->rg_start + size;
-	return newrg;
-}
-		\end{lstlisting}
-		When \texttt{get\_free\_vmrg\_area()} fails (line 45 of \texttt{libmem.c}, inside \texttt{\_\_alloc()} function), the system expands the heap via \texttt{inc\_vma\_limit()}, which calls \texttt{vm\_map\_ram()} to allocate and map new pages.
-		
 		\item \textbf{On-Demand Page Table Allocation}
 		
 		Page table directories can be allocated on-demand (lazy allocation) rather than pre-allocating the entire page table structure. This means that memory for page tables is only consumed when that portion of the address space is actually used. This significantly reduces memory overhead, especially for processes that use only a small portion of their virtual address space.
