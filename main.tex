@@ -186,13 +186,13 @@ The scheduler is the central component of the kernel responsible for deciding wh
 \begin{enumerate}
     \item \textbf{Multilevel Queue Scheduling (Theory of Partitioning):}
     \begin{itemize}
-        \item \textbf{Theoretical Basis:} According to \textit{Section 5.3.5}, processes in a system often have different response-time requirements (e.g., interactive/foreground vs. batch/background). A Multilevel Queue (MLQ) algorithm partitions the Ready Queue into several separate queues, each assigned to a different class of processes.
+        \item \textbf{Theoretical Basis:} Processes in a system often have different response-time requirements (e.g., interactive/foreground vs. batch/background). A Multilevel Queue (MLQ) algorithm partitions the Ready Queue into several separate queues, each assigned to a different class of processes.
         \item \textbf{System Design:} In our assignment, we define \texttt{MAX\_PRIO} distinct queues. Processes are permanently assigned to a specific queue based on their \texttt{priority} attribute. Unlike Multilevel Feedback Queues (MLFQ), which allow processes to move between queues to define their behavior dynamically, our standard MLQ implementation reduces runtime overhead ($\mathcal{O}(1)$ queue selection) by maintaining fixed process classification.
     \end{itemize}
 
     \item \textbf{Intra-Queue Scheduling: Round-Robin (RR) and Preemption:}
     \begin{itemize}
-        \item \textbf{Theoretical Basis:} To support time-sharing, \textit{Section 5.3.3} introduces Round-Robin (RR) scheduling. RR is theoretically defined as FCFS scheduling with \textbf{Preemption}. A small unit of time, called a \textit{Time Quantum}, is defined. If a process's CPU burst exceeds this quantum, the system timer generates an interrupt, causing the OS to preempt the process and move it to the tail of the ready queue.
+        \item \textbf{Theoretical Basis:} To support time-sharing, Round-Robin (RR) scheduling is theoretically defined as FCFS scheduling with \textbf{Preemption}. A small unit of time, called a \textit{Time Quantum}, is defined. If a process's CPU burst exceeds this quantum, the system timer generates an interrupt, causing the OS to preempt the process and move it to the tail of the ready queue.
         \item \textbf{System Design:} We implement this by assigning a \texttt{time\_slot} to the system. The \texttt{queue.c} module strictly enforces FIFO behavior (\texttt{dequeue} from head, \texttt{enqueue} to tail), which, combined with the timer interrupt in \texttt{os.c}, realizes the Round-Robin logic. This ensures \textbf{fairness} among processes of the same priority and minimizes the average response time.
     \end{itemize}
 
@@ -204,11 +204,13 @@ The scheduler is the central component of the kernel responsible for deciding wh
         The scheduler iterates through queues; if a high-priority queue consumes its allocated slots, the scheduler is theoretically forced to "yield" to lower-priority queues, even if the high-priority queue is non-empty. This converts the algorithm from "Absolute Priority" to "Proportional Share," mathematically guaranteeing that even the lowest priority queue eventually receives CPU cycles.
     \end{itemize}
 
-    \item \textbf{Symmetric Multiprocessing (SMP) and Load Balancing:}
+  \item \textbf{Symmetric Multiprocessing (SMP) and Concurrency Control:}
     \begin{itemize}
-        \item \textbf{Theoretical Basis:} \textit{Section 5.5} distinguishes between Asymmetric and Symmetric Multiprocessing. In SMP, each processor is self-scheduling. The textbook highlights two architectural choices for the ready queue: (1) Each processor has its own private queue, or (2) All processors share a \textbf{Common Ready Queue}.
-        \item \textbf{System Design:} We adopt the \textbf{Common Ready Queue} architecture. This design inherently solves the \textit{Load Balancing} problem because no processor sits idle while there are tasks in the global queue (Work Stealing is not needed).
-        \item \textbf{Synchronization Theory:} A critical implication of a shared queue is the potential for \textbf{Race Conditions} (two CPUs picking the same process). To adhere to the mutual exclusion principles (Chapter 6), we implement a coarse-grained locking mechanism using \texttt{pthread\_mutex\_t}. Access to the scheduler (enqueue/dequeue operations) constitutes a \textbf{Critical Section} and is strictly serialized.
+        \item \textbf{Theoretical Basis:} According to the theory of \textit{Multiple-Processor Scheduling}, modern systems predominantly use Symmetric Multiprocessing (SMP), where each processor is self-scheduling. The literature outlines two primary strategies for organizing threads: (1) Per-processor private queues, and (2) A single \textbf{Common Ready Queue}. While private queues offer cache efficiency, the Common Ready Queue approach provides a unified pool of work but introduces specific synchronization challenges.
+        
+        \item \textbf{System Design (Load Balancing):} We adopt the \textbf{Common Ready Queue} architecture. As noted in the theoretical framework, this design naturally handles the distribution of workloads. Since all processors examine the same global queue to select a thread, the system inherently avoids the workload disparity often found in private-queue architectures. No complex balancing algorithms are needed because no processor remains idle while tasks exist in the global pool.
+        
+        \item \textbf{Synchronization Theory:} The textbook explicitly warns that a shared ready queue creates a potential \textbf{Race Condition}, where two separate processors might attempt to schedule the same thread simultaneously or corrupt the queue structure. To mitigate this, as mandated by the principles of concurrency control, we implement a locking mechanism (\texttt{pthread\_mutex\_t}). This lock protects the critical section (the shared queue), ensuring that enqueue and dequeue operations are strictly serialized, albeit at the cost of potential lock contention.
     \end{itemize}
 \end{enumerate}
 
@@ -634,7 +636,7 @@ pthread_mutex_unlock(&queue_lock); // END Critical Section
 
 \subsubsection{Scheduler Algorithm Conclusion}
 
-This section presented the implementation of a \textbf{Slot-based Multi-Level Queue (MLQ)} scheduler for an SMP environment. By integrating a quota mechanism ($slot = MAX\_PRIO - prio$) into the priority traversal logic, the design successfully balances two conflicting objectives: prioritizing critical tasks while preventing the starvation of lower-priority processes. Additionally, the rigorous application of \textbf{Mutex locks} ensures thread safety, preventing race conditions as multiple CPUs concurrently access the shared ready queue structure.
+This section describes the implementation of a \textbf{Slot-based Multi-Level Queue (MLQ)} scheduler for an SMP environment. By integrating a quota mechanism ($slot = MAX\_PRIO - prio$) into the priority traversal logic, the design \textbf{aims to balance} two conflicting objectives: prioritizing critical tasks while mitigating the starvation of lower-priority processes. Additionally, the application of \textbf{Mutex locks} \textbf{is designed to maintain} thread safety, \textbf{addressing} potential race conditions as multiple CPUs concurrently access the shared ready queue structure.
 
 
 \subsection{Memory Management}
@@ -813,7 +815,7 @@ When a process frees memory, the region is not immediately physically erased but
 \end{itemize}
 
 \textbf{Conclusion:} \\
-The Memory Management module at the Logical Level has successfully established a secure memory management mechanism (via strict User/Kernel separation) and an efficient allocation strategy (via Free List reuse). This serves as the initial abstraction layer before these logical addresses are translated into physical addresses through the 5-Level Paging mechanism described in the next section.
+The Memory Management module at the Logical Level \textbf{implements} a memory management mechanism \textbf{predicated on} strict User/Kernel separation and an allocation strategy \textbf{utilizing} Free List reuse. This architecture \textbf{functions as} the initial abstraction layer, establishing the logical address space before these addresses are translated into physical frames by the 5-Level Paging mechanism detailed in the subsequent section.
 
 \subsubsection{Multi-level paging}
 
@@ -1473,24 +1475,38 @@ The scheduling algorithm implemented in this assignment is a \textbf{Non-Feedbac
         Our Slot-based MLQ algorithm completely eliminates the Convoy Effect. By forcing time-sharing (Round Robin within queues), short processes and I/O-bound processes are guaranteed frequent CPU access. This significantly improves the system's \textbf{Responsiveness}, making it suitable for interactive environments, whereas FCFS is strictly limited to Batch Systems.
     \end{itemize}
 
-    % --- 2. SJF ---
+   % --- 2. SJF ---
     \item \textbf{Comparison with Shortest-Job-First (SJF)}
     
     \begin{itemize}
-        \item \textbf{Theoretical Background:} 
-        SJF is theoretically optimal; it is proven to yield the minimum possible average waiting time for a given set of processes. Ideally, the scheduler selects the process with the shortest next CPU burst. However, the textbook highlights a fundamental implementation flaw: \textit{Infeasibility}. In a real Short-Term Scheduler, the OS cannot know the length of the next CPU burst. Implementing SJF requires relying on exponential averaging ($\tau_{n+1} = \alpha t_n + (1 - \alpha)\tau_n$) to predict the future, which adds computational overhead and is not always accurate.
+        \item \textbf{Theoretical Background (Optimality vs. Prediction):} 
+        SJF (or more accurately, \textit{Shortest-Next-CPU-Burst}) is theoretically proven to yield the minimum average waiting time. However, it suffers from a fundamental implementation flaw: the OS cannot know the length of the next CPU burst ($\tau_{n+1}$) in advance.
         
-        \item \textbf{Assignment Implementation Analysis:}
-        Our implementation prioritizes \textbf{Determinism} and \textbf{Feasibility} over theoretical optimality.
+        To implement SJF, the system must rely on \textbf{Exponential Averaging} to predict the future based on past behavior, using the formula:
+        \begin{equation}
+            \tau_{n+1} = \alpha t_n + (1 - \alpha)\tau_n
+        \end{equation}
+        Where $t_n$ is the most recent burst and $\tau_n$ is the past history. The parameter $\alpha$ ($0 \le \alpha \le 1$) controls the relative weight of recent versus past history:
         \begin{itemize}
-            \item \textit{Mechanism:} Instead of guessing the future, the system uses a static priority value (\texttt{proc->prio}) defined in the \texttt{pcb\_t} structure.
-            \item \textit{Code Evidence:} The \texttt{get\_mlq\_proc()} function iterates through a fixed array \texttt{mlq\_ready\_queue[i]}. The decision is based purely on the current state (priority and slot), requiring no complex mathematical prediction.
+            \item \textbf{Properties of $\alpha$ (Weighting):} 
+            The expansion of the formula ($\tau_{n+1} = \alpha t_n + (1-\alpha)\alpha t_{n-1} + \dots$) shows that the weight of each past burst decays exponentially.
+            \item \textbf{Scenario Analysis (When is it bad?):} 
+            \begin{itemize}
+                \item If $\alpha \approx 0$ (History dominates): The system is sluggish. If a process changes behavior (e.g., from I/O-bound to CPU-bound), the scheduler fails to adapt, treating a long job as a short one.
+                \item If $\alpha \approx 1$ (Recent dominates): The system overreacts to transient spikes. A single unusually long burst (an outlier) will cause the scheduler to penalize the process significantly in the next turn, even if the long burst was a one-time event.
+            \end{itemize}
+        \end{itemize}
+        Thus, while optimal in theory, SJF is computationally expensive (floating-point math in kernel) and prone to prediction errors when process behavior is unstable.
+        
+        \item \textbf{Assignment Implementation Analysis (Static Determinism):}
+        Our implemented algorithm prioritizes \textbf{Determinism} and \textbf{Feasibility} over theoretical optimality by avoiding runtime predictions entirely.
+        \begin{itemize}
+            \item \textit{Mechanism:} Instead of guessing $\tau_{n+1}$, the system relies on the explicit \texttt{proc->prio} value defined in the PCB. This value represents the "importance" or "class" of a process rather than its estimated burst length.
+            \item \textit{Code Evidence:} The selection logic in \texttt{sched.c} (\texttt{get\_mlq\_proc}) iterates through \texttt{mlq\_ready\_queue[i]} using simple integer comparisons. This avoids the overhead of calculating exponential averages ($O(1)$ arithmetic vs. floating-point operations).
         \end{itemize}
         
-        \item \textbf{Comparative Evaluation:}
-        While our algorithm may not achieve the theoretically minimum waiting time of SJF, it is practically implementable with $O(1)$ decision overhead (relative to process count). It avoids the runtime cost of predicting CPU bursts, making the kernel faster and more predictable.
+        \item \textbf{Comparative Evaluation:} Unlike SJF, which can degrade if $\alpha$ is poorly tuned or if processes exhibit erratic burst patterns (e.g., mixed CPU/IO workloads), our Slot-based MLQ guarantees that high-priority processes always run first, while the slot mechanism prevents the starvation that strict priority scheduling usually suffers from.
     \end{itemize}
-
     % --- 3. Priority Scheduling (Crucial Point) ---
     \item \textbf{Comparison with Pure Priority Scheduling}
     
@@ -3013,15 +3029,15 @@ In summary, synchronization is essential for the Simple OS's correctness. The mu
     
 \section{Overall}
 
-In this assignment, we have successfully designed and implemented the core components of a simple Operating System simulation, focusing on a Symmetric Multiprocessing (SMP) environment. The project integrated three critical modules: a Slot-based Scheduler, a Hybrid Memory Management system, and a robust Synchronization mechanism.
+In this assignment, we undertook the design and implementation of the core components for a simple Operating System simulation, focusing on a Symmetric Multiprocessing (SMP) environment. The project integrated three critical modules: a Slot-based Scheduler, a Hybrid Memory Management system, and a Synchronization mechanism.
 
-For process management, we implemented a Slot-based Multi-Level Queue (MLQ) scheduling algorithm. Unlike standard priority scheduling which suffers from starvation, our design introduces a dynamic slot mechanism ($slot = MAX\_PRIO - prio$) combined with Round-Robin execution within each queue. This approach ensures a balance between honoring process priority and maintaining fairness, guaranteeing that lower-priority tasks eventually receive CPU resources even under heavy load. The implementation successfully handles context switching and load balancing across multiple simulated CPUs.
+For process management, we implemented a Slot-based Multi-Level Queue (MLQ) scheduling algorithm. Unlike standard priority scheduling which is prone to starvation, our design introduces a dynamic slot mechanism ($slot = MAX\_PRIO - prio$) combined with Round-Robin execution within each queue. This approach is designed to balance honoring process priority with maintaining fairness, aiming to allow lower-priority tasks to eventually receive CPU resources even under heavy load. The implementation addresses the logic of context switching and load balancing across multiple simulated CPUs.
 
-Regarding memory management, we constructed a sophisticated hybrid architecture that combines Segmentation with 5-Level Paging. A focal point of this implementation is the rigorous simulation of the hardware page walk mechanism.We programmed the traversal logic that iteratively resolves a 64-bit virtual address through the five hierarchical levels: PGD $\rightarrow$ P4D $\rightarrow$ PUD $\rightarrow$ PMD $\rightarrow$ PT. By utilizing precise bit-masking and shifting operations to extract directory indices at each level, our system accurately mimics the translation process of modern MMUs. This mechanism allows the OS to handle sparse memory allocation efficiently within a massive 128 PiB address space while ensuring strict isolation between user and kernel modes.
+Regarding memory management, we constructed a hybrid architecture that combines Segmentation with 5-Level Paging. A focal point of this implementation is the simulation of the hardware page walk mechanism. We programmed the traversal logic that iteratively resolves a 64-bit virtual address through the five hierarchical levels: PGD $\rightarrow$ P4D $\rightarrow$ PUD $\rightarrow$ PMD $\rightarrow$ PT. By utilizing bit-masking and shifting operations to extract directory indices at each level, our system replicates the translation process of modern MMUs. This mechanism is intended to enable the OS to handle sparse memory allocation within a massive 128 PiB address space while establishing isolation between user and kernel modes.
 
-Furthermore, we addressed the critical challenge of concurrency in a multi-threaded architecture. We identified potential race conditions that could lead to data corruption or system crashes when multiple CPUs and the loader access shared resources simultaneously. By strictly applying synchronization mechanisms—specifically Mutex locks on the ready queue, memory structures, and the global timer—we ensured the atomicity of critical operations and the deterministic behavior of the system.
+Furthermore, we addressed the challenge of concurrency in a multi-threaded architecture. We identified potential race conditions that could lead to data corruption or system instability when multiple CPUs and the loader access shared resources simultaneously. By applying synchronization mechanisms, specifically Mutex locks on the ready queue, memory structures, and the global timer, we sought to preserve the atomicity of critical operations and promote the deterministic behavior of the system.
 
-In conclusion, this assignment has provided a comprehensive hands-on experience in building OS kernel components. It bridged the gap between theoretical concepts—such as virtual memory translation, process scheduling, and thread safety—and practical system programming. The insights gained from handling the complexity of the 5-level page walking algorithm and SMP synchronization serve as a solid foundation for understanding the architecture of modern, high-performance operating systems.
+In conclusion, this assignment has provided a comprehensive hands-on experience in building OS kernel components. It bridged the gap between theoretical concepts, such as virtual memory translation, process scheduling, thread safety and practical system programming. The insights gained from handling the complexity of the 5-level page walking algorithm and SMP synchronization serve as a foundation for understanding the architecture of modern, high-performance operating systems.
 
 \section{Source Code}
 
