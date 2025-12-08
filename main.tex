@@ -1713,15 +1713,6 @@ Based on the Simple OS implementation, dividing the address into more than 2 lev
 		\item \textbf{Increased Translation Overhead:}
 		Each address translation requires traversing all 5 levels (PGD $\rightarrow$ P4D $\rightarrow$ PUD $\rightarrow$ PMD $\rightarrow$ PT), requiring 5 memory accesses instead of 2. The implementation in \texttt{get\_page\_table\_entry()} demonstrates this hierarchical traversal. Modern CPUs use Translation Lookaside Buffers (TLB) to cache recent translations, mitigating this overhead in practice.
 		
-		\item \textbf{Sparse Allocation and Memory Efficiency:}
-		The implementation uses \textbf{on-demand allocation} through the \texttt{get\_next\_level()} function (lines 72-96 of \texttt{mm64.c}). Page tables are allocated only when actually needed, not for the entire address space. This sparse allocation strategy is critical because:
-		\begin{itemize}
-			\item Theoretical maximum page table size would be 512$^5$ = 35 trillion entries (unfeasible)
-			\item Actual memory usage is much smaller since only used address ranges allocate tables
-			\item Each table is 4KB (512 entries $\times$ 8 bytes), allocated via \texttt{alloc\_aligned\_table()}
-			\item The \texttt{mm\_struct->pgd} pointer starts as NULL and is allocated on first use
-		\end{itemize}
-		
 		\item \textbf{Page Table Entry Operations Complexity:}
 		All PTE operations must traverse the full 5-level hierarchy:
 		\begin{itemize}
@@ -1743,7 +1734,6 @@ Based on the Simple OS implementation, dividing the address into more than 2 lev
 		The code structure shows separate directory types (\texttt{pgd\_t}, \texttt{p4d\_t}, \texttt{pud\_t}, \texttt{pmd\_t}, \texttt{pt\_t}) defined in \texttt{os-mm.h}, each containing 512 entries.
 	\end{enumerate}
 \end{enumerate}
-\vspace{0.5cm}
 In summary, moving from 2-level to 5-level paging in this Simple OS enables massive address space expansion (from 1 MB to 128 PiB) but requires more complex address parsing, slower translation (5 memory accesses vs. 2), and sophisticated memory management strategies.
 
 \subsection{Question 6}
