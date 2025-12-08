@@ -1955,16 +1955,8 @@ int __alloc(struct pcb_t *caller, int vmaid, int rgid, addr_t size,
 	// Only expand heap if no free region available
 }
 		\end{lstlisting}
-		\item \textbf{On-Demand Page Table Allocation}
-		
-		Page table directories can be allocated on-demand (lazy allocation) rather than pre-allocating the entire page table structure. This means that memory for page tables is only consumed when that portion of the address space is actually used. This significantly reduces memory overhead, especially for processes that use only a small portion of their virtual address space.
-		
-		In the Simple OS implementation, the lazy allocation is implemented in \texttt{get\_page\_table\_entry()} (lines 100-144 of \texttt{mm64.c}), where page table directories are allocated on-demand when first accessed. The \texttt{init\_mm()} function (line 361 of \texttt{mm64.c}) initializes \texttt{pgd} as \texttt{NULL}.
 	\end{enumerate}
-	
 \end{enumerate}
-
-\vspace{0.5cm}
 In summary, the Simple OS's segmentation-with-paging approach (VM areas + page tables) provides logical memory organization and eliminates external fragmentation, but at the cost of increased translation complexity, memory overhead for management structures, O(n) overlap validation, complex coordination between segment and page-level operations. The hybrid system requires maintaining both VM area metadata and page table structures, with operations spanning both abstraction levels, making the implementation more complex than a pure paging system.
 
 \subsection{Question 7}
