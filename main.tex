@@ -258,7 +258,7 @@ To implement memory mapping in modern architectures, \textbf{Paging} is widely u
 \paragraph{a. The Page Table Problem in 64-bit Systems}
 In traditional 32-bit architectures, a two-level paging scheme is often sufficient. However, with a 64-bit architecture ($2^{64}$ bytes of address space), the size of the page table becomes prohibitively large if stored contiguously.
 
-According to \textbf{Chapter 9.4.2 (Hierarchical Paging)}, the optimal solution is to divide the page table into smaller pieces. This allows the operating system to avoid allocating the entire page table structure in contiguous memory. Only the necessary sub-tables are allocated (on-demand allocation).
+Hierarchical Paging is the optimal solution is to divide the page table into smaller pieces. This allows the operating system to avoid allocating the entire page table structure in contiguous memory. Only the necessary sub-tables are allocated (on-demand allocation).
 
 \paragraph{b. 5-Level Paging Architecture}
 The system is designed based on an extension of the Intel x86-64 architecture, utilizing a \textbf{5-level paging scheme} to support a significantly larger virtual address space (up to 57-bit linear address).
