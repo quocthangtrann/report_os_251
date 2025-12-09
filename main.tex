@@ -1771,15 +1771,11 @@ When the address is divided to more than 2 levels in the paging memory managemen
 	\item \textbf{Advantages}
 	
 	\begin{enumerate}[label=\textbf{\alph*.}]
-		\item \textbf{Address Space Expansion:} 
-		Multi-level paging enables support for much larger virtual address spaces by allowing the system to represent more address bits through hierarchical page table structures. This is particularly important for 64-bit architectures where the full address space would be impractical to manage with only two levels.
-		
 		\item \textbf{Reduced Page Table Size:}
 		By dividing the address space into more levels, the system can allocate page table entries more efficiently, only creating page table pages for regions that are actually in use. This reduces the overall memory footprint of page tables compared to a flat or two-level structure that might require allocating entries for unused address ranges.
 		
 		\item \textbf{Fine-grained Control:}
-		Additional levels provide more granular control over memory management, allowing the operating system to manage different regions of the address space with varying policies and permissions at each level. This enables more sophisticated memory protection and sharing mechanisms across different parts of the virtual address space.
-		
+		Additional levels provide more granular control over memory management, allowing the operating system to manage different regions of the address space with higher utilization and more efficient allocation.
 	\end{enumerate}
 	
 	\item \textbf{Challenges}
@@ -1903,15 +1899,8 @@ The Simple OS uses a multi-threaded architecture where multiple CPU threads (fro
 		Without \texttt{mmvm\_lock} protection, concurrent memory operations could corrupt critical structures:
 		\begin{itemize}
 			\item \textbf{VM Area List Corruption:} Multiple threads accessing \texttt{mm\_struct->mmap} (the VM area linked list) simultaneously could corrupt list pointers, causing processes to access wrong memory regions or crash when traversing the list.
-			\item \textbf{Page Table Race Conditions:} Concurrent calls to \texttt{pte\_set\_fpn()} and \texttt{pte\_get\_entry()} could result in reading partially updated page table entries, causing incorrect address translations and memory access violations.
+			\item \textbf{Race Conditions:} Concurrent calls to \texttt{pte\_set\_fpn()} and \texttt{pte\_get\_entry()} could result in reading partially updated page table entries, causing incorrect address translations and memory access violations.
 			\item \textbf{Symbol Table Corruption:} The \texttt{symrgtbl[]} array could be corrupted if multiple threads allocate memory regions simultaneously, leading to processes accessing incorrect memory addresses or overwriting each other's data.
-		\end{itemize}
-		
-		\item \textbf{Process State Corruption:}
-		In \texttt{cpu\_routine()}, each CPU thread maintains local state (\texttt{proc}, \texttt{time\_left}) but accesses shared process control blocks. Without synchronization:
-		\begin{itemize}
-			\item \textbf{Concurrent Process Execution:} The same \texttt{pcb\_t} structure could be modified by multiple CPU threads simultaneously, corrupting the program counter (\texttt{pc}), registers, or memory mappings.
-			\item \textbf{Inconsistent Process Termination:} A process might be freed by one CPU thread while another is still executing it, leading to use-after-free errors and system crashes.
 		\end{itemize}
 	\end{enumerate}
 	
@@ -1922,7 +1911,6 @@ The Simple OS uses a multi-threaded architecture where multiple CPU threads (fro
 	\begin{itemize}
 		\item \textbf{Non-Deterministic Behavior:} The same input could produce different outputs on each run due to race conditions, making debugging and testing extremely difficult.
 		\item \textbf{System Crashes:} Segmentation faults from corrupted pointers, null pointer dereferences, or invalid memory accesses would cause the entire OS simulation to crash.
-		\item \textbf{Resource Leaks:} Lost processes or corrupted queue structures could prevent proper cleanup, leading to memory leaks and resource exhaustion.
 		\item \textbf{Incorrect Execution Results:} Even if the system doesn't crash, processes might execute incorrectly due to corrupted state, producing wrong outputs that are difficult to detect.
 	\end{itemize}
 	
