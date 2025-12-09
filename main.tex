@@ -717,6 +717,11 @@ pthread_mutex_unlock(&queue_lock); // END Critical Section
 
 This section describes the implementation of a \textbf{Slot-based Multi-Level Queue (MLQ)} scheduler for an SMP environment. By integrating a quota mechanism ($slot = MAX\_PRIO - prio$) into the priority traversal logic, the design \textbf{aims to balance} two conflicting objectives: prioritizing critical tasks while mitigating the starvation of lower-priority processes. Additionally, the application of \textbf{Mutex locks} \textbf{is designed to maintain} thread safety, \textbf{addressing} potential race conditions as multiple CPUs concurrently access the shared ready queue structure.
 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\textwidth]{flowchartsched}
+	\caption{Taskflow of \texttt{get\_mlq\_proc()} in MLQ scheduling}
+\end{figure}
 
 \subsection{Memory Management}
 
@@ -1596,6 +1601,22 @@ The scheduling algorithm implemented in this assignment is a \textbf{Non-Feedbac
         \item \textbf{Comparative Evaluation:} 
         Unlike SJF, which can degrade if $\alpha$ is poorly tuned or if processes exhibit erratic/seasonal burst patterns, our Slot-based MLQ guarantees that high-priority processes always run first. Simultaneously, the slot mechanism prevents the starvation that strict priority scheduling usually suffers from, providing a balanced trade-off between responsiveness and fairness without the computational cost of prediction.
     \end{itemize}
+    
+    % --- 3. SRTF ---
+    \item \textbf{Comparison with Shortest-Remaining-Time-First (SRTF)}
+    
+    \begin{itemize}
+        \item \textbf{Theoretical Background:} 
+        SRTF is the \textbf{preemptive} version of SJF. When a new process arrives, if its next CPU burst is shorter than the remaining time of the currently executing process, the scheduler preempts the current process. Theoretically, SRTF provides an even lower average waiting time than non-preemptive SJF. However, it shares the same implementation hurdles (prediction difficulty) and introduces a new risk: frequent context switching if many short jobs arrive.
+        
+        \item \textbf{Assignment Implementation Analysis:}
+        \begin{itemize}
+            \item \textit{Preemption Logic:} Our algorithm is also preemptive, but the preemption condition is different. SRTF preempts based on \textit{Remaining Time} (requiring prediction), whereas our algorithm preempts based on \textit{Time Slice Expiration} (Round Robin logic) or \textit{Slot Exhaustion}.
+            \item \textit{Responsiveness:} Both algorithms are responsive to new processes. In SRTF, a new short job runs immediately. In our MLQ, a new high-priority job is enqueued at the tail of its priority queue and waits for the current time slice to finish (or runs immediately if the current process yields).
+        \end{itemize}
+     	\item \textbf{Comparative Advantage:}
+        The critical advantage of our design over SRTF is the prevention of \textbf{Starvation}. In SRTF, a continuous stream of short processes can indefinitely block long processes (CPU-bound), causing them to never execute. In contrast, our Slot-based MLQ imposes a finite "execution budget" (slots) on every priority level. Even if the highest-priority queue (often containing interactive/short tasks) remains populated, it cannot monopolize the CPU. Once its slots are exhausted (slot[i] == 0), the scheduler is forced to yield to lower-priority queues, guaranteeing fairness for long-running tasks.
+    \end{itemize}
     % --- 3. Priority Scheduling (Crucial Point) ---
     \item \textbf{Comparison with Pure Priority Scheduling}
     
@@ -1606,18 +1627,7 @@ The scheduling algorithm implemented in this assignment is a \textbf{Non-Feedbac
         \item \textbf{Assignment Implementation Analysis (The Slot Mechanism):}
         This is the most innovative aspect of the assignment's design. It solves starvation \textbf{without} changing process priorities (Aging).
         \begin{itemize}
-            \item \textit{Code Logic:}
-            \begin{lstlisting}[language=C, basicstyle=\ttfamily\scriptsize]
-// sched.c : get_mlq_proc()
-if (slot[i] > 0) {
-    proc = dequeue(...);
-    slot[i]--; // Consume budget
-    break;     // Dispatch immediate
-} else {
-    slot[i] = MAX_PRIO - i; // Refill budget
-    continue; // SKIP this queue, force check lower priority
-}
-            \end{lstlisting}
+            \item \textit{Code Logic:} See implementation in \href{https://github.com/quocthangtrann/os_lamiaatrium-2.git}{\texttt{sched.c} (lines 65--77)}.
             \item \textit{Operational Theory:} The system assigns a "CPU Budget" to each priority level based on the formula $Budget = MAX\_PRIO - Prio$. 
             \item \textit{Example:} Priority 0 gets 140 slots. Priority 1 gets 139 slots. Even if Priority 0 has infinite tasks, after 140 dispatches, the \texttt{slot[0]} becomes 0. The scheduler is mathematically forced to skip Priority 0 and serve Priority 1.
         \end{itemize}
