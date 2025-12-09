@@ -1819,9 +1819,6 @@ Segmentation with paging is a memory management scheme that combines the benefit
 		\item \textbf{Flexible Memory Management:}
 		The system can efficiently handle variable-sized logical divisions while maintaining fixed-size physical allocations.
 		
-		\item \textbf{Efficient Memory Utilization:}
-		Only necessary pages of segments need to be in memory, reducing wasted space compared to pure segmentation. This allows the system to load only the actively used portions of segments, improving overall memory efficiency.
-		
 		\item \textbf{Flexible Protection and Sharing:}
 		Protection can be applied per segment (e.g., code = read-only, stack = read/write), enabling fine-grained control over memory access and enforcing security boundaries. Segments can be shared between processes (e.g., shared libraries) while paging avoids fragmentation, minimizing duplication and improving memory efficiency.
 		
@@ -1844,9 +1841,6 @@ Segmentation with paging is a memory management scheme that combines the benefit
 		
 		\item \textbf{Internal Fragmentation Still Exists:}
 		Each page is fixed size, so the last page of a segment may have unused space, leading to internal fragmentation within pages. While this is typically small compared to external fragmentation, it still represents wasted memory.
-		
-		\item \textbf{More Complicated to Manage:}
-		Segment creation, deletion, and growth must be handled carefully, and the operating system must track the mapping of many segment-page structures. This complex coordination between segment and page-level operations makes the implementation more complex than a pure paging system.
 		
 	\end{enumerate}
 	
@@ -1918,13 +1912,6 @@ The Simple OS uses a multi-threaded architecture where multiple CPU threads (fro
 		\begin{itemize}
 			\item \textbf{Concurrent Process Execution:} The same \texttt{pcb\_t} structure could be modified by multiple CPU threads simultaneously, corrupting the program counter (\texttt{pc}), registers, or memory mappings.
 			\item \textbf{Inconsistent Process Termination:} A process might be freed by one CPU thread while another is still executing it, leading to use-after-free errors and system crashes.
-		\end{itemize}
-		
-		\item \textbf{Loader-CPU Race Conditions:}
-		The \texttt{ld\_routine()} adds processes to the ready queue via \texttt{add\_proc()} while CPU threads are simultaneously removing processes via \texttt{get\_proc()}. Without synchronization:
-		\begin{itemize}
-			\item \textbf{Process Addition During Dequeue:} A process might be added to the queue while another thread is in the middle of dequeuing, causing the new process to be lost or the dequeue operation to fail.
-			\item \textbf{Incomplete Process Initialization:} A CPU thread might dispatch a process before the loader finishes initializing its memory structures (\texttt{mm\_struct}), leading to null pointer dereferences or uninitialized memory access.
 		\end{itemize}
 	\end{enumerate}
 	
@@ -2103,14 +2090,12 @@ CPU 1 stopped
 		
 		\item \textbf{Analysis of the Results}
 		
-		While this particular run completed successfully, several critical observations highlight the dangers of missing synchronization:
+		While this particular run completed with no errors, several critical observations highlight the dangers of missing synchronization:
 		
 		\begin{itemize}
-			\item \textbf{Concurrent Operations in Same Time Slot:} At time slot 6, we observe multiple events occurring simultaneously within the same time slot: \texttt{libwrite:343}, process loading (PID 4), CPU 0 putting process 1 to run queue, CPU 1 putting process 2 to run queue, and both CPUs dispatching new processes (3 and 4). Without timer synchronization, the loader thread, CPU 0, and CPU 1 are all executing concurrently. The \texttt{next\_slot()} function (called from \texttt{cpu\_routine()} at lines 66, 99, 112 and from \texttt{ld\_routine()} at lines 140, 155 in \texttt{os.c}) should coordinate with \texttt{timer\_routine()} to ensure only one time slot is active at a time. Without mutexes, threads can read and modify the \texttt{done} flag and \texttt{\_time} variable concurrently, causing operations from different logical time slots to interleave.
+			\item \textbf{Concurrent Operations in Same Time Slot:} At time slot 6, we observe multiple events occurring simultaneously within the same time slot: \texttt{libwrite:343}, process loading (PID 4), CPU 0 putting process 1 to run queue, CPU 1 putting process 2 to run queue, and both CPUs dispatching new processes (3 and 4). Without timer synchronization, the loader thread, CPU 0, and CPU 1 are all executing concurrently. Without mutexes, threads can read and modify the \texttt{done} flag and \texttt{\_time} variable concurrently, causing operations from different logical time slots to interleave.
 			
 			\item \textbf{Potential Page Table Race Conditions:} While the page table dumps appear consistent in this run, without proper synchronization, concurrent access to page table structures could lead to race conditions. Multiple threads could simultaneously call \texttt{pte\_set\_fpn()} or \texttt{pte\_get\_entry()} (in \texttt{mm64.c}), which traverse the 5-level page table hierarchy via \texttt{get\_page\_table\_entry()}. Without mutex protection, one thread could be updating a page table entry (via \texttt{get\_next\_level()} allocating new directory levels) while another thread reads it, potentially observing partially updated pointers or inconsistent states. The fact that this run shows consistent page tables does not guarantee correctness—race conditions are non-deterministic and may manifest differently in subsequent runs.
-			
-			\item \textbf{Concurrent Memory Operations:} At time slot 13, we see both CPUs performing operations simultaneously: CPU 1 putting process 3 to run queue and dispatching process 1, CPU 1 performing \texttt{libread:304}, CPU 0 putting process 4 to run queue and dispatching process 3. CPU 1 is reading memory while CPU 0 is dispatching a process. Without proper synchronization, these operations could interfere with each other, especially if they access shared scheduler structures or memory management data.
 			
 			\item \textbf{Non-Deterministic Execution Order:} The output shows that operations from different threads can appear in any order within a time slot. For example, at time slot 6, the process loading, CPU queue operations, and dispatches all occur in an unpredictable sequence. This non-determinism makes it impossible to reproduce bugs consistently, as the exact interleaving depends on thread scheduling by the operating system.
 			
@@ -2125,7 +2110,6 @@ CPU 1 stopped
 			\item \textbf{Ambiguous Results:} The fact that this run completed with no errors demonstrates a critical characteristic of race conditions: they are \textbf{non-deterministic}. The absence of visible errors in one run does not guarantee correctness. While this particular run shows consistent page table structures and no obvious data corruption, the concurrent operations observed (especially at time slots 6 and 13) indicate that threads are executing without proper coordination. Subsequent runs with the same input might:
 			\begin{itemize}
 				\item Crash due to corrupted pointers or invalid memory accesses
-				\item Produce incorrect results due to data corruption
 				\item Deadlock if threads wait on condition variables without proper mutex protection (the condition variable waits in \texttt{timer\_routine()} and \texttt{next\_slot()} require mutexes to function correctly)
 				\item Exhibit different execution orders, making debugging and testing impossible
 			\end{itemize}
