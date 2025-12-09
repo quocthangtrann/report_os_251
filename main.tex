@@ -1764,282 +1764,95 @@ Implementing multiple memory segments fundamentally structures how the OS manage
 
 \noindent\textbf{Answer:}
 
-Based on the Simple OS implementation, dividing the address into more than 2 levels fundamentally changes the paging structure and introduces several important consequences:
+When the address is divided to more than 2 levels in the paging memory management system, there will be some key consequences:
 
-% Bắt đầu danh sách cấp 1 (1., 2., 3.)
+% Bắt đầu danh sách cấp 1 (1., 2.)
 \begin{enumerate}[label=\textbf{\arabic*.}]
+	\item \textbf{Advantages}
 	
-	% --- 1. Current 2-Level Implementation ---
-	\item \textbf{Current 2-Level Implementation}
-	
-	In the Simple OS's 2-level paging system (defined in \texttt{common.h}), the 20-bit address space is divided as follows:
-	\begin{itemize}
-		\item \textbf{First level (Segment):} 5 bits (\texttt{FIRST\_LV\_LEN}) = 32 entries
-		\item \textbf{Second level (Page):} 5 bits (\texttt{SECOND\_LV\_LEN}) = 32 entries
-		\item \textbf{Offset:} 10 bits (\texttt{OFFSET\_LEN}) = 1KB pages
-	\end{itemize}
-	This creates a hierarchical structure with \texttt{page\_table\_t} containing pointers to \texttt{trans\_table\_t} entries, requiring 2 memory accesses for address translation. The total virtual address space is limited to 1 MB (2$^{20}$ bytes).
-	
-	% --- 2. 5-Level Paging (64-bit Implementation) ---
-	\item \textbf{5-Level Paging (64-bit Implementation)}
-	
-	When moving to 5-level paging in the 64-bit mode (\texttt{mm64.h} and \texttt{mm64.c}), the address is divided into 5 distinct levels:
-	\begin{itemize}
-		\item \textbf{Level 5 - PGD (Page Global Directory):} bits 56-48 (9 bits = 512 entries)
-		\item \textbf{Level 4 - P4D (Page Level 4 Directory):} bits 47-39 (9 bits = 512 entries)
-		\item \textbf{Level 3 - PUD (Page Upper Directory):} bits 38-30 (9 bits = 512 entries)
-		\item \textbf{Level 2 - PMD (Page Middle Directory):} bits 29-21 (9 bits = 512 entries)
-		\item \textbf{Level 1 - PT (Page Table):} bits 20-12 (9 bits = 512 entries)
-		\item \textbf{Offset:} bits 11-0 (12 bits = 4KB pages)
-	\end{itemize}
-	This expands the virtual address space from 1 MB (20-bit) to 128 PiB (57-bit canonical address space), as implemented in \texttt{mm64.c}.
-	
-	% --- 3. Key Consequences of Multi-Level Paging ---
-	\item \textbf{Key Consequences of Multi-Level Paging}
-	
-	% Bắt đầu danh sách cấp 2 (a., b., c.)
 	\begin{enumerate}[label=\textbf{\alph*.}]
-		% a. Address Space Expansion
 		\item \textbf{Address Space Expansion:} 
-		The 5-level scheme supports up to 128 petabytes of virtual memory, compared to the 2-level system's 1 MB limit. The function \texttt{get\_pd\_from\_address()} in \texttt{mm64.c} (lines 149-157) extracts all 5 directory indices from a single address using bit masks and shifts, enabling this massive expansion. Each level uses 9 bits, allowing 512 entries per directory table.
+		Multi-level paging enables support for much larger virtual address spaces by allowing the system to represent more address bits through hierarchical page table structures. This is particularly important for 64-bit architectures where the full address space would be impractical to manage with only two levels.
 		
+		\item \textbf{Reduced Page Table Size:}
+		By dividing the address space into more levels, the system can allocate page table entries more efficiently, only creating page table pages for regions that are actually in use. This reduces the overall memory footprint of page tables compared to a flat or two-level structure that might require allocating entries for unused address ranges.
+		
+		\item \textbf{Fine-grained Control:}
+		Additional levels provide more granular control over memory management, allowing the operating system to manage different regions of the address space with varying policies and permissions at each level. This enables more sophisticated memory protection and sharing mechanisms across different parts of the virtual address space.
+		
+	\end{enumerate}
+	
+	\item \textbf{Challenges}
+	
+	\begin{enumerate}[label=\textbf{\alph*.}]
 		\item \textbf{Increased Translation Overhead:}
-		Each address translation requires traversing all 5 levels (PGD $\rightarrow$ P4D $\rightarrow$ PUD $\rightarrow$ PMD $\rightarrow$ PT), requiring 5 memory accesses instead of 2. The implementation in \texttt{get\_page\_table\_entry()} demonstrates this hierarchical traversal. Modern CPUs use Translation Lookaside Buffers (TLB) to cache recent translations, mitigating this overhead in practice.
-		
-		\item \textbf{Page Table Entry Operations Complexity:}
-		All PTE operations must traverse the full 5-level hierarchy:
-		\begin{itemize}
-			\item \texttt{pte\_set\_fpn()} (lines 192-208): Walks 5 levels to set frame number
-			\item \texttt{pte\_set\_swap()} (lines 171-187): Walks 5 levels to set swap information
-			\item \texttt{pte\_get\_entry()} (lines 211-218): Walks 5 levels to read PTE
-			\item \texttt{vmap\_pgd\_memset()} (lines 234-246): Must walk 5 levels for each page mapped
-		\end{itemize}
-		Each operation calls \texttt{get\_page\_table\_entry()} which performs the full traversal, allocating intermediate directories as needed.
+		Each additional level requires an extra memory access during address translation, which increases the time needed to translate virtual addresses to physical addresses. This overhead can impact system performance, especially for memory-intensive applications that frequently access different pages.
 		
 		\item \textbf{Implementation Complexity:}
-		The 5-level implementation is significantly more complex than the 2-level system:
-		\begin{itemize}
-			\item \texttt{init\_mm()} (lines 358-386 in mm64.c): Initializes the root PGD pointer as NULL, with VM area structures
-			\item \texttt{get\_page\_table\_entry()}: Implements recursive tree traversal with dynamic allocation
-			\item \texttt{print\_pgtbl\_recursive()} (lines 546-595 in mm64.c): Recursive function to traverse and print all 5 levels
-			\item Address extraction in \texttt{get\_pd\_from\_address()}: Complex bit manipulation across 5 levels
-		\end{itemize}
-		The code structure shows separate directory types (\texttt{pgd\_t}, \texttt{p4d\_t}, \texttt{pud\_t}, \texttt{pmd\_t}, \texttt{pt\_t}) defined in \texttt{os-mm.h}, each containing 512 entries.
+		Managing multiple levels of page tables requires more complex algorithms for page table creation, modification, and cleanup, making the memory management subsystem harder to design, implement, and maintain. The complexity also increases the potential for bugs and makes debugging more difficult.
+		
+		\item \textbf{Potential Fragmentation:}
+		With more levels, the page table structure itself can become fragmented across physical memory (due to partially filled tables), leading to inefficient memory usage. This fragmentation can also complicate memory allocation strategies for the page tables themselves.
+		
 	\end{enumerate}
+	
 \end{enumerate}
-In summary, moving from 2-level to 5-level paging in this Simple OS enables massive address space expansion (from 1 MB to 128 PiB) but requires more complex address parsing, slower translation (5 memory accesses vs. 2), and sophisticated memory management strategies.
 
 \subsection{Question 6}
 
-\textbf{Question:}What are the advantages and disadvantages of segmentation with paging?
+\textbf{Question:} What are the advantages and disadvantages of segmentation with paging?
 
 \vspace{0.5cm}
 
 \noindent\textbf{Answer:}
 
-In the Simple OS implementation, segmentation with paging is realized through the \texttt{vm\_area\_struct} (VM areas) acting as logical segments, which are then divided into fixed-size pages managed by the page table hierarchy. This hybrid approach combines the benefits of both memory management techniques.
+Segmentation with paging is a memory management scheme that combines the benefits of both segmentation and paging. It organizes memory into logical segments, each further divided into fixed-size pages, offering both flexibility and efficient use of physical memory.
 
-% Bắt đầu danh sách cấp 1 (1., 2., 3., 4.)
+% Bắt đầu danh sách cấp 1 (1., 2.)
 \begin{enumerate}[label=\textbf{\arabic*.}]
-	
-	% --- 1. Implementation in Simple OS ---
-	\item \textbf{Implementation in Simple OS}
-	
-	The OS uses \texttt{vm\_area\_struct} (defined in \texttt{os-mm.h}) as segment-like structures, each containing:
-	\begin{itemize}
-		\item \texttt{vm\_id}: Identifier for the VM area (logical segment identifier)
-		\item \texttt{vm\_start} and \texttt{vm\_end}: Boundaries defining the logical segment's virtual address range
-		\item \texttt{sbrk}: Break pointer for dynamic memory allocation within the segment (heap growth)
-		\item \texttt{vm\_freerg\_list}: Linked list of free regions within the segment for efficient reuse
-		\item \texttt{vm\_mm}: Back-pointer to the \texttt{mm\_struct} for accessing page tables
-		
-	\end{itemize}
-	Each VM area is then paged using the hierarchical page table structure (\texttt{mm\_struct->pgd} in 64-bit mode, as defined in \texttt{os-mm.h}), where pages are mapped to non-contiguous physical frames. The symbol table (\texttt{symrgtbl}) tracks memory regions (variables) within VM areas, similar to how segments track logical units. The \texttt{mm\_struct->mmap} field maintains a linked list of all VM areas for a process.
-	
-	% --- 2. Disadvantages ---
-	\item \textbf{Disadvantages}
-	
-	\begin{enumerate}[label=\textbf{\alph*.}]
-		\item \textbf{Increased Translation Complexity}
-		
-		Segmentation with paging requires two conceptual steps for address translation: first identifying which segment (VM area) contains the address, then translating the address through the page table hierarchy. In systems with multi-level page tables (such as 64-bit architectures), address translation involves traversing multiple levels of page directories (PGD, P4D, PUD, PMD, PT), potentially requiring multiple memory accesses for each translation. This increases the complexity and latency of address translation compared to simpler memory management schemes.
-		
-		In the Simple OS implementation, this complexity manifests in the \texttt{get\_pd\_from\_address()} function (lines 149-157 of \texttt{mm64.c}), which extracts all 5 page directory indices from a virtual address:
-		\begin{lstlisting}
-int get_pd_from_address(addr_t addr, addr_t *pgd, addr_t *p4d, 
-						addr_t *pud, addr_t *pmd, addr_t *pt)
-{
-	*pgd = (addr & PAGING64_ADDR_PGD_MASK) >> PAGING64_ADDR_PGD_LOBIT;
-	*p4d = (addr & PAGING64_ADDR_P4D_MASK) >> PAGING64_ADDR_P4D_LOBIT;
-	*pud = (addr & PAGING64_ADDR_PUD_MASK) >> PAGING64_ADDR_PUD_LOBIT;
-	*pmd = (addr & PAGING64_ADDR_PMD_MASK) >> PAGING64_ADDR_PMD_LOBIT;
-	*pt = (addr & PAGING64_ADDR_PT_MASK) >> PAGING64_ADDR_PT_LOBIT;
-	return 0;
-}
-		\end{lstlisting}
-		Additionally, the \texttt{get\_page\_table\_entry()} function (lines 100-144 of \texttt{mm64.c}) must walk through all 5 levels of the page table hierarchy, potentially requiring 5 memory accesses to reach the final page table entry.
-		
-		\item \textbf{Memory Overhead for Management Structures}
-		
-		Segmentation with paging requires maintaining both segment management structures (VM areas) and page table structures simultaneously. Each process must maintain metadata for segments (segment descriptors, boundaries, free region lists) as well as hierarchical page tables. Each level of the page table hierarchy consumes memory (typically 4KB per directory level in 64-bit systems). Additionally, segment structures, free region lists, and symbol tables add overhead. This dual-structure approach consumes more memory than a pure paging system, which only needs page tables.
-		
-		In the Simple OS implementation, this memory overhead is evident in the structure definitions in \texttt{os-mm.h}:
-		\begin{lstlisting}
-struct mm_struct {
-	struct pgd_t *pgd;              // 4KB per directory level
-	struct vm_area_struct *mmap;    // Linked list of VM areas
-	struct vm_rg_struct symrgtbl[PAGING_MAX_SYMTBL_SZ]; // 30 entries
-	struct pgn_t *fifo_pgn;         // Page number list
-};
-
-struct vm_area_struct {
-	// ... fields ...
-	struct vm_rg_struct *vm_freerg_list; // Free region list per VM area
-	struct vm_area_struct *vm_next;      // Linked list overhead
-};
-		\end{lstlisting}
-		The initialization in \texttt{init\_mm()} (\texttt{mm64.c}, lines 357-375) shows all these structures being allocated for each process.
-		
-		\item \textbf{Complex Overlap Validation}
-		
-		In segmentation with paging, the system must ensure that segments do not overlap in the virtual address space. This requires validating that new segment allocations do not conflict with existing segments. As the number of segments grows, this validation becomes more expensive, requiring O(n) operations where n is the number of segments. This overhead occurs during memory allocation operations, potentially impacting performance.
-		
-		In the Simple OS implementation, the \texttt{validate\_overlap\_vm\_area()} function in \texttt{mm-vm.c} (lines 76-102) demonstrates this overhead:
-		\begin{lstlisting}
-int validate_overlap_vm_area(struct pcb_t *caller, int vmaid,
-								addr_t vmastart, addr_t vmaend)
-{
-	struct vm_area_struct *vma = caller->mm->mmap;
-	
-	// Must traverse entire linked list
-	while (vma != NULL) {
-		if (vma->vm_id != vmaid) {
-			// Check for overlap: O(n) comparison
-			if ((vmastart < vma->vm_end) && (vma->vm_start < vmaend)) {
-				return -1; // Overlap detected
-			}
-		}
-		vma = vma->vm_next;
-	}
-	return 0;
-}
-		\end{lstlisting}
-		This function is called in \texttt{inc\_vma\_limit()} (line 138 of \texttt{mm-vm.c}) and during memory allocation operations, adding overhead to every segment expansion.
-	\end{enumerate}
-	
-	% --- 3. Advantages ---
 	\item \textbf{Advantages}
 	
 	\begin{enumerate}[label=\textbf{\alph*.}]
-		\item \textbf{Eliminates External Fragmentation}
+		\item \textbf{Eliminates External Fragmentation:}
+		Paging ensures that physical memory is divided into fixed-size frames, and since segments are broken into pages, there is no external fragmentation in physical memory. This eliminates the need for contiguous physical memory allocation that plagues pure segmentation schemes.
 		
-		By combining segmentation with paging, the system eliminates external fragmentation that plagues pure segmentation schemes. Segments are divided into fixed-size pages, which are then mapped to physical frames. Since pages are of fixed size, any available frame can be used, and segments can span multiple non-contiguous physical frames. This eliminates the need for contiguous physical memory allocation, which is a major limitation of pure segmentation.
+		\item \textbf{Flexible Memory Management:}
+		The system can efficiently handle variable-sized logical divisions while maintaining fixed-size physical allocations.
 		
-		In the Simple OS implementation, the \texttt{alloc\_pages\_range()} function (lines 283-317 of \texttt{mm64.c}) allocates frames individually and links them via \texttt{framephy\_struct}:
-		\begin{lstlisting}
-addr_t alloc_pages_range(struct pcb_t *caller, int req_pgnum,
-						struct framephy_struct **frm_lst)
-{
-	// Allocates frames individually and links them
-	for (pgit = 0; pgit < req_pgnum; pgit++) {
-		MEMPHY_get_freefp(caller->krnl->mram, &fpn);
-		// Create framephy_struct node and link to list
-	}
-}
-		\end{lstlisting}
-		The \texttt{vm\_map\_ram()} function (lines 322-337 of \texttt{mm64.c}) coordinates frame allocation and page mapping:
-		\begin{lstlisting}
-addr_t vm_map_ram(struct pcb_t *caller, addr_t astart, addr_t aend,
-				addr_t mapstart, int incpgnum, struct vm_rg_struct *ret_rg)
-{
-	// Step 1: Allocate physical frames (paging concern)
-	ret_alloc = alloc_pages_range(caller, incpgnum, &frm_lst);
-	
-	// Step 2: Map pages to virtual addresses (paging concern)
-	vmap_page_range(caller, mapstart, incpgnum, frm_lst, ret_rg);
-	
-	return 0;
-}
-		\end{lstlisting}
-		The \texttt{framephy\_struct} is defined in \texttt{os-mm.h} (lines 155-162) and manages non-contiguous frames.
+		\item \textbf{Efficient Memory Utilization:}
+		Only necessary pages of segments need to be in memory, reducing wasted space compared to pure segmentation. This allows the system to load only the actively used portions of segments, improving overall memory efficiency.
 		
-		\item \textbf{Logical Memory Organization}
+		\item \textbf{Flexible Protection and Sharing:}
+		Protection can be applied per segment (e.g., code = read-only, stack = read/write), enabling fine-grained control over memory access and enforcing security boundaries. Segments can be shared between processes (e.g., shared libraries) while paging avoids fragmentation, minimizing duplication and improving memory efficiency.
 		
-		Segmentation with paging provides logical organization of memory by maintaining segments that represent different logical units (code, data, heap, stack). This allows the operating system to treat different memory regions as separate entities with distinct properties, while still using paging for efficient physical memory management. This logical organization simplifies memory protection, sharing, and management compared to pure paging systems.
+		\item \textbf{Allows Large Logical Address Spaces:}
+		Each segment can be large, even larger than physical memory, because paging supports virtual memory. This enables processes to work with address spaces that exceed available physical RAM through demand paging and swapping mechanisms.
 		
-		In the Simple OS implementation, functions like \texttt{get\_vma\_by\_num()} (lines 12-31 of \texttt{mm-vm.c}) traverse the VM area list to find segments by ID:
-		\begin{lstlisting}
-struct vm_area_struct *get_vma_by_num(struct mm_struct *mm, int vmaid)
-{
-	struct vm_area_struct *pvma = mm->mmap;
-	while (pvma != NULL) {
-		if (pvma->vm_id == vmaid)
-		return pvma;
-		pvma = pvma->vm_next;
-	}
-	return NULL;
-}
-		\end{lstlisting}
-		The \texttt{validate\_overlap\_vm\_area()} function (lines 76-102 of \texttt{mm-vm.c}) ensures distinct logical regions don't overlap.
-		
-		\item \textbf{Efficient Handling of Large Segments}
-		
-		Segmentation with paging allows segments to grow dynamically without requiring contiguous physical memory. Since segments are divided into pages, and pages can be allocated from any available frames, large segments can be created and expanded efficiently. This is particularly beneficial for dynamic data structures like heaps that grow over time, as they don't need to be pre-allocated or relocated when they expand.
-		
-		In the Simple OS implementation, the \texttt{inc\_vma\_limit()} function (lines 110-168 of \texttt{mm-vm.c}) demonstrates how large VM areas can grow dynamically:
-		\begin{lstlisting}
-int inc_vma_limit(struct pcb_t *caller, int vmaid, addr_t inc_sz)
-{
-	// Calculate number of pages needed
-	int incnumpage = DIV_ROUND_UP(inc_amt, PAGING_PAGESZ);
-	
-	// Allocate and map new pages
-	vm_map_ram(caller, area->rg_start, area->rg_end, old_sbrk,
-	incnumpage, newrg);
-	
-	// Update sbrk pointer
-	cur_vma->sbrk += inc_sz;
-}
-		\end{lstlisting}
-		The function calculates page-aligned size, calls \texttt{vm\_map\_ram()} which allocates frames via \texttt{alloc\_pages\_range()} and maps them via \texttt{vmap\_page\_range()}, then updates the \texttt{sbrk} pointer.
-		
-		\item \textbf{Reduced Internal Fragmentation}
-		
-		Segmentation with paging can reduce internal fragmentation within segments by maintaining free region lists that track freed memory. When memory is freed within a segment, it can be reused for subsequent allocations within the same segment, rather than always allocating new pages. This reuse of freed memory reduces wasted space within segments, improving memory utilization compared to systems that always allocate new pages.
-		
-		In the Simple OS implementation, the \texttt{get\_free\_vmrg\_area()} function (lines 384-437 of \texttt{libmem.c}) searches the free list for regions large enough to satisfy allocation requests:
-		\begin{lstlisting}
-int get_free_vmrg_area(struct pcb_t *caller, int vmaid, int size,
-						struct vm_rg_struct *newrg)
-{
-	struct vm_rg_struct *rgit = cur_vma->vm_freerg_list;
-	while (rgit != NULL) {
-		if (rgit->rg_start + size <= rgit->rg_end) {
-			// Found fit - reuse existing free region
-			newrg->rg_start = rgit->rg_start;
-			newrg->rg_end = rgit->rg_start + size;
-			// Update free node efficiently
-		}
-		rgit = rgit->rg_next;
-	}
-}
-		\end{lstlisting}
-		The \texttt{\_\_alloc()} function (lines 38-100 of \texttt{libmem.c}) first attempts to reuse free regions before expanding the heap:
-		\begin{lstlisting}
-int __alloc(struct pcb_t *caller, int vmaid, int rgid, addr_t size,
-			addr_t *alloc_addr)
-{
-	// First try to reuse free region
-	if (get_free_vmrg_area(caller, vmaid, size, &rgnode) == 0) {
-		*alloc_addr = rgnode.rg_start;
-		return 0;
-	}
-	// Only expand heap if no free region available
-}
-		\end{lstlisting}
 	\end{enumerate}
+	
+	\item \textbf{Disadvantages}
+	
+	\begin{enumerate}[label=\textbf{\alph*.}]
+		\item \textbf{Increased Complexity in Hardware/OS:}
+		Managing both segments and pages requires a segment table and a page table for each segment, with two-level translation increasing system complexity. This requires additional hardware support and more complex software algorithms, increasing the risk of errors and maintenance overhead.
+		
+		\item \textbf{Higher Overhead in Address Translation:}
+		Address translation involves multiple steps: logical address → segment → page → frame → physical address, which is more complex than pure paging or pure segmentation. The system may need Translation Lookaside Buffers (TLBs) for both segment and page entries, introducing additional memory access latency and overhead in systems with limited resources.
+		
+		\item \textbf{More Memory Needed for Table Storage:}
+		The system must store a segment table and multiple page tables (one per segment), which can be costly for programs with many segments. This increases the memory overhead for management structures compared to simpler memory management schemes.
+		
+		\item \textbf{Internal Fragmentation Still Exists:}
+		Each page is fixed size, so the last page of a segment may have unused space, leading to internal fragmentation within pages. While this is typically small compared to external fragmentation, it still represents wasted memory.
+		
+		\item \textbf{More Complicated to Manage:}
+		Segment creation, deletion, and growth must be handled carefully, and the operating system must track the mapping of many segment-page structures. This complex coordination between segment and page-level operations makes the implementation more complex than a pure paging system.
+		
+	\end{enumerate}
+	
 \end{enumerate}
-In summary, the Simple OS's segmentation-with-paging approach (VM areas + page tables) provides logical memory organization and eliminates external fragmentation, but at the cost of increased translation complexity, memory overhead for management structures, O(n) overlap validation, complex coordination between segment and page-level operations. The hybrid system requires maintaining both VM area metadata and page table structures, with operations spanning both abstraction levels, making the implementation more complex than a pure paging system.
+
+In summary, segmentation with paging effectively balances flexibility, protection, and memory efficiency by eliminating external fragmentation in physical memory and supporting logical program structures. However, this comes at the cost of added complexity in hardware and software design, increased memory overhead for table storage, higher address translation overhead, and the persistence of internal fragmentation. The hybrid system requires maintaining both segment tables and page tables, with operations spanning both abstraction levels, making the implementation more complex than pure paging or pure segmentation systems.
 
 \subsection{Question 7}
 \textbf{Question:} What happens if the synchronization is not handled in your Simple OS? Illustrate the problem of your simple OS (assignment outputs) by example if you have any.
@@ -2088,75 +1901,8 @@ The Simple OS uses a multi-threaded architecture where multiple CPU threads (fro
 		The timer mechanism in \texttt{timer\_routine()} coordinates all threads by waiting for each device's \texttt{done} flag before advancing time slots. Without proper mutex protection:
 		\begin{itemize}
 			\item \textbf{Time Slot Skips:} If multiple threads call \texttt{next\_slot()} simultaneously, the timer might advance before all threads complete their work, causing some threads to miss time slots or execute out of order.
-			\item \textbf{Deadlock in Timer:} The condition variable waits in \texttt{timer\_routine()} (lines 18-20 below) and \texttt{next\_slot()} (lines 61-63 below) could deadlock if mutexes are not properly acquired, freezing the entire system.
+			\item \textbf{Deadlock in Timer:} The condition variable waits in \texttt{timer\_routine()}) and \texttt{next\_slot()} (lines 61-63 below) could deadlock if mutexes are not properly acquired, freezing the entire system.
 			\item \textbf{Inconsistent Time Perception:} Different CPU threads might observe different values of \texttt{current\_time()} if the timer advances while threads are reading it, leading to incorrect process scheduling decisions.
-			\begin{lstlisting}[language=C, caption=timer\_routine() and next\_slot() in timer.c]
-// timer.c
-static void *timer_routine(void *args)
-{
-	while (!timer_stop)
-	{
-		printf("Time slot %3llu\n", current_time());
-		int fsh = 0;
-		int event = 0;
-		/* Wait for all devices have done the job in current
-		* time slot */
-		struct timer_id_container_t *temp;
-		for (temp = dev_list; temp != NULL; temp = temp->next)
-		{
-			pthread_mutex_lock(&temp->id.event_lock);
-			while (!temp->id.done && !temp->id.fsh)
-			{
-				pthread_cond_wait(
-				&temp->id.event_cond,
-				&temp->id.event_lock);
-			}
-			if (temp->id.fsh)
-			{
-				fsh++;
-			}
-			event++;
-			pthread_mutex_unlock(&temp->id.event_lock);
-		}
-		
-		/* Increase the time slot */
-		_time++;
-		
-		/* Let devices continue their job */
-		for (temp = dev_list; temp != NULL; temp = temp->next)
-		{
-			pthread_mutex_lock(&temp->id.timer_lock);
-			temp->id.done = 0;
-			pthread_cond_signal(&temp->id.timer_cond);
-			pthread_mutex_unlock(&temp->id.timer_lock);
-		}
-		if (fsh == event)
-		{
-			break;
-		}
-	}
-	pthread_exit(args);
-}
-
-void next_slot(struct timer_id_t *timer_id)
-{
-	/* Tell to timer that we have done our job in current slot */
-	pthread_mutex_lock(&timer_id->event_lock);
-	timer_id->done = 1;
-	pthread_cond_signal(&timer_id->event_cond);
-	pthread_mutex_unlock(&timer_id->event_lock);
-	
-	/* Wait for going to next slot */
-	pthread_mutex_lock(&timer_id->timer_lock);
-	while (timer_id->done)
-	{
-		pthread_cond_wait(
-		&timer_id->timer_cond,
-		&timer_id->timer_lock);
-	}
-	pthread_mutex_unlock(&timer_id->timer_lock);
-}
-			\end{lstlisting}
 		\end{itemize}
 		
 		\item \textbf{Memory Management Corruption:}
@@ -2204,60 +1950,7 @@ void next_slot(struct timer_id_t *timer_id)
 		The mutexes \texttt{event\_lock} and \texttt{timer\_lock} (defined per device in \texttt{struct timer\_id\_t}), along with their associated condition variables (\texttt{event\_cond} and \texttt{timer\_cond}), were removed from the timer synchronization code. Specifically:
 		\begin{itemize}
 			\item In \texttt{timer\_routine()}: Removed mutex locks at lines 32, 44, 53, 56 that protect the \texttt{done} flag checks and updates
-			\begin{lstlisting}[language=C, caption=Removed muxtex timer\_routine()]
-// timer.c
-static void *timer_routine(void *args)
-{
-	/*...*/
-	for (temp = dev_list; temp != NULL; temp = temp->next)
-	{
-		//line 32	pthread_mutex_lock(&temp->id.event_lock);
-		while (!temp->id.done && !temp->id.fsh)
-		{
-			pthread_cond_wait(
-			&temp->id.event_cond,
-			&temp->id.event_lock);
-		}
-		if (temp->id.fsh)
-		{
-			fsh++;
-		}
-		event++;
-		//line 44	pthread_mutex_unlock(&temp->id.event_lock);
-	}
-	/*...*/
-	for (temp = dev_list; temp != NULL; temp = temp->next)
-	{
-		//line 53	pthread_mutex_lock(&temp->id.timer_lock);
-		temp->id.done = 0;
-		pthread_cond_signal(&temp->id.timer_cond);
-		//line 56	pthread_mutex_unlock(&temp->id.timer_lock);
-	}
-	/*...*/
-}
-			\end{lstlisting}
 			\item In \texttt{next\_slot()}: Removed mutex locks at lines 69, 72, 75, 82 that coordinate between threads and the timer
-			\begin{lstlisting}[language=C, caption=Removed muxtex next\_slot()]
-// timer.c
-void next_slot(struct timer_id_t *timer_id)
-{
-	/* Tell to timer that we have done our job in current slot */
-	//line 69	pthread_mutex_lock(&timer_id->event_lock);
-	timer_id->done = 1;
-	pthread_cond_signal(&timer_id->event_cond);
-	//line 72	pthread_mutex_unlock(&timer_id->event_lock);
-	
-	/* Wait for going to next slot */
-	//line 75	pthread_mutex_lock(&timer_id->timer_lock);
-	while (timer_id->done)
-	{
-		pthread_cond_wait(
-		&timer_id->timer_cond,
-		&timer_id->timer_lock);
-	}
-	//line 82	pthread_mutex_unlock(&timer_id->timer_lock);
-}
-			\end{lstlisting}
 		\end{itemize}
 		This allows multiple threads (CPU threads from \texttt{cpu\_routine()} in \texttt{os.c} and the loader thread from \texttt{ld\_routine()}) to access and modify the timer state (\texttt{\_time} of \texttt{timer.c}) and device \texttt{done} flags concurrently without any protection.
 		
@@ -2466,6 +2159,7 @@ CPU 1 stopped
 
 \vspace{0.5cm}
 In summary, synchronization is essential for the Simple OS's correctness. The mutex-protected critical sections in \texttt{timer.c} (protecting \texttt{\_time} and \texttt{done} flags), \texttt{sched.c} (protecting queue operations), and \texttt{libmem.c} (protecting memory management structures) ensure that shared data structures are accessed atomically, preventing race conditions, data corruption, and system failures. The experimental removal of timer synchronization demonstrates that even when a run appears successful, the underlying race conditions create non-deterministic behavior. The concurrent operations observed in the output show that threads are not properly coordinated, which can lead to subtle bugs, data corruption, and unpredictable system behavior in subsequent runs.
+
 
 
     \pagebreak
