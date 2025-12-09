@@ -263,12 +263,6 @@ According to \textbf{Chapter 9.4.2 (Hierarchical Paging)}, the optimal solution 
 \paragraph{b. 5-Level Paging Architecture}
 The system is designed based on an extension of the Intel x86-64 architecture, utilizing a \textbf{5-level paging scheme} to support a significantly larger virtual address space (up to 57-bit linear address).
 
-The virtual address structure is decomposed into index fields and an offset. Assuming a standard page size of 4KB ($2^{12}$ bytes), the virtual address is resolved as follows:
-
-\begin{equation}
-    \texttt{Virtual\_Address} = PGD \oplus P4D \oplus PUD \oplus PMD \oplus PT \oplus Offset
-\end{equation}
-
 The address translation process (also known as the \textbf{Page Walk}) occurs sequentially through 5 tables:
 \begin{enumerate}
     \item \textbf{PGD (Page Global Directory):} The top-level table (Level 5).

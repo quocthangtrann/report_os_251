@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.12.6)  9 DEC 2025 09:47
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.12.6)  9 DEC 2025 10:51
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -1459,7 +1459,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 277.
+Package pdftex.def Info: logobk.png  used on input line 276.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -1469,16 +1469,16 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-18.27916pt}.
 
 [5]
-<Hierarchical Paging.png, id=230, 2055.68pt x 1073.00874pt>
+<Hierarchical Paging.png, id=232, 2055.68pt x 1073.00874pt>
 File: Hierarchical Paging.png Graphic file (type png)
 <use Hierarchical Paging.png>
-Package pdftex.def Info: Hierarchical Paging.png  used on input line 305.
+Package pdftex.def Info: Hierarchical Paging.png  used on input line 299.
 (pdftex.def)             Requested size: 435.32422pt x 227.22134pt.
 
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 308.
+Package pdftex.def Info: logobk.png  used on input line 302.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -1491,7 +1491,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 355.
+Package pdftex.def Info: logobk.png  used on input line 349.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -1505,18 +1505,18 @@ pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.355 \end{itemize}
+l.349 \end{itemize}
                     <./Hierarchical Paging.png>]
-<Huge page.png, id=248, 2055.68pt x 1074.0125pt>
+<Huge page.png, id=247, 2055.68pt x 1074.0125pt>
 File: Huge page.png Graphic file (type png)
 <use Huge page.png>
-Package pdftex.def Info: Huge page.png  used on input line 366.
+Package pdftex.def Info: Huge page.png  used on input line 360.
 (pdftex.def)             Requested size: 483.69687pt x 252.70435pt.
 
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 395.
+Package pdftex.def Info: logobk.png  used on input line 389.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -1530,19 +1530,19 @@ pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.395 	\item \textbf
+l.389 	\item \textbf
                     {Flexible Structure:} Since it does not require storing ...
  <./Huge page.png>]
-<Hashed Page Tables.png, id=256, 2055.68pt x 1075.01625pt>
+<Hashed Page Tables.png, id=255, 2055.68pt x 1075.01625pt>
 File: Hashed Page Tables.png Graphic file (type png)
 <use Hashed Page Tables.png>
-Package pdftex.def Info: Hashed Page Tables.png  used on input line 407.
+Package pdftex.def Info: Hashed Page Tables.png  used on input line 401.
 (pdftex.def)             Requested size: 483.69687pt x 252.94052pt.
 
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 420.
+Package pdftex.def Info: logobk.png  used on input line 414.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -1556,25 +1556,25 @@ pdfTeX warning (ext4): destination with the same identifier (name{figure.3}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.420 	\item \textbf
+l.414 	\item \textbf
                     {An Array of PFNs:} Stores physical frame numbers for mu...
  <./Hashed Page Tables.png>]
-Overfull \hbox (46.9348pt too wide) in paragraph at lines 420--421
+Overfull \hbox (46.9348pt too wide) in paragraph at lines 414--415
 []\T1/cmr/bx/n/10 An Ar-ray of PFNs: \T1/cmr/m/n/10 Stores phys-i-cal frame num
 -bers for mul-ti-ple con-sec-u-tive pages (e.g., $\OML/cmm/m/it/10 PFN[]; PFN[]
 ; [] ; PFN[]$\T1/cmr/m/n/10 ). 
  []
 
-<Clustered Page Tables.png, id=264, 2055.68pt x 1073.00874pt>
+<Clustered Page Tables.png, id=263, 2055.68pt x 1073.00874pt>
 File: Clustered Page Tables.png Graphic file (type png)
 <use Clustered Page Tables.png>
-Package pdftex.def Info: Clustered Page Tables.png  used on input line 446.
+Package pdftex.def Info: Clustered Page Tables.png  used on input line 440.
 (pdftex.def)             Requested size: 435.32422pt x 227.22134pt.
 
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 467.
+Package pdftex.def Info: logobk.png  used on input line 461.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -1588,13 +1588,13 @@ pdfTeX warning (ext4): destination with the same identifier (name{figure.4}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.467 I
+l.461 I
        n both Hierarchical Paging and Hashed Page Tables methods, each proce...
  <./Clustered Page Tables.png>]
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 515.
+Package pdftex.def Info: logobk.png  used on input line 509.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -1607,7 +1607,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 528.
+Package pdftex.def Info: logobk.png  used on input line 522.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -1618,12 +1618,12 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 [12]
 Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on i
-nput line 543.
+nput line 537.
 
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 575.
+Package pdftex.def Info: logobk.png  used on input line 569.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -1634,12 +1634,12 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 [13]
 LaTeX Font Info:    Font shape `T1/cmtt/bx/n' in size <10> not available
-(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 583.
+(Font)              Font shape `T1/cmtt/m/n' tried instead on input line 577.
 
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 621.
+Package pdftex.def Info: logobk.png  used on input line 615.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -1652,7 +1652,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 664.
+Package pdftex.def Info: logobk.png  used on input line 658.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -1665,7 +1665,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 705.
+Package pdftex.def Info: logobk.png  used on input line 699.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -1675,16 +1675,16 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-18.27916pt}.
 
 [16]
-<flowchartsched.png, id=379, 1572.87625pt x 4137.4575pt>
+<flowchartsched.png, id=378, 1572.87625pt x 4137.4575pt>
 File: flowchartsched.png Graphic file (type png)
 <use flowchartsched.png>
-Package pdftex.def Info: flowchartsched.png  used on input line 722.
+Package pdftex.def Info: flowchartsched.png  used on input line 716.
 (pdftex.def)             Requested size: 241.84843pt x 636.18558pt.
 
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 725.
+Package pdftex.def Info: logobk.png  used on input line 719.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -1697,7 +1697,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 734.
+Package pdftex.def Info: logobk.png  used on input line 728.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -1711,13 +1711,13 @@ pdfTeX warning (ext4): destination with the same identifier (name{figure.5}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.734     \item O
+l.728     \item O
                  ne user \texttt{vm\_area\_struct} (\texttt{vmaid = 0}) acti...
  <./flowchartsched.png>]
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 774.
+Package pdftex.def Info: logobk.png  used on input line 768.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -1730,7 +1730,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 814.
+Package pdftex.def Info: logobk.png  used on input line 808.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -1743,7 +1743,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 858.
+Package pdftex.def Info: logobk.png  used on input line 852.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -1756,7 +1756,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 890.
+Package pdftex.def Info: logobk.png  used on input line 884.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -1769,7 +1769,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 928.
+Package pdftex.def Info: logobk.png  used on input line 922.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -1782,7 +1782,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 973.
+Package pdftex.def Info: logobk.png  used on input line 967.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -1795,7 +1795,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 1014.
+Package pdftex.def Info: logobk.png  used on input line 1008.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -1808,7 +1808,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 1057.
+Package pdftex.def Info: logobk.png  used on input line 1051.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -1821,7 +1821,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 1081.
+Package pdftex.def Info: logobk.png  used on input line 1075.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -1834,7 +1834,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 1129.
+Package pdftex.def Info: logobk.png  used on input line 1123.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -1847,7 +1847,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 1171.
+Package pdftex.def Info: logobk.png  used on input line 1165.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -1860,7 +1860,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 1292.
+Package pdftex.def Info: logobk.png  used on input line 1286.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -1874,18 +1874,18 @@ pdfTeX warning (ext4): destination with the same identifier (name{figure.6}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1292 	CPU 
+l.1286 	CPU 
             1: Dispatched process  1
 pdfTeX warning (ext4): destination with the same identifier (name{figure.7}) ha
 s been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.1292 	CPU 
+l.1286 	CPU 
             1: Dispatched process  1]
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 1330.
+Package pdftex.def Info: logobk.png  used on input line 1324.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -1898,7 +1898,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 1369.
+Package pdftex.def Info: logobk.png  used on input line 1363.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -1911,7 +1911,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 1413.
+Package pdftex.def Info: logobk.png  used on input line 1407.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -1924,7 +1924,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 1461.
+Package pdftex.def Info: logobk.png  used on input line 1455.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -1937,7 +1937,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 1505.
+Package pdftex.def Info: logobk.png  used on input line 1499.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -1950,7 +1950,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 1534.
+Package pdftex.def Info: logobk.png  used on input line 1528.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -1963,7 +1963,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 1574.
+Package pdftex.def Info: logobk.png  used on input line 1568.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -1976,7 +1976,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 1611.
+Package pdftex.def Info: logobk.png  used on input line 1605.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -1989,7 +1989,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 1645.
+Package pdftex.def Info: logobk.png  used on input line 1639.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -2002,7 +2002,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 1693.
+Package pdftex.def Info: logobk.png  used on input line 1687.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -2015,7 +2015,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 1743.
+Package pdftex.def Info: logobk.png  used on input line 1737.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -2025,7 +2025,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-18.27916pt}.
 
 [41]
-Overfull \hbox (7.71207pt too wide) in paragraph at lines 1751--1753
+Overfull \hbox (7.71207pt too wide) in paragraph at lines 1745--1747
 \T1/cmr/m/n/10 come segment-aware. They take a \T1/cmtt/m/n/10 vmaid \T1/cmr/m/
 n/10 pa-ram-e-ter to se-lect the cor-rect VMA via \T1/cmtt/m/n/10 get_vma_by_nu
 m(mm,
@@ -2035,7 +2035,7 @@ m(mm,
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 1786.
+Package pdftex.def Info: logobk.png  used on input line 1780.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -2048,7 +2048,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 1830.
+Package pdftex.def Info: logobk.png  used on input line 1824.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -2061,7 +2061,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 1874.
+Package pdftex.def Info: logobk.png  used on input line 1868.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -2074,7 +2074,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 1908.
+Package pdftex.def Info: logobk.png  used on input line 1902.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -2087,7 +2087,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 1948.
+Package pdftex.def Info: logobk.png  used on input line 1942.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -2100,7 +2100,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 1986.
+Package pdftex.def Info: logobk.png  used on input line 1980.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -2110,7 +2110,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-18.27916pt}.
 
 [47]
-Overfull \hbox (42.2973pt too wide) in paragraph at lines 2010--2011
+Overfull \hbox (42.2973pt too wide) in paragraph at lines 2004--2005
 \T1/cmr/m/n/10 The func-tion cal-cu-lates page-aligned size, calls \T1/cmtt/m/n
 /10 vm_map_ram() \T1/cmr/m/n/10 which al-lo-cates frames via \T1/cmtt/m/n/10 al
 loc_pages_range()
@@ -2120,7 +2120,7 @@ loc_pages_range()
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 2021.
+Package pdftex.def Info: logobk.png  used on input line 2015.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -2133,7 +2133,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 2058.
+Package pdftex.def Info: logobk.png  used on input line 2052.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -2143,21 +2143,21 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-18.27916pt}.
 
 [49]
-Overfull \hbox (6.99112pt too wide) in paragraph at lines 2069--2070
+Overfull \hbox (6.99112pt too wide) in paragraph at lines 2063--2064
 \T1/cmr/m/n/10 in-clud-ing \T1/cmtt/m/n/10 mlq_ready_queue[]\T1/cmr/m/n/10 , \T
 1/cmtt/m/n/10 slot_remaining[]\T1/cmr/m/n/10 , \T1/cmtt/m/n/10 current_queue_in
 dex\T1/cmr/m/n/10 , and \T1/cmtt/m/n/10 running_list\T1/cmr/m/n/10 . Func-
  []
 
 
-Overfull \hbox (3.97333pt too wide) in paragraph at lines 2078--2081
+Overfull \hbox (3.97333pt too wide) in paragraph at lines 2072--2075
 \T1/cmr/m/n/10 ne-ously call \T1/cmtt/m/n/10 get_mlq_proc() \T1/cmr/m/n/10 and 
 \T1/cmtt/m/n/10 put_mlq_proc()\T1/cmr/m/n/10 , lead-ing to race con-di-tions on
  \T1/cmtt/m/n/10 mlq_ready_queue[]\T1/cmr/m/n/10 .
  []
 
 
-Overfull \hbox (19.34041pt too wide) in paragraph at lines 2086--2089
+Overfull \hbox (19.34041pt too wide) in paragraph at lines 2080--2083
 []\T1/cmr/bx/n/10 Scheduler State In-con-sis-tency: \T1/cmr/m/n/10 The sched-ul
 er main-tains state vari-ables \T1/cmtt/m/n/10 slot[] \T1/cmr/m/n/10 and \T1/cm
 tt/m/n/10 mlq_ready_queue
@@ -2167,7 +2167,7 @@ tt/m/n/10 mlq_ready_queue
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 2098.
+Package pdftex.def Info: logobk.png  used on input line 2092.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -2180,7 +2180,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 2138.
+Package pdftex.def Info: logobk.png  used on input line 2132.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -2193,7 +2193,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 2180.
+Package pdftex.def Info: logobk.png  used on input line 2174.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -2203,7 +2203,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-18.27916pt}.
 
 [52]
-Overfull \hbox (15.8525pt too wide) in paragraph at lines 2183--2186
+Overfull \hbox (15.8525pt too wide) in paragraph at lines 2177--2180
 []\T1/cmr/bx/n/10 Loader-CPU Race Con-di-tions: \T1/cmr/m/n/10 The \T1/cmtt/m/n
 /10 ld_routine() \T1/cmr/m/n/10 adds pro-cesses to the ready queue via \T1/cmtt
 /m/n/10 add_proc()
@@ -2213,7 +2213,7 @@ Overfull \hbox (15.8525pt too wide) in paragraph at lines 2183--2186
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 2220.
+Package pdftex.def Info: logobk.png  used on input line 2214.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -2226,7 +2226,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 2262.
+Package pdftex.def Info: logobk.png  used on input line 2256.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -2239,7 +2239,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 2304.
+Package pdftex.def Info: logobk.png  used on input line 2298.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -2252,7 +2252,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 2344.
+Package pdftex.def Info: logobk.png  used on input line 2338.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -2265,7 +2265,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 2386.
+Package pdftex.def Info: logobk.png  used on input line 2380.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -2278,7 +2278,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 2423.
+Package pdftex.def Info: logobk.png  used on input line 2417.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -2291,7 +2291,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 2443.
+Package pdftex.def Info: logobk.png  used on input line 2437.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -2304,7 +2304,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 2478.
+Package pdftex.def Info: logobk.png  used on input line 2472.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -2317,7 +2317,7 @@ Package fancyhdr Warning: \headheight is too small (28.0pt):
 
 File: logobk.png Graphic file (type png)
 <use logobk.png>
-Package pdftex.def Info: logobk.png  used on input line 2498.
+Package pdftex.def Info: logobk.png  used on input line 2492.
 (pdftex.def)             Requested size: 42.68001pt x 42.67912pt.
 
 Package fancyhdr Warning: \headheight is too small (28.0pt): 
@@ -2349,9 +2349,9 @@ Package logreq Info: Writing requests to 'main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 47362 strings out of 473190
- 1055430 string characters out of 5715800
- 2226496 words of memory out of 5000000
+ 47361 strings out of 473190
+ 1055420 string characters out of 5715800
+ 2227496 words of memory out of 5000000
  68924 multiletter control sequences out of 15000+600000
  575152 words of font info for 78 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -2373,10 +2373,10 @@ ve/2025/texmf-dist/fonts/type1/public/cm-super/sfrm0500.pfb></usr/local/texlive
 texmf-dist/fonts/type1/public/cm-super/sfti1000.pfb></usr/local/texlive/2025/te
 xmf-dist/fonts/type1/public/cm-super/sftt0900.pfb></usr/local/texlive/2025/texm
 f-dist/fonts/type1/public/cm-super/sftt1000.pfb>
-Output written on main.pdf (62 pages, 1118338 bytes).
+Output written on main.pdf (62 pages, 1116699 bytes).
 PDF statistics:
- 1741 PDF objects out of 2073 (max. 8388607)
- 1613 compressed objects within 17 object streams
- 1013 named destinations out of 1200 (max. 500000)
+ 1740 PDF objects out of 2073 (max. 8388607)
+ 1612 compressed objects within 17 object streams
+ 1012 named destinations out of 1200 (max. 500000)
  307 words of extra memory for PDF output out of 10000 (max. 10000000)
 
