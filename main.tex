@@ -324,7 +324,7 @@ To mitigate these overheads \textbf{directly within the hierarchical framework},
 
 Huge Pages do not eliminate the hierarchical paging structure but operate by ``short-circuiting'' the tree traversal process. Considering the Intel x86-64 4-level paging structure:
 \begin{itemize}
-	\item \textbf{Standard Page (4KB):} The CPU must traverse all 4 levels: PML4 $\rightarrow$ PDP $\rightarrow$ PD $\rightarrow$ PT $\rightarrow$ 4KB Page.
+	\item \textbf{Standard Page (4KB):} The CPU must traverse all 5 levels: PGD $\rightarrow$ P4D $\rightarrow$ PUD $\rightarrow$ PMD $\rightarrow$ PT $\rightarrow$ 4KB Page.
 	\item \textbf{Huge Page (2MB):} The CPU only traverses 3 levels. At the 3rd level (Page Directory - PD), a special bit (PS bit - Page Size) is set. The entry in the PD points directly to a \textbf{2MB physical frame} instead of a Level-4 Page Table.
 	\item \textbf{Huge Page (1GB):} The CPU only traverses 2 levels. At the 2nd level (Page Directory Pointer - PDP), the PS bit is set, pointing directly to a \textbf{1GB physical frame}.
 \end{itemize}
